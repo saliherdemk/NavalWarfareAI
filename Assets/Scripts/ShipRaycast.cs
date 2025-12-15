@@ -13,19 +13,13 @@ public class ShipRaycast : MonoBehaviour
         rays = new float[rayCount];
     }
 
-    void FixedUpdate()
-    {
-        CastCircleRays();
-    }
-
     void CastCircleRays()
     {
         float angleStep = 360f / rayCount;
 
         for (int i = 0; i < rayCount; i++)
         {
-            float angle = transform.eulerAngles.z + angleStep * i;
-            Vector2 direction = AngleToDir(angle);
+            Vector2 direction = Quaternion.Euler(0f, 0f, angleStep * i) * transform.up;
 
             RaycastHit2D hit = Physics2D.Raycast(
                 transform.position,
@@ -53,6 +47,7 @@ public class ShipRaycast : MonoBehaviour
 
     public float[] GetSensors()
     {
+        CastCircleRays();
         return rays;
     }
 }

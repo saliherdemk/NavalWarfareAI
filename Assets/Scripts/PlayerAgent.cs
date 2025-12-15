@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
@@ -26,19 +27,33 @@ public class PlayerAgent : Agent
     public override void OnEpisodeBegin()
     {
         gm.RestartGame();
-
         _targetPos = gm.targetLake.lakeCenter;
         _lastDist = Vector2.Distance(transform.position, _targetPos);
-
-        _controller.hitByMine = false;
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        float[] sensors = _controller.GetSensors();
+        List<float> debugObs = new();
 
-        for (int i = 0; i < sensors.Length; i++)
-            sensor.AddObservation(sensors[i]);
+        float[] sensors = _controller.GetSensors();
+        foreach (var s in sensors)
+        {
+            debugObs.Add(s);
+            sensor.AddObservation(s);
+        }
+
+        debugObs.Add(_lastDist);
+        sensor.AddObservation(_lastDist);
+
+        float angleToTarget = Vector2.SignedAngle(
+            transform.up,
+            _targetPos - (Vector2)transform.position
+        );
+
+        debugObs.Add(angleToTarget);
+        sensor.AddObservation(angleToTarget);
+
+        Debug.Log("Observations: " + string.Join(", ", debugObs));
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -61,7 +76,6 @@ public class PlayerAgent : Agent
             return;
         }
 
-        Debug.Log(gm.PlayerReachedTarget());
         if (gm.PlayerReachedTarget())
         {
             AddReward(+3f);

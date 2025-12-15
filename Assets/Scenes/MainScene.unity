@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a54e02dc2aa15e7391dbc1b63ce8502, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow2D
---- !u!1001 &3272080143626867790
+--- !u!1001 &956075935
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -279,7 +279,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3504641895084605442, guid: 15b1e414e8c1c6b3fbe6c76523e71ce4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3504641895084605442, guid: 15b1e414e8c1c6b3fbe6c76523e71ce4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -319,7 +319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5644967989317806445, guid: 15b1e414e8c1c6b3fbe6c76523e71ce4, type: 3}
       propertyPath: m_Name
-      value: Environment
+      value: Environment (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -331,4 +331,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
-  - {fileID: 3272080143626867790}
+  - {fileID: 956075935}

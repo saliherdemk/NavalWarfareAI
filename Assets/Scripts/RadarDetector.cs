@@ -34,13 +34,6 @@ public class RadarDetector : MonoBehaviour
     public List<DetectedTarget> VisibleTargets { get; private set; } = new List<DetectedTarget>();
     public List<DetectedMine> DetectedMines { get; private set; } = new List<DetectedMine>();
 
-    private void Update()
-    {
-        DetectTargets();
-        DetectMines();
-        DrawDebugRadar();
-    }
-
     private void DetectTargets()
     {
         VisibleTargets.Clear();
@@ -152,6 +145,9 @@ public class RadarDetector : MonoBehaviour
 
     public float[] GetSensors(int enemyCount)
     {
+        DetectTargets();
+        DetectMines();
+        DrawDebugRadar();
         List<float> inputs = new List<float>();
         Transform self = transform;
 

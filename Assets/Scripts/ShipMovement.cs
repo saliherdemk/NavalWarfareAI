@@ -84,12 +84,10 @@ public class ShipMovement : MonoBehaviour
 
     public float[] GetSensors()
     {
-        float shipX = transform.position.x;
-        float shipY = transform.position.y;
-
-        float shipRotation = transform.eulerAngles.z;
-        float shipSpeed = _velocity.magnitude;
-
-        return new float[] { shipX, shipY, shipRotation, shipSpeed };
+        Vector2 forward = transform.up;
+        Vector2 right = transform.right;
+        float forwardVel = Vector2.Dot(_velocity, forward);
+        float sidewaysVel = Vector2.Dot(_velocity, right);
+        return new float[] { forwardVel, sidewaysVel };
     }
 }
