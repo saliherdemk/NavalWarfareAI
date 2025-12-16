@@ -4,19 +4,17 @@ using UnityEngine;
 
 public struct DetectedTarget
 {
-    public Transform TargetTransform;
     public float Distance;
     public float RelativeAngle;
+    public float ClosingSpeed;
     public bool HasLOS;
-    public Vector2 Velocity;
 }
 
 public struct DetectedMine
 {
-    public Transform MineTransform;
     public float Distance;
     public float RelativeAngle;
-    public Vector2 Velocity;
+    public float ClosingSpeed;
 }
 
 public class RadarDetector : MonoBehaviour
@@ -33,6 +31,13 @@ public class RadarDetector : MonoBehaviour
 
     public List<DetectedTarget> VisibleTargets { get; private set; } = new List<DetectedTarget>();
     public List<DetectedMine> DetectedMines { get; private set; } = new List<DetectedMine>();
+
+    private ShipMovement _shipMovement;
+
+    void Awake()
+    {
+        _shipMovement = GetComponent<ShipMovement>();
+    }
 
     private void DetectTargets()
     {
@@ -63,16 +68,21 @@ public class RadarDetector : MonoBehaviour
             float angleToTarget = Vector2.SignedAngle(transform.up, directionToTarget);
 
             ShipMovement sm = target.GetComponent<ShipMovement>();
-            Vector2 vel = sm.Velocity;
+            Vector2 relVel = sm.Velocity - _shipMovement.Velocity;
+
+            float closingSpeed = 0f;
+            if (distance > 0.001f)
+            {
+                closingSpeed = Vector2.Dot(relVel, directionToTarget / distance);
+            }
 
             VisibleTargets.Add(
                 new DetectedTarget
                 {
-                    TargetTransform = target,
                     Distance = distance,
                     RelativeAngle = angleToTarget,
+                    ClosingSpeed = closingSpeed,
                     HasLOS = losClear,
-                    Velocity = vel,
                 }
             );
         }
@@ -96,15 +106,20 @@ public class RadarDetector : MonoBehaviour
             float angleToTarget = Vector2.SignedAngle(transform.up, directionToTarget);
 
             MineController mc = mineCollider.GetComponent<MineController>();
-            Vector2 vel = mc.Velocity;
+            Vector2 relVel = mc.Velocity - _shipMovement.Velocity;
+
+            float closingSpeed = 0f;
+            if (distance > 0.001f)
+            {
+                closingSpeed = Vector2.Dot(relVel, directionToTarget / distance);
+            }
 
             DetectedMines.Add(
                 new DetectedMine
                 {
-                    MineTransform = target,
                     Distance = distance,
                     RelativeAngle = angleToTarget,
-                    Velocity = vel,
+                    ClosingSpeed = closingSpeed,
                 }
             );
         }
@@ -128,18 +143,21 @@ public class RadarDetector : MonoBehaviour
     {
         DebugExtension.DrawCircle(transform.position, Range, Color.yellow);
 
-        foreach (var targetData in VisibleTargets)
+        foreach (var t in VisibleTargets)
         {
-            Color debugColor = targetData.HasLOS ? Color.red : Color.blue;
+            Vector2 dir = Quaternion.Euler(0f, 0f, t.RelativeAngle) * transform.up;
+            Vector2 end = (Vector2)transform.position + dir * t.Distance;
 
-            Debug.DrawLine(transform.position, targetData.TargetTransform.position, debugColor);
+            Color color = t.HasLOS ? Color.red : Color.blue;
+            Debug.DrawLine(transform.position, end, color);
         }
 
-        foreach (var mineData in DetectedMines)
+        foreach (var m in DetectedMines)
         {
-            Color mineColor = Color.green;
+            Vector2 dir = Quaternion.Euler(0f, 0f, m.RelativeAngle) * transform.up;
+            Vector2 end = (Vector2)transform.position + dir * m.Distance;
 
-            Debug.DrawLine(transform.position, mineData.MineTransform.position, mineColor);
+            Debug.DrawLine(transform.position, end, Color.green);
         }
     }
 
@@ -154,7 +172,7 @@ public class RadarDetector : MonoBehaviour
         var visibleEnemies = VisibleTargets
             .Where(t => t.HasLOS)
             .OrderBy(t => t.Distance)
-            .Take(3)
+            .Take(2)
             .ToList();
 
         for (int i = 0; i < enemyCount; i++)
@@ -163,17 +181,12 @@ public class RadarDetector : MonoBehaviour
             {
                 var e = visibleEnemies[i];
 
-                float forwardSpeed = Vector2.Dot(e.Velocity, transform.up);
-                float sidewaysSpeed = Vector2.Dot(e.Velocity, transform.right);
-
                 inputs.Add(e.Distance);
                 inputs.Add(e.RelativeAngle);
-                inputs.Add(forwardSpeed);
-                inputs.Add(sidewaysSpeed);
+                inputs.Add(e.ClosingSpeed);
             }
             else
             {
-                inputs.Add(0f);
                 inputs.Add(0f);
                 inputs.Add(0f);
                 inputs.Add(0f);
@@ -188,17 +201,12 @@ public class RadarDetector : MonoBehaviour
             {
                 var m = closestMines[i];
 
-                float forwardSpeed = Vector2.Dot(m.Velocity, transform.up);
-                float sidewaysSpeed = Vector2.Dot(m.Velocity, transform.right);
-
                 inputs.Add(m.Distance);
                 inputs.Add(m.RelativeAngle);
-                inputs.Add(forwardSpeed);
-                inputs.Add(sidewaysSpeed);
+                inputs.Add(m.ClosingSpeed);
             }
             else
             {
-                inputs.Add(0f);
                 inputs.Add(0f);
                 inputs.Add(0f);
                 inputs.Add(0f);

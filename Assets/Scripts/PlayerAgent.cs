@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NormalizerClass;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
@@ -16,6 +17,15 @@ public class PlayerAgent : Agent
 
     public GameManager gm;
 
+    private float[] _normalizedSensors;
+    private float[] _normalizedAngle;
+
+    private void Awake()
+    {
+        _normalizedSensors = new float[Normalizer.GetPlayerSensorCount()];
+        _normalizedAngle = new float[Normalizer.GetTargetAngleCount()];
+    }
+
     public override void Initialize()
     {
         MaxStep = 0;
@@ -28,32 +38,29 @@ public class PlayerAgent : Agent
     {
         gm.RestartGame();
         _targetPos = gm.targetLake.lakeCenter;
-        _lastDist = Vector2.Distance(transform.position, _targetPos);
+        _lastDist = Vector2.Distance(transform.localPosition, _targetPos);
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        List<float> debugObs = new();
-
-        float[] sensors = _controller.GetSensors();
-        foreach (var s in sensors)
+        Normalizer.NormalizePlayerController(_controller.GetSensors(), _normalizedSensors);
+        foreach (var s in _normalizedSensors)
         {
-            debugObs.Add(s);
             sensor.AddObservation(s);
         }
 
-        debugObs.Add(_lastDist);
         sensor.AddObservation(_lastDist);
 
         float angleToTarget = Vector2.SignedAngle(
             transform.up,
-            _targetPos - (Vector2)transform.position
+            _targetPos - (Vector2)transform.localPosition
         );
 
-        debugObs.Add(angleToTarget);
-        sensor.AddObservation(angleToTarget);
-
-        Debug.Log("Observations: " + string.Join(", ", debugObs));
+        Normalizer.NormalizeTargetAngle(angleToTarget, _normalizedAngle);
+        foreach (float item in _normalizedAngle)
+        {
+            sensor.AddObservation(item);
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -62,7 +69,7 @@ public class PlayerAgent : Agent
         float targetRudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
         _movement.SetInput(targetThrottle, targetRudder);
 
-        float currentDist = Vector2.Distance(transform.position, _targetPos);
+        float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
         float diff = _lastDist - currentDist;
 
         AddReward(diff * 0.01f);

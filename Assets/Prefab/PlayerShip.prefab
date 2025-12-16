@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
   m_BrainParameters:
-    VectorObservationSize: 41
+    VectorObservationSize: 40
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
