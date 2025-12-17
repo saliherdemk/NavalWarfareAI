@@ -28,11 +28,11 @@ public class ShipRaycast : MonoBehaviour
                 detectMask
             );
 
-            Debug.DrawLine(
-                transform.position,
-                (Vector2)transform.position + direction * rayDistance,
-                hit.collider ? Color.red : Color.green
-            );
+            // Debug.DrawLine(
+            //     transform.position,
+            //     (Vector2)transform.position + direction * rayDistance,
+            //     hit.collider ? Color.red : Color.green
+            // );
 
             float dist = hit.collider ? hit.distance : rayDistance;
             rays[i] = dist;

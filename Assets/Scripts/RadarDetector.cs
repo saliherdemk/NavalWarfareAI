@@ -165,7 +165,7 @@ public class RadarDetector : MonoBehaviour
     {
         DetectTargets();
         DetectMines();
-        DrawDebugRadar();
+        // DrawDebugRadar();
         List<float> inputs = new List<float>();
         Transform self = transform;
 

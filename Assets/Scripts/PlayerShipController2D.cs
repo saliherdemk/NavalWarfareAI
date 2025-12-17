@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(ShipMovement))]
 public class PlayerShipController2D : MonoBehaviour

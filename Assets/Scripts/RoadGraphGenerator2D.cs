@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
-using UnityEditor;
 #endif
 
 public enum TileType
@@ -235,32 +234,32 @@ public class RoadGraphGenerator2D : MonoBehaviour
             }
         }
     }
-
-    void OnDrawGizmos()
-    {
-        if (allLeafs == null)
-            return;
-
-        Gizmos.color = Color.green;
-
-        if (wallContainer != null)
-        {
-            Gizmos.matrix = wallContainer.localToWorldMatrix;
-        }
-
-        foreach (var leaf in allLeafs)
-        {
-            Vector3 bl = new Vector3(leaf.rect.xMin, leaf.rect.yMin, 0);
-            Vector3 tl = new Vector3(leaf.rect.xMin, leaf.rect.yMax, 0);
-            Vector3 tr = new Vector3(leaf.rect.xMax, leaf.rect.yMax, 0);
-            Vector3 br = new Vector3(leaf.rect.xMax, leaf.rect.yMin, 0);
-
-            Gizmos.DrawLine(bl, tl);
-            Gizmos.DrawLine(tl, tr);
-            Gizmos.DrawLine(tr, br);
-            Gizmos.DrawLine(br, bl);
-        }
-
-        Gizmos.matrix = Matrix4x4.identity;
-    }
+    //
+    // void OnDrawGizmos()
+    // {
+    //     if (allLeafs == null)
+    //         return;
+    //
+    //     Gizmos.color = Color.green;
+    //
+    //     if (wallContainer != null)
+    //     {
+    //         Gizmos.matrix = wallContainer.localToWorldMatrix;
+    //     }
+    //
+    //     foreach (var leaf in allLeafs)
+    //     {
+    //         Vector3 bl = new Vector3(leaf.rect.xMin, leaf.rect.yMin, 0);
+    //         Vector3 tl = new Vector3(leaf.rect.xMin, leaf.rect.yMax, 0);
+    //         Vector3 tr = new Vector3(leaf.rect.xMax, leaf.rect.yMax, 0);
+    //         Vector3 br = new Vector3(leaf.rect.xMax, leaf.rect.yMin, 0);
+    //
+    //         Gizmos.DrawLine(bl, tl);
+    //         Gizmos.DrawLine(tl, tr);
+    //         Gizmos.DrawLine(tr, br);
+    //         Gizmos.DrawLine(br, bl);
+    //     }
+    //
+    //     Gizmos.matrix = Matrix4x4.identity;
+    // }
 }

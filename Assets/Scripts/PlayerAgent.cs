@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using NormalizerClass;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -20,18 +19,15 @@ public class PlayerAgent : Agent
     private float[] _normalizedSensors;
     private float[] _normalizedAngle;
 
-    private void Awake()
-    {
-        _normalizedSensors = new float[Normalizer.GetPlayerSensorCount()];
-        _normalizedAngle = new float[Normalizer.GetTargetAngleCount()];
-    }
-
     public override void Initialize()
     {
         MaxStep = 0;
 
         _controller = GetComponent<PlayerShipController2D>();
         _movement = GetComponent<ShipMovement>();
+
+        _normalizedSensors = new float[Normalizer.GetPlayerSensorCount()];
+        _normalizedAngle = new float[Normalizer.GetTargetAngleCount()];
     }
 
     public override void OnEpisodeBegin()
