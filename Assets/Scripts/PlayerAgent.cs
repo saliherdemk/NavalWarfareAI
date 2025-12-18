@@ -21,7 +21,7 @@ public class PlayerAgent : Agent
 
     public override void Initialize()
     {
-        MaxStep = 0;
+        MaxStep = 2000;
 
         _controller = GetComponent<PlayerShipController2D>();
         _movement = GetComponent<ShipMovement>();
@@ -45,7 +45,7 @@ public class PlayerAgent : Agent
             sensor.AddObservation(s);
         }
 
-        sensor.AddObservation(_lastDist);
+        sensor.AddObservation(Normalizer.NormalizeTargetDistance(_lastDist));
 
         float angleToTarget = Vector2.SignedAngle(
             transform.up,
@@ -66,11 +66,6 @@ public class PlayerAgent : Agent
         _movement.SetInput(targetThrottle, targetRudder);
 
         float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
-        float diff = _lastDist - currentDist;
-
-        AddReward(diff * 0.01f);
-
-        _lastDist = currentDist;
 
         if (gm.PlayerDie())
         {
@@ -81,10 +76,27 @@ public class PlayerAgent : Agent
 
         if (gm.PlayerReachedTarget())
         {
-            AddReward(+3f);
+            AddReward(+10f);
             EndEpisode();
             return;
         }
+
+        Vector2 dirToTarget = (_targetPos - (Vector2)transform.localPosition).normalized;
+        float alignment = Vector2.Dot(transform.up, dirToTarget);
+        if (alignment > 0)
+        {
+            AddReward(alignment * 0.005f);
+        }
+
+        float diff = _lastDist - currentDist;
+        if (diff > 0)
+            AddReward(diff * 0.02f);
+        else
+            AddReward(diff * 0.01f);
+
+        AddReward(-0.001f);
+
+        _lastDist = currentDist;
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
