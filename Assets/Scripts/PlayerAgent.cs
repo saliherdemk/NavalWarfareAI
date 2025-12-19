@@ -21,7 +21,10 @@ public class PlayerAgent : Agent
 
     public override void Initialize()
     {
-        MaxStep = 2000;
+        if (Academy.Instance.IsCommunicatorOn)
+            MaxStep = 2000;
+        else
+            MaxStep = 0;
 
         _controller = GetComponent<PlayerShipController2D>();
         _movement = GetComponent<ShipMovement>();
@@ -45,7 +48,8 @@ public class PlayerAgent : Agent
             sensor.AddObservation(s);
         }
 
-        sensor.AddObservation(Normalizer.NormalizeTargetDistance(_lastDist));
+        float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
+        sensor.AddObservation(Normalizer.NormalizeTargetDistance(currentDist));
 
         float angleToTarget = Vector2.SignedAngle(
             transform.up,
@@ -81,20 +85,11 @@ public class PlayerAgent : Agent
             return;
         }
 
-        Vector2 dirToTarget = (_targetPos - (Vector2)transform.localPosition).normalized;
-        float alignment = Vector2.Dot(transform.up, dirToTarget);
-        if (alignment > 0)
-        {
-            AddReward(alignment * 0.005f);
-        }
-
         float diff = _lastDist - currentDist;
         if (diff > 0)
-            AddReward(diff * 0.02f);
-        else
-            AddReward(diff * 0.01f);
+            AddReward(diff * 1f);
 
-        AddReward(-0.001f);
+        AddReward(-0.005f);
 
         _lastDist = currentDist;
     }
