@@ -2,31 +2,40 @@
     "PlayerShip": {
         "checkpoints": [
             {
-                "steps": 174406,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-174406.onnx",
-                "reward": 1.2640106619370204,
-                "creation_time": 1766155614.3988416,
+                "steps": 499972,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-499972.onnx",
+                "reward": 11.397645187377929,
+                "creation_time": 1766203970.7581334,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-174406.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-499972.pt"
                 ]
             },
             {
-                "steps": 229119,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-229119.onnx",
-                "reward": -0.02873503598384559,
-                "creation_time": 1766160457.698928,
+                "steps": 999944,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-999944.onnx",
+                "reward": 76.3940806639822,
+                "creation_time": 1766234396.5029652,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-229119.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-999944.pt"
+                ]
+            },
+            {
+                "steps": 1008610,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-1008610.onnx",
+                "reward": 43.887831942240396,
+                "creation_time": 1766235006.6206,
+                "auxillary_file_paths": [
+                    "results/ship_v1/PlayerShip/PlayerShip-1008610.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 229119,
+            "steps": 1008610,
             "file_path": "results/ship_v1/PlayerShip.onnx",
-            "reward": -0.02873503598384559,
-            "creation_time": 1766160457.698928,
+            "reward": 43.887831942240396,
+            "creation_time": 1766235006.6206,
             "auxillary_file_paths": [
-                "results/ship_v1/PlayerShip/PlayerShip-229119.pt"
+                "results/ship_v1/PlayerShip/PlayerShip-1008610.pt"
             ]
         }
     },
