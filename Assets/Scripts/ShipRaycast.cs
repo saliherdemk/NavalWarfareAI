@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class ShipRaycast : MonoBehaviour
 {
-    public int rayCount = 16;
-    public float rayDistance = 8f;
+    private int rayCount = 16;
+    private float rayDistance = 16f;
     public LayerMask detectMask;
 
     private float[] rays;
@@ -28,11 +28,11 @@ public class ShipRaycast : MonoBehaviour
                 detectMask
             );
 
-            // Debug.DrawLine(
-            //     transform.position,
-            //     (Vector2)transform.position + direction * rayDistance,
-            //     hit.collider ? Color.red : Color.green
-            // );
+            Debug.DrawLine(
+                transform.position,
+                (Vector2)transform.position + direction * rayDistance,
+                hit.collider ? Color.red : Color.green
+            );
 
             float dist = hit.collider ? hit.distance : rayDistance;
             rays[i] = dist;
@@ -49,5 +49,10 @@ public class ShipRaycast : MonoBehaviour
     {
         CastCircleRays();
         return rays;
+    }
+
+    public float GetRayDistance()
+    {
+        return rayDistance;
     }
 }

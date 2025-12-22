@@ -2,40 +2,22 @@
     "PlayerShip": {
         "checkpoints": [
             {
-                "steps": 499972,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-499972.onnx",
-                "reward": 11.397645187377929,
-                "creation_time": 1766203970.7581334,
+                "steps": 234914,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-234914.onnx",
+                "reward": 60.057090774178505,
+                "creation_time": 1766405860.0067725,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-499972.pt"
-                ]
-            },
-            {
-                "steps": 999944,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-999944.onnx",
-                "reward": 76.3940806639822,
-                "creation_time": 1766234396.5029652,
-                "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-999944.pt"
-                ]
-            },
-            {
-                "steps": 1008610,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-1008610.onnx",
-                "reward": 43.887831942240396,
-                "creation_time": 1766235006.6206,
-                "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-1008610.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-234914.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 1008610,
+            "steps": 234914,
             "file_path": "results/ship_v1/PlayerShip.onnx",
-            "reward": 43.887831942240396,
-            "creation_time": 1766235006.6206,
+            "reward": 60.057090774178505,
+            "creation_time": 1766405860.0067725,
             "auxillary_file_paths": [
-                "results/ship_v1/PlayerShip/PlayerShip-1008610.pt"
+                "results/ship_v1/PlayerShip/PlayerShip-234914.pt"
             ]
         }
     },

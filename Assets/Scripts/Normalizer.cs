@@ -10,7 +10,7 @@ namespace NormalizerClass
         public static float mapHeight = 200f;
         public static float minSpeed = 4f;
         public static float maxSpeed = 8f;
-        public static float rayDistance = 8f;
+        public static float rayDistance = 16f;
         public static float radarRange = 50f;
         public static float minAcceleration = 3f;
         public static float maxAcceleration = 6f;

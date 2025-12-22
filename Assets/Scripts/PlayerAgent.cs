@@ -10,6 +10,7 @@ public class PlayerAgent : Agent
 {
     private PlayerShipController2D _controller;
     private ShipMovement _movement;
+    private ShipRaycast _raycast;
 
     private Vector2 _targetPos;
     private float _lastDist;
@@ -22,12 +23,13 @@ public class PlayerAgent : Agent
     public override void Initialize()
     {
         if (Academy.Instance.IsCommunicatorOn)
-            MaxStep = 2000;
+            MaxStep = 4000;
         else
             MaxStep = 0;
 
         _controller = GetComponent<PlayerShipController2D>();
         _movement = GetComponent<ShipMovement>();
+        _raycast = GetComponent<ShipRaycast>();
 
         _normalizedSensors = new float[Normalizer.GetPlayerSensorCount()];
         _normalizedAngle = new float[Normalizer.GetTargetAngleCount()];
@@ -49,7 +51,8 @@ public class PlayerAgent : Agent
         }
 
         float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
-        sensor.AddObservation(Normalizer.NormalizeTargetDistance(currentDist));
+        float normalizedDist = Normalizer.NormalizeTargetDistance(currentDist);
+        sensor.AddObservation(normalizedDist);
 
         float angleToTarget = Vector2.SignedAngle(
             transform.up,
@@ -86,10 +89,20 @@ public class PlayerAgent : Agent
         }
 
         float diff = _lastDist - currentDist;
-        if (diff > 0)
+        if (diff > 0f)
             AddReward(diff * 1f);
 
-        AddReward(-0.005f);
+        float[] rays = _raycast.GetSensors();
+        float minWallDist = Mathf.Min(rays);
+        float wallProximity = 1f - (minWallDist / _raycast.GetRayDistance());
+        wallProximity = Mathf.Clamp01(wallProximity);
+
+        if (diff <= 0f)
+        {
+            AddReward(-0.004f * wallProximity);
+        }
+
+        AddReward(-0.001f);
 
         _lastDist = currentDist;
     }

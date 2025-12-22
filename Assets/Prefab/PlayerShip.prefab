@@ -210,8 +210,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c8bb98df2848fd5bc047069f6ea4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShipRaycast
-  rayCount: 16
-  rayDistance: 8
   detectMask:
     serializedVersion: 2
     m_Bits: 256
@@ -269,7 +267,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 47af2f064e56f7c0cbc68455ee664afd, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 191cfc2a3ba461d439cb3aa98eff78de, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: PlayerShip

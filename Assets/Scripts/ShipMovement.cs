@@ -70,14 +70,12 @@ public class ShipMovement : MonoBehaviour
 
         transform.position += (Vector3)_velocity * deltaTime;
 
-        float rotationDirection = Mathf.Sign(forwardVel);
-
-        if (Mathf.Abs(forwardVel) < 0.1f)
-            rotationDirection = 0f;
-
         float speedFactor = Mathf.Clamp01(_velocity.magnitude / maxSpeed);
 
-        float rotationAmount = -_rudder * turnSpeed * speedFactor * rotationDirection * deltaTime;
+        float minTurnFactor = 0.3f;
+
+        float rotationAmount =
+            -_rudder * turnSpeed * Mathf.Max(speedFactor, minTurnFactor) * deltaTime;
 
         transform.Rotate(0f, 0f, rotationAmount);
     }
