@@ -14,6 +14,7 @@ public class PlayerAgent : Agent
 
     private Vector2 _targetPos;
     private float _lastDist;
+    private float _startDist;
 
     public GameManager gm;
 
@@ -22,10 +23,7 @@ public class PlayerAgent : Agent
 
     public override void Initialize()
     {
-        if (Academy.Instance.IsCommunicatorOn)
-            MaxStep = 4000;
-        else
-            MaxStep = 0;
+        MaxStep = 30000;
 
         _controller = GetComponent<PlayerShipController2D>();
         _movement = GetComponent<ShipMovement>();
@@ -39,7 +37,8 @@ public class PlayerAgent : Agent
     {
         gm.RestartGame();
         _targetPos = gm.targetLake.lakeCenter;
-        _lastDist = Vector2.Distance(transform.localPosition, _targetPos);
+        _startDist = Vector2.Distance(transform.localPosition, _targetPos);
+        _lastDist = _startDist;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -72,37 +71,36 @@ public class PlayerAgent : Agent
         float targetRudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
         _movement.SetInput(targetThrottle, targetRudder);
 
-        float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
+        if (gm.PlayerReachedTarget())
+        {
+            SetReward(1.0f);
+            // Debug.Log($"<color=green>WIN! Total Reward: {GetCumulativeReward():F2}</color>");
+            EndEpisode();
+            return;
+        }
 
         if (gm.PlayerDie())
         {
-            AddReward(-1f);
+            SetReward(-1.0f);
+            // Debug.Log($"<color=red>DIED. Total Reward: {GetCumulativeReward():F2}</color>");
             EndEpisode();
             return;
         }
 
-        if (gm.PlayerReachedTarget())
-        {
-            AddReward(+10f);
-            EndEpisode();
-            return;
-        }
-
+        float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
         float diff = _lastDist - currentDist;
-        if (diff > 0f)
-            AddReward(diff * 1f);
 
-        float[] rays = _raycast.GetSensors();
-        float minWallDist = Mathf.Min(rays);
-        float wallProximity = 1f - (minWallDist / _raycast.GetRayDistance());
-        wallProximity = Mathf.Clamp01(wallProximity);
-
-        if (diff <= 0f)
+        if (_startDist > 0)
         {
-            AddReward(-0.004f * wallProximity);
+            AddReward(diff / _startDist);
         }
 
-        AddReward(-0.001f);
+        AddReward(-1f / MaxStep);
+
+        // if (StepCount >= MaxStep - 1 && MaxStep > 0)
+        // {
+        //     Debug.Log($"<color=yellow>TIMEOUT. Total Reward: {GetCumulativeReward():F2}</color>");
+        // }
 
         _lastDist = currentDist;
     }

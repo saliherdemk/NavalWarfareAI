@@ -1,25 +1,6 @@
 {
-    "PlayerShip": {
-        "checkpoints": [
-            {
-                "steps": 234914,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-234914.onnx",
-                "reward": 60.057090774178505,
-                "creation_time": 1766405860.0067725,
-                "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-234914.pt"
-                ]
-            }
-        ],
-        "final_checkpoint": {
-            "steps": 234914,
-            "file_path": "results/ship_v1/PlayerShip.onnx",
-            "reward": 60.057090774178505,
-            "creation_time": 1766405860.0067725,
-            "auxillary_file_paths": [
-                "results/ship_v1/PlayerShip/PlayerShip-234914.pt"
-            ]
-        }
+    "spawn_radius": {
+        "lesson_num": 0
     },
     "metadata": {
         "stats_format_version": "0.3.0",

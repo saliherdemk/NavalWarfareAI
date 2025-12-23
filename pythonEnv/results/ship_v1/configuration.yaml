@@ -17,8 +17,8 @@ behaviors:
     checkpoint_interval: 500000
     network_settings:
       normalize: true
-      hidden_units: 256
-      num_layers: 2
+      hidden_units: 128
+      num_layers: 3
       vis_encode_type: simple
       memory: null
       goal_conditioning_type: hyper
@@ -38,14 +38,14 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 3000000
+    max_steps: 500000
     time_horizon: 512
     summary_freq: 10000
     threaded: false
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: null
+  env_path: ./NavalEnv.x86_64
   env_args: null
   base_port: 5005
   num_envs: 1
@@ -59,18 +59,66 @@ engine_settings:
   width: 84
   height: 84
   quality_level: 5
-  time_scale: 20
+  time_scale: 20.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: false
+  no_graphics: true
   no_graphics_monitor: false
-environment_parameters: null
+environment_parameters:
+  spawn_radius:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 2825
+          value: 30.0
+      name: Lesson0
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 100
+        signal_smoothing: true
+        threshold: 0.1
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 2826
+          value: 60.0
+      name: Lesson1
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 100
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 2827
+          value: 150.0
+      name: Lesson2
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 100
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 2828
+          value: -1.0
+      name: Lesson3
+      completion_criteria: null
 checkpoint_settings:
   run_id: ship_v1
   initialize_from: null
   load_model: false
   resume: false
-  force: true
+  force: false
   train_model: false
   inference: false
   results_dir: results

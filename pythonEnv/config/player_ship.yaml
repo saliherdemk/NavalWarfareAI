@@ -14,8 +14,8 @@ behaviors:
 
     network_settings:
       normalize: true
-      hidden_units: 256
-      num_layers: 2
+      hidden_units: 128
+      num_layers: 3
 
     reward_signals:
       extrinsic:
@@ -23,5 +23,38 @@ behaviors:
         strength: 1.0
 
     time_horizon: 512
-    max_steps: 3_000_000
+    max_steps: 500_000
     summary_freq: 10_000
+
+environment_parameters:
+  spawn_radius:
+    curriculum:
+      - name: Lesson0 
+        completion_criteria:
+          measure: progress
+          behavior: PlayerShip
+          signal_smoothing: true
+          min_lesson_length: 100
+          threshold: 0.1
+        value: 30.0
+      
+      - name: Lesson1 
+        completion_criteria:
+          measure: progress
+          behavior: PlayerShip
+          signal_smoothing: true
+          min_lesson_length: 100
+          threshold: 0.3
+        value: 60.0
+
+      - name: Lesson2
+        completion_criteria:
+          measure: progress
+          behavior: PlayerShip
+          signal_smoothing: true
+          min_lesson_length: 100
+          threshold: 0.5
+        value: 150.0
+
+      - name: Lesson3
+        value: -1.0

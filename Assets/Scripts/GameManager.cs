@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.MLAgents;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -115,19 +116,44 @@ public class GameManager : MonoBehaviour
 
         spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
 
-        float minDistance = Mathf.Min(MapGenerator.mapWidth, MapGenerator.mapHeight) * 0.5f;
+        float trainingRadius = Academy.Instance.EnvironmentParameters.GetWithDefault(
+            "spawn_radius",
+            -1f
+        );
 
         List<Leaf> validTargets = new List<Leaf>();
 
-        foreach (Leaf leaf in allLeafs)
+        if (trainingRadius > 0f)
         {
-            if (leaf == spawnLake)
-                continue;
+            foreach (Leaf leaf in allLeafs)
+            {
+                if (leaf == spawnLake)
+                    continue;
 
-            float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
+                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
 
-            if (dist >= minDistance)
-                validTargets.Add(leaf);
+                if (dist <= trainingRadius && dist > 5f)
+                {
+                    validTargets.Add(leaf);
+                }
+            }
+        }
+        else
+        {
+            float minDistance = Mathf.Min(MapGenerator.mapWidth, MapGenerator.mapHeight) * 0.5f;
+
+            foreach (Leaf leaf in allLeafs)
+            {
+                if (leaf == spawnLake)
+                    continue;
+
+                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
+
+                if (dist >= minDistance)
+                {
+                    validTargets.Add(leaf);
+                }
+            }
         }
 
         if (validTargets.Count == 0)
@@ -164,7 +190,6 @@ public class GameManager : MonoBehaviour
 
         if (availableLakes.Count < enemyCount)
         {
-            Debug.LogWarning("Not enough lakes to spawn enemies!");
             return;
         }
 

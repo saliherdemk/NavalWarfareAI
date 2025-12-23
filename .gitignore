@@ -100,3 +100,4 @@ InitTestScene*.unity*
 .vscode
 
 .venv
+pythonEnv/Build
