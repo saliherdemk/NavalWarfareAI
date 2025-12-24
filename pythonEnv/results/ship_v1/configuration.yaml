@@ -38,17 +38,17 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 500000
+    max_steps: 3000000
     time_horizon: 512
     summary_freq: 10000
     threaded: false
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: ./NavalEnv.x86_64
+  env_path: Build/NavalEnv.x86_64
   env_args: null
   base_port: 5005
-  num_envs: 1
+  num_envs: 8
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2825
+          seed: 2623
           value: 30.0
       name: Lesson0
       completion_criteria:
@@ -83,7 +83,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2826
+          seed: 2624
           value: 60.0
       name: Lesson1
       completion_criteria:
@@ -96,7 +96,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2827
+          seed: 2625
           value: 150.0
       name: Lesson2
       completion_criteria:
@@ -109,7 +109,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2828
+          seed: 2626
           value: -1.0
       name: Lesson3
       completion_criteria: null
@@ -118,7 +118,7 @@ checkpoint_settings:
   initialize_from: null
   load_model: false
   resume: false
-  force: false
+  force: true
   train_model: false
   inference: false
   results_dir: results

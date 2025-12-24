@@ -5,63 +5,127 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public RoadGraphGenerator2D MapGenerator;
-    public PlayerShipController2D playerPrefab;
 
-    public EnemyShip enemyPrefab;
+    public PlayerShipController playerPrefab;
+    public EnemyShipController enemyPrefab;
 
     public GameObject targetMarkerPrefab;
 
-    public int enemyCount = 2;
-
     public Transform mapEnvironment;
 
-    private List<EnemyShip> spawnedEnemies = new List<EnemyShip>();
+    private EnemyShipController enemy1;
+    private EnemyAgent enemy1Agent;
 
-    private PlayerShipController2D player;
+    private EnemyShipController enemy2;
+    private EnemyAgent enemy2Agent;
+
+    private PlayerShipController player;
+    private PlayerAgent playerAgent;
 
     private GameObject targetMarkerInstance;
 
     private Leaf spawnLake;
     public Leaf targetLake;
 
+    private Leaf enemy1Lake;
+    private Leaf enemy2Lake;
+
     void Awake() { }
 
     void Start()
     {
         InstantiatePlayer();
+        InstantiateEnemies();
         RestartGame();
     }
 
-    public bool PlayerDie()
+    void FixedUpdate()
     {
-        int mW = MapGenerator.mapWidth;
-        int mH = MapGenerator.mapHeight;
+        CheckDeaths();
+    }
+
+    public void CheckDeaths()
+    {
+        if (enemy1.gameObject.activeSelf && CheckEnemyDeath(enemy1))
+        {
+            enemy1Agent.SetReward(-1.0f);
+            enemy1Agent.EndEpisode();
+            enemy1.gameObject.SetActive(false);
+        }
+
+        if (enemy2.gameObject.activeSelf && CheckEnemyDeath(enemy2))
+        {
+            enemy2Agent.SetReward(-1.0f);
+            enemy2Agent.EndEpisode();
+            enemy2.gameObject.SetActive(false);
+        }
+
+        if (CommitedSuicide(player.transform))
+        {
+            playerAgent.SetReward(-1.0f);
+            EndEpisode();
+            return;
+        }
+
+        if (player.hitByMine)
+        {
+            playerAgent.SetReward(-1.0f);
+            enemy1Agent.SetReward(1.0f);
+            enemy2Agent.SetReward(1.0f);
+            EndEpisode();
+            return;
+        }
 
         Vector2 pos = player.transform.localPosition;
-        int x = Mathf.RoundToInt(pos.x);
-        int y = Mathf.RoundToInt(pos.y);
 
-        bool outOfMap = x <= 0 || x >= mW || y <= 0 || y >= mH;
-        bool hitWall = false;
-        if (!outOfMap)
+        float dist1 = Vector2.Distance(pos, enemy1.transform.localPosition);
+        float dist2 = Vector2.Distance(pos, enemy2.transform.localPosition);
+
+        if (dist1 < 3f)
         {
-            hitWall = MapGenerator.map[x, y] == TileType.Wall;
-        }
-        bool hitMine = player.hitByMine;
-        bool hitEnemy = false;
-
-        foreach (EnemyShip enemy in spawnedEnemies)
-        {
-            float dist = Vector2.Distance(pos, enemy.transform.localPosition);
-
-            if (dist < 3f)
-            {
-                hitEnemy = true;
-                break;
-            }
+            playerAgent.SetReward(-1.0f);
+            enemy1Agent.SetReward(1.0f);
+            EndEpisode();
+            return;
         }
 
-        return outOfMap || hitWall || hitMine || hitEnemy;
+        if (dist2 < 3f)
+        {
+            playerAgent.SetReward(-1.0f);
+            enemy2Agent.SetReward(1.0f);
+            EndEpisode();
+            return;
+        }
+
+        if (PlayerReachedTarget())
+        {
+            playerAgent.SetReward(1.0f);
+            enemy1Agent.SetReward(-1.0f);
+            enemy2Agent.SetReward(-1.0f);
+            EndEpisode();
+            return;
+        }
+    }
+
+    private void EndEpisode()
+    {
+        // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
+        // Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
+        // Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
+
+        if (player.gameObject.activeSelf)
+            playerAgent.EndEpisode();
+        if (enemy1.gameObject.activeSelf)
+            enemy1Agent.EndEpisode();
+        if (enemy2.gameObject.activeSelf)
+            enemy2Agent.EndEpisode();
+
+        RestartGame();
+    }
+
+    public bool CheckEnemyDeath(EnemyShipController enemy)
+    {
+        return CommitedSuicide(enemy.transform) || enemy.hitByMine;
     }
 
     public bool PlayerReachedTarget()
@@ -78,7 +142,9 @@ public class GameManager : MonoBehaviour
         ChooseSpawnTargetLakes();
 
         player.Reset(spawnLake.lakeCenter);
-        SpawnEnemies();
+        enemy1.Reset(enemy1Lake.lakeCenter);
+        enemy2.Reset(enemy2Lake.lakeCenter);
+
         PlaceTargetMarker();
     }
 
@@ -104,8 +170,17 @@ public class GameManager : MonoBehaviour
     void InstantiatePlayer()
     {
         player = Instantiate(playerPrefab, mapEnvironment);
-        var agent = player.GetComponent<PlayerAgent>();
-        agent.gm = this;
+        playerAgent = player.GetComponent<PlayerAgent>();
+        playerAgent.gm = this;
+    }
+
+    void InstantiateEnemies()
+    {
+        enemy1 = Instantiate(enemyPrefab, mapEnvironment);
+        enemy1Agent = enemy1.GetComponent<EnemyAgent>();
+
+        enemy2 = Instantiate(enemyPrefab, mapEnvironment);
+        enemy2Agent = enemy2.GetComponent<EnemyAgent>();
     }
 
     void ChooseSpawnTargetLakes()
@@ -167,18 +242,6 @@ public class GameManager : MonoBehaviour
         {
             targetLake = validTargets[Random.Range(0, validTargets.Count)];
         }
-    }
-
-    void SpawnEnemies()
-    {
-        foreach (var e in spawnedEnemies)
-        {
-            if (e)
-            {
-                e.Remove();
-            }
-        }
-        spawnedEnemies.Clear();
 
         List<Leaf> availableLakes = new List<Leaf>();
 
@@ -188,75 +251,52 @@ public class GameManager : MonoBehaviour
                 availableLakes.Add(lake);
         }
 
-        if (availableLakes.Count < enemyCount)
-        {
-            return;
-        }
-
         for (int i = availableLakes.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
             (availableLakes[i], availableLakes[j]) = (availableLakes[j], availableLakes[i]);
         }
 
-        for (int i = 0; i < enemyCount; i++)
-        {
-            Leaf lake = availableLakes[i];
-            Vector2 pos = lake.lakeCenter;
-
-            EnemyShip e = Instantiate(enemyPrefab, mapEnvironment);
-            e.transform.localPosition = new Vector3(pos.x, pos.y, 0f);
-
-            spawnedEnemies.Add(e);
-        }
+        enemy1Lake = availableLakes[0];
+        enemy2Lake = availableLakes[1];
     }
 
-    bool CheckGameOver()
+    private bool CommitedSuicide(Transform shipTransform)
     {
-        if (player.hitByMine)
-        {
-            return true;
-        }
-        Vector2 pos = player.transform.position;
+        int mW = MapGenerator.mapWidth;
+        int mH = MapGenerator.mapHeight;
 
-        int x = Mathf.RoundToInt(pos.x);
-        int y = Mathf.RoundToInt(pos.y);
+        float xExt = 1.0f;
+        float yExt = 2.0f;
 
-        if (x >= 0 && x < MapGenerator.mapWidth && y >= 0 && y < MapGenerator.mapHeight)
+        Vector2[] localPoints = new Vector2[]
         {
-            if (MapGenerator.map[x, y] == TileType.Wall)
+            new Vector2(0, yExt), // Top Center
+            new Vector2(xExt, yExt), // Top Right
+            new Vector2(-xExt, yExt), // Top Left
+            new Vector2(xExt, -yExt), // Bottom Right
+            new Vector2(-xExt, -yExt), // Bottom Left
+            new Vector2(0, -yExt), // Bottom Center
+        };
+
+        Vector2 shipPos = shipTransform.transform.localPosition;
+        Quaternion shipRot = shipTransform.transform.localRotation;
+
+        foreach (Vector2 p in localPoints)
+        {
+            Vector3 rotatedPoint = shipRot * p;
+
+            Vector2 worldPos = shipPos + (Vector2)rotatedPoint;
+
+            int x = Mathf.RoundToInt(worldPos.x);
+            int y = Mathf.RoundToInt(worldPos.y);
+
+            if (x <= 0 || x >= mW || y <= 0 || y >= mH)
             {
                 return true;
             }
-        }
 
-        foreach (EnemyShip enemy in spawnedEnemies)
-        {
-            if (enemy == null)
-                continue;
-
-            Vector2 enemyPos = enemy.transform.position;
-
-            int enemyX = Mathf.RoundToInt(enemyPos.x);
-            int enemyY = Mathf.RoundToInt(enemyPos.y);
-
-            if (
-                enemyX >= 0
-                && enemyX < MapGenerator.mapWidth
-                && enemyY >= 0
-                && enemyY < MapGenerator.mapHeight
-            )
-            {
-                if (MapGenerator.map[enemyX, enemyY] == TileType.Wall)
-                {
-                    Destroy(enemy.gameObject);
-                    return false;
-                }
-            }
-
-            float dist = Vector2.Distance(pos, enemy.transform.position);
-
-            if (dist < 1.5f)
+            if (MapGenerator.map[x, y] == TileType.Wall)
             {
                 return true;
             }

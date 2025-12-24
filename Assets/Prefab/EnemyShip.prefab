@@ -11,10 +11,13 @@ GameObject:
   - component: {fileID: 99227447994197440}
   - component: {fileID: 6187492948394842344}
   - component: {fileID: 4763789025775672007}
-  - component: {fileID: 4367272892248652973}
   - component: {fileID: 7010147840289735496}
   - component: {fileID: 8649191504974135238}
   - component: {fileID: 2307254005662315597}
+  - component: {fileID: 2908628836435270618}
+  - component: {fileID: 2997237366345771690}
+  - component: {fileID: -489572787034452150}
+  - component: {fileID: -6233532207234175445}
   m_Layer: 6
   m_Name: EnemyShip
   m_TagString: EnemyShip
@@ -141,23 +144,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4367272892248652973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6346421369624739259}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fbf590b71a045e3cbfb306bbf746a26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyShip
-  minePrefab: {fileID: 4838542427059691886, guid: 20bf11ce06f1513588caacdd8bbb1485, type: 3}
-  initialMineCount: 10
-  mineCooldownTime: 5
-  mineLaunchOffset: 5
-  mineLaunchSpeed: 20
 --- !u!114 &7010147840289735496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,6 +185,7 @@ MonoBehaviour:
   rudderResponsiveness: 2
   forwardDrag: 0.2
   sidewaysDrag: 3
+  speedMult: 1
 --- !u!114 &2307254005662315597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,8 +198,86 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c8bb98df2848fd5bc047069f6ea4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShipRaycast
-  rayCount: 16
-  rayDistance: 8
   detectMask:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &2908628836435270618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346421369624739259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3193c109777fc7629f1a539f1707139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyShipController
+  hitByMine: 0
+  minePrefab: {fileID: 4838542427059691886, guid: 20bf11ce06f1513588caacdd8bbb1485, type: 3}
+  initialMineCount: 10
+  mineCooldownTime: 5
+  mineLaunchOffset: 5
+  mineLaunchSpeed: 10
+--- !u!114 &2997237366345771690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346421369624739259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
+  m_BrainParameters:
+    VectorObservationSize: 33
+    NumStackedVectorObservations: 1
+    m_ActionSpec:
+      m_NumContinuousActions: 2
+      BranchSizes: 
+    VectorActionSize: 02000000
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 1
+    hasUpgradedBrainParametersWithActionSpec: 1
+  m_Model: {fileID: 0}
+  m_InferenceDevice: 0
+  m_BehaviorType: 0
+  m_BehaviorName: EnemyShip
+  TeamId: 0
+  m_UseChildSensors: 1
+  m_UseChildActuators: 1
+  m_DeterministicInference: 0
+  m_ObservableAttributeHandling: 0
+--- !u!114 &-489572787034452150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346421369624739259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79632f223f41dce079dbf89816f4632b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAgent
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+--- !u!114 &-6233532207234175445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346421369624739259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
+  DecisionPeriod: 5
+  DecisionStep: 0
+  TakeActionsBetweenDecisions: 1

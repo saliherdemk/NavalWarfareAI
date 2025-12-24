@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(ShipMovement))]
-public class PlayerShipController2D : MonoBehaviour
+public class PlayerShipController : MonoBehaviour
 {
     public bool hitByMine = false;
 
@@ -34,9 +34,7 @@ public class PlayerShipController2D : MonoBehaviour
     public float[] GetSensors()
     {
         float[] shipInputs = _shipMovement.GetSensors();
-
         float[] raycastInputs = _shipRaycast.GetSensors();
-
         float[] radarInputs = _radarDetector.GetSensors(2);
 
         float[] globalFeatures = new float[]

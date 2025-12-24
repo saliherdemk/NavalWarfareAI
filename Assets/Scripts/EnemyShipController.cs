@@ -4,8 +4,10 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(ShipMovement))]
 [RequireComponent(typeof(RadarDetector))]
-public class EnemyShip : MonoBehaviour
+public class EnemyShipController : MonoBehaviour
 {
+    public bool hitByMine = false;
+
     public GameObject minePrefab;
 
     public int initialMineCount = 10;
@@ -34,9 +36,13 @@ public class EnemyShip : MonoBehaviour
         _mineCooldownTimer = 0f;
     }
 
-    public void ResetMovement()
+    public void Reset(Vector2 spawnCoorinates)
     {
+        gameObject.SetActive(true);
         _shipMovement.ResetMovement();
+        transform.eulerAngles = Vector3.zero;
+        hitByMine = false;
+        transform.localPosition = new Vector3(spawnCoorinates.x, spawnCoorinates.y, 0f);
     }
 
     void Update()
@@ -114,17 +120,5 @@ public class EnemyShip : MonoBehaviour
         globalFeatures.CopyTo(inputVector, offset);
 
         return inputVector;
-    }
-
-    public void Remove()
-    {
-        foreach (var m in spawnedMines)
-        {
-            if (m)
-            {
-                Destroy(m.gameObject);
-            }
-        }
-        Destroy(gameObject);
     }
 }

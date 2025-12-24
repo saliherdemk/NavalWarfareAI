@@ -10,6 +10,8 @@ public class ShipMovement : MonoBehaviour
     public float forwardDrag = 0.2f;
     public float sidewaysDrag = 3.0f;
 
+    public float speedMult = 1.0f;
+
     private float _targetThrottle = 0f;
     private float _targetRudder = 0f;
 
@@ -38,7 +40,16 @@ public class ShipMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (speedMult <= 0.01f)
+        {
+            _velocity = Vector2.zero;
+            return;
+        }
+
         float deltaTime = Time.deltaTime;
+
+        float currentMaxSpeed = maxSpeed * speedMult;
+        float currentAccel = acceleration * speedMult;
 
         _throttle = Mathf.Lerp(_throttle, _targetThrottle, deltaTime * 1.5f);
         _rudder = Mathf.Lerp(_rudder, _targetRudder, deltaTime * rudderResponsiveness);
@@ -51,7 +62,7 @@ public class ShipMovement : MonoBehaviour
 
         if (_throttle != 0)
         {
-            forwardVel += _throttle * acceleration * deltaTime;
+            forwardVel += _throttle * currentAccel * deltaTime;
         }
         else
         {
@@ -63,9 +74,9 @@ public class ShipMovement : MonoBehaviour
 
         _velocity = forwardVel * forward + sidewaysVel * right;
 
-        if (_velocity.magnitude > maxSpeed)
+        if (_velocity.magnitude > currentMaxSpeed)
         {
-            _velocity = _velocity.normalized * maxSpeed;
+            _velocity = _velocity.normalized * currentMaxSpeed;
         }
 
         transform.position += (Vector3)_velocity * deltaTime;

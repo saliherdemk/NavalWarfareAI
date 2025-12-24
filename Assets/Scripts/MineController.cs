@@ -129,13 +129,13 @@ public class MineController : MonoBehaviour
         {
             if (col.CompareTag("EnemyShip"))
             {
-                Destroy(col.gameObject);
+                var enemyShip = col.GetComponent<EnemyShipController>();
+                enemyShip.hitByMine = true;
             }
             else if (col.CompareTag("PlayerShip"))
             {
-                var playerShip = col.GetComponent<PlayerShipController2D>();
-                if (playerShip != null)
-                    playerShip.hitByMine = true;
+                var playerShip = col.GetComponent<PlayerShipController>();
+                playerShip.hitByMine = true;
             }
         }
 

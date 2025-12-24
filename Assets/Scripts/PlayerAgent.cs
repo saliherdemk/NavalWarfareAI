@@ -5,10 +5,10 @@ using Unity.MLAgents.Sensors;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerShipController2D))]
+[RequireComponent(typeof(PlayerShipController))]
 public class PlayerAgent : Agent
 {
-    private PlayerShipController2D _controller;
+    private PlayerShipController _controller;
     private ShipMovement _movement;
     private ShipRaycast _raycast;
 
@@ -25,7 +25,7 @@ public class PlayerAgent : Agent
     {
         MaxStep = 30000;
 
-        _controller = GetComponent<PlayerShipController2D>();
+        _controller = GetComponent<PlayerShipController>();
         _movement = GetComponent<ShipMovement>();
         _raycast = GetComponent<ShipRaycast>();
 
@@ -35,7 +35,10 @@ public class PlayerAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        gm.RestartGame();
+        _movement.speedMult = Academy.Instance.EnvironmentParameters.GetWithDefault(
+            "player_speed_multiplier",
+            1.0f
+        );
         _targetPos = gm.targetLake.lakeCenter;
         _startDist = Vector2.Distance(transform.localPosition, _targetPos);
         _lastDist = _startDist;
@@ -71,22 +74,6 @@ public class PlayerAgent : Agent
         float targetRudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
         _movement.SetInput(targetThrottle, targetRudder);
 
-        if (gm.PlayerReachedTarget())
-        {
-            SetReward(1.0f);
-            // Debug.Log($"<color=green>WIN! Total Reward: {GetCumulativeReward():F2}</color>");
-            EndEpisode();
-            return;
-        }
-
-        if (gm.PlayerDie())
-        {
-            SetReward(-1.0f);
-            // Debug.Log($"<color=red>DIED. Total Reward: {GetCumulativeReward():F2}</color>");
-            EndEpisode();
-            return;
-        }
-
         float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
         float diff = _lastDist - currentDist;
 
@@ -96,11 +83,6 @@ public class PlayerAgent : Agent
         }
 
         AddReward(-1f / MaxStep);
-
-        // if (StepCount >= MaxStep - 1 && MaxStep > 0)
-        // {
-        //     Debug.Log($"<color=yellow>TIMEOUT. Total Reward: {GetCumulativeReward():F2}</color>");
-        // }
 
         _lastDist = currentDist;
     }

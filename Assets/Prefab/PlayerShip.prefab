@@ -11,13 +11,13 @@ GameObject:
   - component: {fileID: 1633372485828171130}
   - component: {fileID: 4344741193715359839}
   - component: {fileID: 7331505406192328730}
-  - component: {fileID: 5521652577401725904}
   - component: {fileID: 3558422647964703565}
   - component: {fileID: 5656702394028418616}
   - component: {fileID: -1695952100276913139}
   - component: {fileID: -1401226848055160590}
   - component: {fileID: 4796319932848490300}
   - component: {fileID: 967951347228045238}
+  - component: {fileID: 351306406652815276}
   m_Layer: 7
   m_Name: PlayerShip
   m_TagString: PlayerShip
@@ -144,19 +144,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &5521652577401725904
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4491821316754141788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8491dd5c0ab031276803a405c04ccb04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerShipController2D
-  hitByMine: 0
 --- !u!114 &3558422647964703565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,6 +185,7 @@ MonoBehaviour:
   rudderResponsiveness: 2
   forwardDrag: 0.2
   sidewaysDrag: 3
+  speedMult: 1
 --- !u!114 &-1695952100276913139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,12 +255,25 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 191cfc2a3ba461d439cb3aa98eff78de, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 3bc5c00d7320d0fc4887f96483e4c67a, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
+  m_BehaviorType: 1
   m_BehaviorName: PlayerShip
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_DeterministicInference: 0
   m_ObservableAttributeHandling: 0
+--- !u!114 &351306406652815276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4491821316754141788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30094e6ee20b181b899844902c534157, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerShipController
+  hitByMine: 0

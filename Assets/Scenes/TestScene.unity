@@ -308,6 +308,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Environment
       objectReference: {fileID: 0}
+    - target: {fileID: 8635297664701195747, guid: 15b1e414e8c1c6b3fbe6c76523e71ce4, type: 3}
+      propertyPath: enemyPrefab
+      value: 
+      objectReference: {fileID: 2908628836435270618, guid: dc1ba13eb26a25e18bb3eb6593bddee1, type: 3}
+    - target: {fileID: 8635297664701195747, guid: 15b1e414e8c1c6b3fbe6c76523e71ce4, type: 3}
+      propertyPath: playerPrefab
+      value: 
+      objectReference: {fileID: 351306406652815276, guid: aaf4fada3607c76db902dbcd9db3687a, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

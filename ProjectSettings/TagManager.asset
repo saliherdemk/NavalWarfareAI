@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayerShip
   - EnemyShip
+  - Wall
   layers:
   - Default
   - TransparentFX

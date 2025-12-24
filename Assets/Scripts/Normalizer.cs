@@ -5,6 +5,7 @@ namespace NormalizerClass
     public static class Normalizer
     {
         public const int PLAYER_OBS_SIZE = 37;
+        public const int ENEMY_OBS_SIZE = 33;
 
         public static float mapWidth = 200f;
         public static float mapHeight = 200f;
@@ -18,6 +19,8 @@ namespace NormalizerClass
         public static float maxTurnSpeed = 100f;
 
         public static int GetPlayerSensorCount() => PLAYER_OBS_SIZE;
+
+        public static int GetEnemySensorCount() => ENEMY_OBS_SIZE;
 
         public static int GetTargetAngleCount() => 2;
 
@@ -41,6 +44,27 @@ namespace NormalizerClass
             destination[index++] = NormalizeRange(s[30], minSpeed, maxSpeed);
             destination[index++] = NormalizeRange(s[31], minAcceleration, maxAcceleration);
             destination[index++] = NormalizeRange(s[32], minTurnSpeed, maxTurnSpeed);
+        }
+
+        public static void NormalizeEnemyController(float[] s, float[] destination)
+        {
+            int index = 0;
+
+            destination[index++] = s[0] / maxSpeed;
+            destination[index++] = s[1] / maxSpeed;
+
+            for (int i = 2; i < 2 + 16; i++)
+            {
+                destination[index++] = s[i] / rayDistance;
+            }
+
+            NormalizeTarget(destination, ref index, s, 18);
+            NormalizeTarget(destination, ref index, s, 21);
+            NormalizeTarget(destination, ref index, s, 24);
+
+            destination[index++] = NormalizeRange(s[27], minSpeed, maxSpeed);
+            destination[index++] = NormalizeRange(s[28], minAcceleration, maxAcceleration);
+            destination[index++] = NormalizeRange(s[29], minTurnSpeed, maxTurnSpeed);
         }
 
         public static float NormalizeTargetDistance(float d)
