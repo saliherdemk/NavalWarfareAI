@@ -1,62 +1,65 @@
 {
+    "enemy_speed_multiplier": {
+        "lesson_num": 0
+    },
     "spawn_radius": {
         "lesson_num": 3
     },
     "PlayerShip": {
         "checkpoints": [
             {
-                "steps": 1499969,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-1499969.onnx",
-                "reward": 1.4441622698350864,
-                "creation_time": 1766568419.9448068,
+                "steps": 1499959,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-1499959.onnx",
+                "reward": 1.8272409439086914,
+                "creation_time": 1766672239.8256702,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-1499969.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-1499959.pt"
                 ]
             },
             {
-                "steps": 1999590,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-1999590.onnx",
-                "reward": 1.6533380448818207,
-                "creation_time": 1766568812.9756665,
+                "steps": 1999614,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-1999614.onnx",
+                "reward": 1.0570416691757383,
+                "creation_time": 1766672683.328212,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-1999590.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-1999614.pt"
                 ]
             },
             {
-                "steps": 2499664,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-2499664.onnx",
-                "reward": 1.2980636167857382,
-                "creation_time": 1766569230.4616945,
+                "steps": 2499688,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-2499688.onnx",
+                "reward": 1.1251578070223331,
+                "creation_time": 1766673144.2667499,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-2499664.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-2499688.pt"
                 ]
             },
             {
-                "steps": 2999818,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-2999818.onnx",
-                "reward": 1.912443995475769,
-                "creation_time": 1766569631.5503097,
+                "steps": 2999852,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-2999852.onnx",
+                "reward": 1.02081070621224,
+                "creation_time": 1766673620.0462832,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-2999818.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-2999852.pt"
                 ]
             },
             {
-                "steps": 3000321,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-3000321.onnx",
-                "reward": 1.8705647190411885,
-                "creation_time": 1766569631.608998,
+                "steps": 3024867,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-3024867.onnx",
+                "reward": 1.874295602242152,
+                "creation_time": 1766673645.181064,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-3000321.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-3024867.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 3000321,
+            "steps": 3024867,
             "file_path": "results/ship_v1/PlayerShip.onnx",
-            "reward": 1.8705647190411885,
-            "creation_time": 1766569631.608998,
+            "reward": 1.874295602242152,
+            "creation_time": 1766673645.181064,
             "auxillary_file_paths": [
-                "results/ship_v1/PlayerShip/PlayerShip-3000321.pt"
+                "results/ship_v1/PlayerShip/PlayerShip-3024867.pt"
             ]
         }
     },

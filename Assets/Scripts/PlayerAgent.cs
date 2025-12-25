@@ -23,8 +23,6 @@ public class PlayerAgent : Agent
 
     public override void Initialize()
     {
-        MaxStep = 30000;
-
         _controller = GetComponent<PlayerShipController>();
         _movement = GetComponent<ShipMovement>();
         _raycast = GetComponent<ShipRaycast>();
@@ -35,6 +33,7 @@ public class PlayerAgent : Agent
 
     public override void OnEpisodeBegin()
     {
+        gm.RestartGame();
         _movement.speedMult = Academy.Instance.EnvironmentParameters.GetWithDefault(
             "player_speed_multiplier",
             1.0f
@@ -82,7 +81,7 @@ public class PlayerAgent : Agent
             AddReward(diff / _startDist);
         }
 
-        AddReward(-1f / MaxStep);
+        AddReward(-1f / gm.GetMaxStep());
 
         _lastDist = currentDist;
     }

@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     private Leaf enemy1Lake;
     private Leaf enemy2Lake;
 
+    private int MaxStep = 30000;
+
     void Awake() { }
 
     void Start()
@@ -41,6 +43,9 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!Academy.Instance.IsCommunicatorOn)
+            return;
+
         CheckDeaths();
     }
 
@@ -48,30 +53,30 @@ public class GameManager : MonoBehaviour
     {
         if (enemy1.gameObject.activeSelf && CheckEnemyDeath(enemy1))
         {
-            enemy1Agent.SetReward(-1.0f);
+            enemy1Agent.AddReward(-1.0f);
             enemy1Agent.EndEpisode();
             enemy1.gameObject.SetActive(false);
         }
 
         if (enemy2.gameObject.activeSelf && CheckEnemyDeath(enemy2))
         {
-            enemy2Agent.SetReward(-1.0f);
+            enemy2Agent.AddReward(-1.0f);
             enemy2Agent.EndEpisode();
             enemy2.gameObject.SetActive(false);
         }
 
         if (CommitedSuicide(player.transform))
         {
-            playerAgent.SetReward(-1.0f);
+            playerAgent.AddReward(-1.0f);
             EndEpisode();
             return;
         }
 
         if (player.hitByMine)
         {
-            playerAgent.SetReward(-1.0f);
-            enemy1Agent.SetReward(1.0f);
-            enemy2Agent.SetReward(1.0f);
+            playerAgent.AddReward(-1.0f);
+            enemy1Agent.AddReward(1.0f);
+            enemy2Agent.AddReward(1.0f);
             EndEpisode();
             return;
         }
@@ -83,25 +88,31 @@ public class GameManager : MonoBehaviour
 
         if (dist1 < 3f)
         {
-            playerAgent.SetReward(-1.0f);
-            enemy1Agent.SetReward(1.0f);
+            playerAgent.AddReward(-1.0f);
+            enemy1Agent.AddReward(1.0f);
             EndEpisode();
             return;
         }
 
         if (dist2 < 3f)
         {
-            playerAgent.SetReward(-1.0f);
-            enemy2Agent.SetReward(1.0f);
+            playerAgent.AddReward(-1.0f);
+            enemy2Agent.AddReward(1.0f);
             EndEpisode();
             return;
         }
 
         if (PlayerReachedTarget())
         {
-            playerAgent.SetReward(1.0f);
-            enemy1Agent.SetReward(-1.0f);
-            enemy2Agent.SetReward(-1.0f);
+            playerAgent.AddReward(1.0f);
+            enemy1Agent.AddReward(-1.0f);
+            enemy2Agent.AddReward(-1.0f);
+            EndEpisode();
+            return;
+        }
+
+        if (playerAgent.StepCount >= MaxStep)
+        {
             EndEpisode();
             return;
         }
@@ -109,7 +120,7 @@ public class GameManager : MonoBehaviour
 
     private void EndEpisode()
     {
-        // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
+        Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
         // Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
         // Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
 
@@ -119,8 +130,6 @@ public class GameManager : MonoBehaviour
             enemy1Agent.EndEpisode();
         if (enemy2.gameObject.activeSelf)
             enemy2Agent.EndEpisode();
-
-        RestartGame();
     }
 
     public bool CheckEnemyDeath(EnemyShipController enemy)
@@ -178,9 +187,11 @@ public class GameManager : MonoBehaviour
     {
         enemy1 = Instantiate(enemyPrefab, mapEnvironment);
         enemy1Agent = enemy1.GetComponent<EnemyAgent>();
+        enemy1Agent.gm = this;
 
         enemy2 = Instantiate(enemyPrefab, mapEnvironment);
         enemy2Agent = enemy2.GetComponent<EnemyAgent>();
+        enemy2Agent.gm = this;
     }
 
     void ChooseSpawnTargetLakes()
@@ -303,5 +314,10 @@ public class GameManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    public int GetMaxStep()
+    {
+        return MaxStep;
     }
 }

@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(EnemyShipController))]
 public class EnemyAgent : Agent
 {
+    public GameManager gm;
+
     private EnemyShipController _controller;
     private ShipMovement _movement;
     private ShipRaycast _raycast;
@@ -16,8 +18,6 @@ public class EnemyAgent : Agent
 
     public override void Initialize()
     {
-        MaxStep = 30000;
-
         _controller = GetComponent<EnemyShipController>();
         _movement = GetComponent<ShipMovement>();
         _raycast = GetComponent<ShipRaycast>();
@@ -50,7 +50,7 @@ public class EnemyAgent : Agent
         float targetRudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
         _movement.SetInput(targetThrottle, targetRudder);
 
-        AddReward(-1f / MaxStep);
+        AddReward(-1f / gm.GetMaxStep());
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
