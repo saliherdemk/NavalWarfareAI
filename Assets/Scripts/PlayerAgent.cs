@@ -73,17 +73,17 @@ public class PlayerAgent : Agent
         float targetRudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
         _movement.SetInput(targetThrottle, targetRudder);
 
-        float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
-        float diff = _lastDist - currentDist;
-
-        if (_startDist > 0)
-        {
-            AddReward(diff / _startDist);
-        }
+        // float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
+        // float diff = _lastDist - currentDist;
+        //
+        // if (_startDist > 0)
+        // {
+        //     AddReward(diff / _startDist);
+        // }
 
         AddReward(-1f / gm.GetMaxStep());
 
-        _lastDist = currentDist;
+        // _lastDist = currentDist;
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

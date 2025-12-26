@@ -1,0 +1,74 @@
+{
+    "enemy_speed_multiplier": {
+        "lesson_num": 0
+    },
+    "map_level": {
+        "lesson_num": 2
+    },
+    "spawn_radius": {
+        "lesson_num": 3
+    },
+    "PlayerShip": {
+        "checkpoints": [
+            {
+                "steps": 14999955,
+                "file_path": "results/ship_v2/PlayerShip/PlayerShip-14999955.onnx",
+                "reward": -0.39445562412341434,
+                "creation_time": 1766770977.3821132,
+                "auxillary_file_paths": [
+                    "results/ship_v2/PlayerShip/PlayerShip-14999955.pt"
+                ]
+            },
+            {
+                "steps": 15499520,
+                "file_path": "results/ship_v2/PlayerShip/PlayerShip-15499520.onnx",
+                "reward": null,
+                "creation_time": 1766771426.8147416,
+                "auxillary_file_paths": [
+                    "results/ship_v2/PlayerShip/PlayerShip-15499520.pt"
+                ]
+            },
+            {
+                "steps": 15999499,
+                "file_path": "results/ship_v2/PlayerShip/PlayerShip-15999499.onnx",
+                "reward": -0.9998667426407337,
+                "creation_time": 1766771877.0192206,
+                "auxillary_file_paths": [
+                    "results/ship_v2/PlayerShip/PlayerShip-15999499.pt"
+                ]
+            },
+            {
+                "steps": 16499925,
+                "file_path": "results/ship_v2/PlayerShip/PlayerShip-16499925.onnx",
+                "reward": 0.17063332349061966,
+                "creation_time": 1766772327.0920808,
+                "auxillary_file_paths": [
+                    "results/ship_v2/PlayerShip/PlayerShip-16499925.pt"
+                ]
+            },
+            {
+                "steps": 16504914,
+                "file_path": "results/ship_v2/PlayerShip/PlayerShip-16504914.onnx",
+                "reward": -0.05760003377993902,
+                "creation_time": 1766772330.1298218,
+                "auxillary_file_paths": [
+                    "results/ship_v2/PlayerShip/PlayerShip-16504914.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 16504914,
+            "file_path": "results/ship_v2/PlayerShip.onnx",
+            "reward": -0.05760003377993902,
+            "creation_time": 1766772330.1298218,
+            "auxillary_file_paths": [
+                "results/ship_v2/PlayerShip/PlayerShip-16504914.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.8.0+cu128"
+    }
+}

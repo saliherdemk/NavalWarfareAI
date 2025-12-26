@@ -3,7 +3,7 @@ using UnityEngine;
 public class ShipRaycast : MonoBehaviour
 {
     private int rayCount = 16;
-    private float rayDistance = 16f;
+    private float rayDistance = 32f;
     public LayerMask detectMask;
 
     private float[] rays;
@@ -28,11 +28,11 @@ public class ShipRaycast : MonoBehaviour
                 detectMask
             );
 
-            Debug.DrawLine(
-                transform.position,
-                (Vector2)transform.position + direction * rayDistance,
-                hit.collider ? Color.red : Color.green
-            );
+            // Debug.DrawLine(
+            //     transform.position,
+            //     (Vector2)transform.position + direction * rayDistance,
+            //     hit.collider ? Color.red : Color.green
+            // );
 
             float dist = hit.collider ? hit.distance : rayDistance;
             rays[i] = dist;

@@ -24,7 +24,7 @@ behaviors:
         strength: 1.0
 
     time_horizon: 512
-    max_steps: 5_000_000 
+    max_steps: 20_000_000 
     summary_freq: 20_000
 
   EnemyShip:
@@ -59,9 +59,42 @@ environment_parameters:
     curriculum:
       - name: FreezeEnemy
         value: 0.0
+
+  map_level:
+    curriculum:
+      - name: Easy
+        completion_criteria:
+          measure: progress
+          behavior: PlayerShip
+          signal_smoothing: true
+          min_lesson_length: 2000
+          threshold: 0.15
+        value: 16.0
+
+      - name: Medium
+        completion_criteria:
+          measure: progress
+          behavior: PlayerShip
+          signal_smoothing: true
+          min_lesson_length: 3000
+          threshold: 0.15
+        value: 8.0
+
+      - name: Normal
+        completion_criteria:
+          measure: progress
+          behavior: PlayerShip
+          signal_smoothing: true
+          min_lesson_length: 4000
+          threshold: 0.15
+        value: 4.0
+
+      - name: Hard
+        value: 2.0
+
   spawn_radius:
     curriculum:
-      - name: Lesson0 
+      - name: Small 
         completion_criteria:
           measure: progress
           behavior: PlayerShip
@@ -70,7 +103,7 @@ environment_parameters:
           threshold: 0.1
         value: 30.0
       
-      - name: Lesson1 
+      - name: Medium
         completion_criteria:
           measure: progress
           behavior: PlayerShip
@@ -79,7 +112,7 @@ environment_parameters:
           threshold: 0.3
         value: 60.0
 
-      - name: Lesson2
+      - name: Large
         completion_criteria:
           measure: progress
           behavior: PlayerShip
@@ -88,5 +121,5 @@ environment_parameters:
           threshold: 0.5
         value: 150.0
 
-      - name: Lesson3
+      - name: Full
         value: -1.0

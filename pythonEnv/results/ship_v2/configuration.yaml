@@ -38,7 +38,7 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 5000000
+    max_steps: 20000000
     time_horizon: 512
     summary_freq: 20000
     threaded: false
@@ -114,18 +114,66 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 73
+          seed: 3415
           value: 0.0
       name: FreezeEnemy
+      completion_criteria: null
+  map_level:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 3416
+          value: 16.0
+      name: Easy
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 2000
+        signal_smoothing: true
+        threshold: 0.15
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 3417
+          value: 8.0
+      name: Medium
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 3000
+        signal_smoothing: true
+        threshold: 0.15
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 3418
+          value: 4.0
+      name: Normal
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 4000
+        signal_smoothing: true
+        threshold: 0.15
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 3419
+          value: 2.0
+      name: Hard
       completion_criteria: null
   spawn_radius:
     curriculum:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 74
+          seed: 3420
           value: 30.0
-      name: Lesson0
+      name: Small
       completion_criteria:
         behavior: PlayerShip
         measure: progress
@@ -136,9 +184,9 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 75
+          seed: 3421
           value: 60.0
-      name: Lesson1
+      name: Medium
       completion_criteria:
         behavior: PlayerShip
         measure: progress
@@ -149,9 +197,9 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 76
+          seed: 3422
           value: 150.0
-      name: Lesson2
+      name: Large
       completion_criteria:
         behavior: PlayerShip
         measure: progress
@@ -162,12 +210,12 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 77
+          seed: 3423
           value: -1.0
-      name: Lesson3
+      name: Full
       completion_criteria: null
 checkpoint_settings:
-  run_id: ship_v1
+  run_id: ship_v2
   initialize_from: null
   load_model: false
   resume: true

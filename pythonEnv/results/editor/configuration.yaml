@@ -89,10 +89,10 @@ behaviors:
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: Builds/withoutDistance/game.x86_64
+  env_path: null
   env_args: null
   base_port: 5005
-  num_envs: 4
+  num_envs: 1
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -106,7 +106,7 @@ engine_settings:
   time_scale: 20.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: true
+  no_graphics: false
   no_graphics_monitor: false
 environment_parameters:
   enemy_speed_multiplier:
@@ -114,7 +114,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 73
+          seed: 657
           value: 0.0
       name: FreezeEnemy
       completion_criteria: null
@@ -123,7 +123,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 74
+          seed: 658
           value: 30.0
       name: Lesson0
       completion_criteria:
@@ -136,7 +136,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 75
+          seed: 659
           value: 60.0
       name: Lesson1
       completion_criteria:
@@ -149,7 +149,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 76
+          seed: 660
           value: 150.0
       name: Lesson2
       completion_criteria:
@@ -162,16 +162,16 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 77
+          seed: 661
           value: -1.0
       name: Lesson3
       completion_criteria: null
 checkpoint_settings:
-  run_id: ship_v1
+  run_id: editor
   initialize_from: null
   load_model: false
-  resume: true
-  force: false
+  resume: false
+  force: true
   train_model: false
   inference: false
   results_dir: results

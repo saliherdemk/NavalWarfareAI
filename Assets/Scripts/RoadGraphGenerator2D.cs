@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.MLAgents;
 using UnityEngine;
 #if UNITY_EDITOR
 #endif
@@ -66,8 +67,12 @@ public class RoadGraphGenerator2D : MonoBehaviour
 
     void SplitMap()
     {
+        int difficulty = Mathf.RoundToInt(
+            Academy.Instance.EnvironmentParameters.GetWithDefault("map_level", 4)
+        );
+       
         int minLeafSize = Mathf.Max(mapWidth, mapHeight) / 16;
-        int maxLeafSize = Mathf.Max(mapWidth, mapHeight) / 4;
+        int maxLeafSize = Mathf.Max(mapWidth, mapHeight) / difficulty;
         SplitBSP(new RectInt(0, 0, mapWidth, mapHeight), minLeafSize, maxLeafSize);
     }
 
