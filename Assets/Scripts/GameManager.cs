@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
 
     private void EndEpisode()
     {
-        Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
+        // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
         // Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
         // Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
 
@@ -148,7 +148,12 @@ public class GameManager : MonoBehaviour
             return;
 
         MapGenerator.GenerateMap();
-        ChooseSpawnTargetLakes();
+        bool succeed = ChooseSpawnTargetLakes();
+        if (!succeed)
+        {
+            RestartGame();
+            return;
+        }
 
         player.Reset(spawnLake.lakeCenter);
         enemy1.Reset(enemy1Lake.lakeCenter);
@@ -194,17 +199,17 @@ public class GameManager : MonoBehaviour
         enemy2Agent.gm = this;
     }
 
-    void ChooseSpawnTargetLakes()
+    bool ChooseSpawnTargetLakes()
     {
         List<Leaf> allLeafs = MapGenerator.allLeafs;
-        if (allLeafs.Count < 2)
-            return;
+        if (allLeafs.Count < 4)
+            return false;
 
         spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
 
         float trainingRadius = Academy.Instance.EnvironmentParameters.GetWithDefault(
             "spawn_radius",
-            -1f
+            -1.0f
         );
 
         List<Leaf> validTargets = new List<Leaf>();
@@ -256,7 +261,7 @@ public class GameManager : MonoBehaviour
 
         List<Leaf> availableLakes = new List<Leaf>();
 
-        foreach (var lake in MapGenerator.allLeafs)
+        foreach (var lake in allLeafs)
         {
             if (lake != spawnLake && lake != targetLake)
                 availableLakes.Add(lake);
@@ -270,6 +275,7 @@ public class GameManager : MonoBehaviour
 
         enemy1Lake = availableLakes[0];
         enemy2Lake = availableLakes[1];
+        return true;
     }
 
     private bool CommitedSuicide(Transform shipTransform)

@@ -38,58 +38,14 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 5000000
+    max_steps: 500000
     time_horizon: 512
-    summary_freq: 20000
-    threaded: false
-    self_play: null
-    behavioral_cloning: null
-  EnemyShip:
-    trainer_type: ppo
-    hyperparameters:
-      batch_size: 1024
-      buffer_size: 10240
-      learning_rate: 0.0
-      beta: 0.001
-      epsilon: 0.2
-      lambd: 0.95
-      num_epoch: 5
-      shared_critic: false
-      learning_rate_schedule: linear
-      beta_schedule: linear
-      epsilon_schedule: linear
-    checkpoint_interval: 500000
-    network_settings:
-      normalize: true
-      hidden_units: 128
-      num_layers: 2
-      vis_encode_type: simple
-      memory: null
-      goal_conditioning_type: hyper
-      deterministic: false
-    reward_signals:
-      extrinsic:
-        gamma: 0.99
-        strength: 1.0
-        network_settings:
-          normalize: false
-          hidden_units: 128
-          num_layers: 2
-          vis_encode_type: simple
-          memory: null
-          goal_conditioning_type: hyper
-          deterministic: false
-    init_path: null
-    keep_checkpoints: 5
-    even_checkpoints: false
-    max_steps: 5000000
-    time_horizon: 512
-    summary_freq: 20000
+    summary_freq: 50000
     threaded: false
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: Builds/withoutDistance/game.x86_64
+  env_path: Builds/game.x86_64
   env_args: null
   base_port: 5005
   num_envs: 4
@@ -114,64 +70,147 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 73
+          seed: 8692
           value: 0.0
       name: FreezeEnemy
       completion_criteria: null
-  spawn_radius:
+  map_level:
     curriculum:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 74
-          value: 30.0
-      name: Lesson0
+          seed: 8693
+          value: 16.0
+      name: Intro_Sandbox
       completion_criteria:
         behavior: PlayerShip
         measure: progress
-        min_lesson_length: 100
+        min_lesson_length: 0
         signal_smoothing: true
         threshold: 0.1
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 75
-          value: 60.0
-      name: Lesson1
+          seed: 8694
+          value: 8.0
+      name: Walls_Added
       completion_criteria:
         behavior: PlayerShip
         measure: progress
-        min_lesson_length: 100
+        min_lesson_length: 0
         signal_smoothing: true
-        threshold: 0.3
+        threshold: 0.6
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 76
-          value: 150.0
-      name: Lesson2
+          seed: 8695
+          value: 2.0
+      name: Full_Chaos
+      completion_criteria: null
+  spawn_radius:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 8696
+          value: 30.0
+      name: Close_Range
       completion_criteria:
         behavior: PlayerShip
         measure: progress
-        min_lesson_length: 100
+        min_lesson_length: 0
+        signal_smoothing: true
+        threshold: 0.2
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 8697
+          value: 60.0
+      name: Medium_Range
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 0
         signal_smoothing: true
         threshold: 0.5
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 77
+          seed: 8698
+          value: 150.0
+      name: Long_Range
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 0
+        signal_smoothing: true
+        threshold: 0.8
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 8699
           value: -1.0
-      name: Lesson3
+      name: Infinite
+      completion_criteria: null
+  distance_reward_weight:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 8700
+          value: 1.0
+      name: Full_Help
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 0
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 8701
+          value: 0.5
+      name: Less_Help
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 0
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 8702
+          value: 0.1
+      name: Minimal_Help
+      completion_criteria:
+        behavior: PlayerShip
+        measure: progress
+        min_lesson_length: 0
+        signal_smoothing: true
+        threshold: 0.9
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 8703
+          value: 0.05
+      name: No_Help
       completion_criteria: null
 checkpoint_settings:
   run_id: ship_v1
   initialize_from: null
   load_model: false
-  resume: true
-  force: false
+  resume: false
+  force: true
   train_model: false
   inference: false
   results_dir: results

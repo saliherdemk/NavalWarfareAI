@@ -2,64 +2,34 @@
     "enemy_speed_multiplier": {
         "lesson_num": 0
     },
+    "map_level": {
+        "lesson_num": 1
+    },
     "spawn_radius": {
-        "lesson_num": 3
+        "lesson_num": 1
+    },
+    "distance_reward_weight": {
+        "lesson_num": 0
     },
     "PlayerShip": {
         "checkpoints": [
             {
-                "steps": 3999917,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-3999917.onnx",
-                "reward": 0.9028733313083649,
-                "creation_time": 1766740612.856923,
-                "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-3999917.pt"
-                ]
-            },
-            {
-                "steps": 4499617,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-4499617.onnx",
-                "reward": 0.3860228128339115,
-                "creation_time": 1766741292.8014462,
-                "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-4499617.pt"
-                ]
-            },
-            {
-                "steps": 4999629,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-4999629.onnx",
-                "reward": 0.5371333375573158,
-                "creation_time": 1766741955.4817784,
-                "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-4999629.pt"
-                ]
-            },
-            {
-                "steps": 5000141,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-5000141.onnx",
-                "reward": 0.5371333375573158,
-                "creation_time": 1766741955.5303204,
-                "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-5000141.pt"
-                ]
-            },
-            {
-                "steps": 5000141,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-5000141.onnx",
+                "steps": 141738,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-141738.onnx",
                 "reward": null,
-                "creation_time": 1766743224.0946345,
+                "creation_time": 1767017656.3494701,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-5000141.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-141738.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 5000141,
+            "steps": 141738,
             "file_path": "results/ship_v1/PlayerShip.onnx",
             "reward": null,
-            "creation_time": 1766743224.0946345,
+            "creation_time": 1767017656.3494701,
             "auxillary_file_paths": [
-                "results/ship_v1/PlayerShip/PlayerShip-5000141.pt"
+                "results/ship_v1/PlayerShip/PlayerShip-141738.pt"
             ]
         }
     },
