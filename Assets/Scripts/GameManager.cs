@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     private Leaf enemy1Lake;
     private Leaf enemy2Lake;
 
-    private int MaxStep = 30000;
+    private int MaxStep = 8000;
 
     void Awake() { }
 
@@ -113,6 +113,7 @@ public class GameManager : MonoBehaviour
 
         if (playerAgent.StepCount >= MaxStep)
         {
+            playerAgent.AddReward(-0.5f);
             EndEpisode();
             return;
         }
@@ -123,6 +124,7 @@ public class GameManager : MonoBehaviour
         // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
         // Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
         // Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
+        // Debug.Log(playerAgent.StepCount);
 
         if (player.gameObject.activeSelf)
             playerAgent.EndEpisode();
@@ -207,14 +209,13 @@ public class GameManager : MonoBehaviour
 
         spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
 
-        float trainingRadius = Academy.Instance.EnvironmentParameters.GetWithDefault(
-            "spawn_radius",
-            -1.0f
-        );
+        float diff = Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 4.0f);
+        int[] values = new int[] { 50, 100, -1, -1 };
+        int trainingRadius = values[(int)diff];
 
         List<Leaf> validTargets = new List<Leaf>();
 
-        if (trainingRadius > 0f)
+        if (trainingRadius > 0)
         {
             foreach (Leaf leaf in allLeafs)
             {

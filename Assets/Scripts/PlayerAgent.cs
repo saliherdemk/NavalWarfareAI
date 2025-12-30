@@ -76,13 +76,11 @@ public class PlayerAgent : Agent
         float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
         float diff = _lastDist - currentDist;
 
-        if (_startDist > 0)
+        if (_startDist > 0 && Mathf.Abs(diff) > 0.001f)
         {
-            float distWeight = Academy.Instance.EnvironmentParameters.GetWithDefault(
-                "distance_reward_weight",
-                1.0f
-            );
-            AddReward((diff / _startDist) * distWeight);
+            float progress = diff / _startDist;
+            progress = Mathf.Clamp(progress, -0.01f, 0.01f);
+            AddReward(progress);
         }
 
         AddReward(-1f / gm.GetMaxStep());

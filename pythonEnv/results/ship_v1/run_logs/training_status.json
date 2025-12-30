@@ -1,35 +1,44 @@
 {
-    "enemy_speed_multiplier": {
-        "lesson_num": 0
-    },
-    "map_level": {
-        "lesson_num": 1
-    },
-    "spawn_radius": {
-        "lesson_num": 1
-    },
-    "distance_reward_weight": {
-        "lesson_num": 0
+    "difficulty": {
+        "lesson_num": 2
     },
     "PlayerShip": {
         "checkpoints": [
             {
-                "steps": 141738,
-                "file_path": "results/ship_v1/PlayerShip/PlayerShip-141738.onnx",
-                "reward": null,
-                "creation_time": 1767017656.3494701,
+                "steps": 499973,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-499973.onnx",
+                "reward": 0.8121120820824916,
+                "creation_time": 1767114399.7878196,
                 "auxillary_file_paths": [
-                    "results/ship_v1/PlayerShip/PlayerShip-141738.pt"
+                    "results/ship_v1/PlayerShip/PlayerShip-499973.pt"
+                ]
+            },
+            {
+                "steps": 999967,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-999967.onnx",
+                "reward": 1.0799340307712555,
+                "creation_time": 1767114699.8651905,
+                "auxillary_file_paths": [
+                    "results/ship_v1/PlayerShip/PlayerShip-999967.pt"
+                ]
+            },
+            {
+                "steps": 1000189,
+                "file_path": "results/ship_v1/PlayerShip/PlayerShip-1000189.onnx",
+                "reward": 1.1486987501382828,
+                "creation_time": 1767114699.900301,
+                "auxillary_file_paths": [
+                    "results/ship_v1/PlayerShip/PlayerShip-1000189.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 141738,
+            "steps": 1000189,
             "file_path": "results/ship_v1/PlayerShip.onnx",
-            "reward": null,
-            "creation_time": 1767017656.3494701,
+            "reward": 1.1486987501382828,
+            "creation_time": 1767114699.900301,
             "auxillary_file_paths": [
-                "results/ship_v1/PlayerShip/PlayerShip-141738.pt"
+                "results/ship_v1/PlayerShip/PlayerShip-1000189.pt"
             ]
         }
     },

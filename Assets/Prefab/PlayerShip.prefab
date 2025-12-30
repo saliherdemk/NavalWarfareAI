@@ -255,7 +255,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 9bad9250350ee99798a1394f791c0847, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 3bc5c00d7320d0fc4887f96483e4c67a, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: PlayerShip
