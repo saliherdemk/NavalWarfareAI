@@ -23,7 +23,7 @@ behaviors:
         strength: 1.0
 
     time_horizon: 512
-    max_steps: 5_000_000 
+    max_steps: 13_000_000 
     summary_freq: 20_000
 
   EnemyShip:
