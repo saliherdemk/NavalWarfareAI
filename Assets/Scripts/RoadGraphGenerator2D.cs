@@ -68,7 +68,7 @@ public class RoadGraphGenerator2D : MonoBehaviour
     void SplitMap()
     {
         int difficulty = Mathf.RoundToInt(
-            Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 4)
+            Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 3)
         );
 
         int[] values = new int[] {16, 8, 4, 4};

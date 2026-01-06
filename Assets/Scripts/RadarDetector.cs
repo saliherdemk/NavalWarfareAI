@@ -8,6 +8,7 @@ public struct DetectedTarget
     public float RelativeAngle;
     public float ClosingSpeed;
     public bool HasLOS;
+    public Vector2 WorldVelocity;
 }
 
 public struct DetectedMine
@@ -83,6 +84,7 @@ public class RadarDetector : MonoBehaviour
                     RelativeAngle = angleToTarget,
                     ClosingSpeed = closingSpeed,
                     HasLOS = losClear,
+                    WorldVelocity = sm.Velocity,
                 }
             );
         }
@@ -181,12 +183,18 @@ public class RadarDetector : MonoBehaviour
             {
                 var e = visibleEnemies[i];
 
+                Vector2 localVel = transform.InverseTransformVector(e.WorldVelocity);
+
                 inputs.Add(e.Distance);
                 inputs.Add(e.RelativeAngle);
                 inputs.Add(e.ClosingSpeed);
+                inputs.Add(localVel.x);
+                inputs.Add(localVel.y);
             }
             else
             {
+                inputs.Add(0f);
+                inputs.Add(0f);
                 inputs.Add(0f);
                 inputs.Add(0f);
                 inputs.Add(0f);

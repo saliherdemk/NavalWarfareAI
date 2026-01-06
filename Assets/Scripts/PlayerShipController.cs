@@ -9,7 +9,7 @@ public class PlayerShipController : MonoBehaviour
 
     private ShipRaycast _shipRaycast;
 
-    private RadarDetector _radarDetector;
+    public RadarDetector _radarDetector;
 
     void Awake()
     {

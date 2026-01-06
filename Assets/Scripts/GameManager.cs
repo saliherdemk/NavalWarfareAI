@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     private Leaf enemy1Lake;
     private Leaf enemy2Lake;
 
-    private int MaxStep = 8000;
+    private int MaxStep = 10000;
 
     void Awake() { }
 
@@ -53,14 +53,14 @@ public class GameManager : MonoBehaviour
     {
         if (enemy1.gameObject.activeSelf && CheckEnemyDeath(enemy1))
         {
-            enemy1Agent.AddReward(-1.0f);
+            enemy1Agent.AddReward(-0.5f);
             enemy1Agent.EndEpisode();
             enemy1.gameObject.SetActive(false);
         }
 
         if (enemy2.gameObject.activeSelf && CheckEnemyDeath(enemy2))
         {
-            enemy2Agent.AddReward(-1.0f);
+            enemy2Agent.AddReward(-0.5f);
             enemy2Agent.EndEpisode();
             enemy2.gameObject.SetActive(false);
         }
@@ -68,6 +68,14 @@ public class GameManager : MonoBehaviour
         if (CommitedSuicide(player.transform))
         {
             playerAgent.AddReward(-1.0f);
+            if (enemy1.gameObject.activeSelf)
+            {
+                enemy1Agent.AddReward(2.0f);
+            }
+            if (enemy2.gameObject.activeSelf)
+            {
+                enemy2Agent.AddReward(2.0f);
+            }
             EndEpisode();
             return;
         }
@@ -75,8 +83,14 @@ public class GameManager : MonoBehaviour
         if (player.hitByMine)
         {
             playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(1.0f);
-            enemy2Agent.AddReward(1.0f);
+            if (enemy1.gameObject.activeSelf)
+            {
+                enemy1Agent.AddReward(2.0f);
+            }
+            if (enemy2.gameObject.activeSelf)
+            {
+                enemy2Agent.AddReward(2.0f);
+            }
             EndEpisode();
             return;
         }
@@ -89,7 +103,7 @@ public class GameManager : MonoBehaviour
         if (dist1 < 3f)
         {
             playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(1.0f);
+            enemy1Agent.AddReward(2.0f);
             EndEpisode();
             return;
         }
@@ -97,14 +111,14 @@ public class GameManager : MonoBehaviour
         if (dist2 < 3f)
         {
             playerAgent.AddReward(-1.0f);
-            enemy2Agent.AddReward(1.0f);
+            enemy2Agent.AddReward(2.0f);
             EndEpisode();
             return;
         }
 
         if (PlayerReachedTarget())
         {
-            playerAgent.AddReward(1.0f);
+            playerAgent.AddReward(2.0f);
             enemy1Agent.AddReward(-1.0f);
             enemy2Agent.AddReward(-1.0f);
             EndEpisode();
@@ -113,7 +127,7 @@ public class GameManager : MonoBehaviour
 
         if (playerAgent.StepCount >= MaxStep)
         {
-            playerAgent.AddReward(-0.5f);
+            // playerAgent.AddReward(-0.5f);
             EndEpisode();
             return;
         }
@@ -209,8 +223,9 @@ public class GameManager : MonoBehaviour
 
         spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
 
-        float diff = Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 4.0f);
-        int[] values = new int[] { 50, 100, -1, -1 };
+        float diff = Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 3.0f);
+
+        int[] values = new int[] { 50, 100, 100, -1 };
         int trainingRadius = values[(int)diff];
 
         List<Leaf> validTargets = new List<Leaf>();
@@ -221,30 +236,21 @@ public class GameManager : MonoBehaviour
             {
                 if (leaf == spawnLake)
                     continue;
-
                 float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
-
                 if (dist <= trainingRadius && dist > 5f)
-                {
                     validTargets.Add(leaf);
-                }
             }
         }
         else
         {
             float minDistance = Mathf.Min(MapGenerator.mapWidth, MapGenerator.mapHeight) * 0.5f;
-
             foreach (Leaf leaf in allLeafs)
             {
                 if (leaf == spawnLake)
                     continue;
-
                 float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
-
                 if (dist >= minDistance)
-                {
                     validTargets.Add(leaf);
-                }
             }
         }
 
@@ -261,21 +267,70 @@ public class GameManager : MonoBehaviour
         }
 
         List<Leaf> availableLakes = new List<Leaf>();
-
         foreach (var lake in allLeafs)
         {
             if (lake != spawnLake && lake != targetLake)
                 availableLakes.Add(lake);
         }
 
-        for (int i = availableLakes.Count - 1; i > 0; i--)
+        float enemySpawnRadius = Academy.Instance.EnvironmentParameters.GetWithDefault(
+            "enemy_spawn_radius",
+            -1.0f
+        );
+
+        if (enemySpawnRadius > 0)
         {
-            int j = Random.Range(0, i + 1);
-            (availableLakes[i], availableLakes[j]) = (availableLakes[j], availableLakes[i]);
+            List<Leaf> closeLakes = new List<Leaf>();
+
+            foreach (var lake in availableLakes)
+            {
+                float dist = Vector2Int.Distance(spawnLake.lakeCenter, lake.lakeCenter);
+                if (dist <= enemySpawnRadius)
+                {
+                    closeLakes.Add(lake);
+                }
+            }
+
+            if (closeLakes.Count > 0)
+            {
+                enemy1Lake = closeLakes[Random.Range(0, closeLakes.Count)];
+
+                availableLakes.Remove(enemy1Lake);
+            }
+            else
+            {
+                Leaf closest = null;
+                float minDist = float.MaxValue;
+
+                foreach (var lake in availableLakes)
+                {
+                    float d = Vector2Int.Distance(spawnLake.lakeCenter, lake.lakeCenter);
+                    if (d < minDist)
+                    {
+                        minDist = d;
+                        closest = lake;
+                    }
+                }
+                enemy1Lake = closest;
+                availableLakes.Remove(closest);
+            }
+        }
+        else
+        {
+            int r = Random.Range(0, availableLakes.Count);
+            enemy1Lake = availableLakes[r];
+            availableLakes.RemoveAt(r);
         }
 
-        enemy1Lake = availableLakes[0];
-        enemy2Lake = availableLakes[1];
+        if (availableLakes.Count > 0)
+        {
+            enemy2Lake = availableLakes[Random.Range(0, availableLakes.Count)];
+        }
+        else
+        {
+            enemy2Lake = enemy1Lake;
+        }
+
         return true;
     }
 

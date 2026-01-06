@@ -15,14 +15,14 @@ public class EnemyShipController : MonoBehaviour
     public float mineCooldownTime = 5f;
 
     public float mineLaunchOffset = 5.0f;
-    public float mineLaunchSpeed = 10f;
+    private float mineLaunchSpeed = 30f;
 
     private int _currentMineCount;
     private float _mineCooldownTimer;
 
     private ShipMovement _shipMovement;
     private ShipRaycast _shipRaycast;
-    private RadarDetector _radarDetector;
+    public RadarDetector _radarDetector;
 
     private List<MineController> spawnedMines = new List<MineController>();
 
@@ -42,6 +42,8 @@ public class EnemyShipController : MonoBehaviour
         _shipMovement.ResetMovement();
         transform.eulerAngles = Vector3.zero;
         hitByMine = false;
+        _currentMineCount = initialMineCount;
+        _mineCooldownTimer = 0f;
         transform.localPosition = new Vector3(spawnCoorinates.x, spawnCoorinates.y, 0f);
     }
 
@@ -50,32 +52,21 @@ public class EnemyShipController : MonoBehaviour
         _mineCooldownTimer -= Time.deltaTime;
     }
 
-    private void ThrowMine()
+    public void LaunchMine(Vector2 direction)
     {
-        if (_mineCooldownTimer <= 0f)
-        {
-            Vector3 mouseScreenPos = Mouse.current.position.ReadValue();
+        if (_currentMineCount == 0 || _mineCooldownTimer > 0f)
+            return;
 
-            Vector3 targetWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPos);
-            targetWorldPosition.z = 0f;
-
-            LaunchMineAtWorldPoint(targetWorldPosition);
-        }
-    }
-
-    public void LaunchMineAtWorldPoint(Vector3 targetWorldPoint)
-    {
-        Vector3 launchDirection = (targetWorldPoint - transform.position).normalized;
-
-        Vector3 launchPosition = transform.position + launchDirection * mineLaunchOffset;
-
+        if (direction.sqrMagnitude < 0.01f)
+            direction = transform.up;
+        direction.Normalize();
+        Vector3 launchPosition = transform.position + (Vector3)direction * mineLaunchOffset;
         GameObject mineInstance = Instantiate(minePrefab, launchPosition, Quaternion.identity);
-
         MineController mineController = mineInstance.GetComponent<MineController>();
 
         if (mineController != null)
         {
-            Vector2 initialVelocity = launchDirection * mineLaunchSpeed;
+            Vector2 initialVelocity = direction * mineLaunchSpeed;
             mineController.SetOwner(transform);
             mineController.SetInitialVelocity(initialVelocity);
             spawnedMines.Add(mineController);
@@ -96,6 +87,8 @@ public class EnemyShipController : MonoBehaviour
         float[] raycastInputs = _shipRaycast.GetSensors();
         float[] radarInputs = _radarDetector.GetSensors(1);
 
+        float[] mineInputs = new float[] { _currentMineCount, _mineCooldownTimer };
+
         float[] globalFeatures = new float[]
         {
             _shipMovement.maxSpeed,
@@ -104,7 +97,11 @@ public class EnemyShipController : MonoBehaviour
         };
 
         float[] inputVector = new float[
-            shipInputs.Length + raycastInputs.Length + radarInputs.Length + globalFeatures.Length
+            shipInputs.Length
+                + raycastInputs.Length
+                + radarInputs.Length
+                + mineInputs.Length
+                + globalFeatures.Length
         ];
 
         int offset = 0;
@@ -116,6 +113,9 @@ public class EnemyShipController : MonoBehaviour
 
         radarInputs.CopyTo(inputVector, offset);
         offset += radarInputs.Length;
+
+        mineInputs.CopyTo(inputVector, offset);
+        offset += mineInputs.Length;
 
         globalFeatures.CopyTo(inputVector, offset);
 

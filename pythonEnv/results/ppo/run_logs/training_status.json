@@ -1,0 +1,41 @@
+{
+    "player_speed_multiplier": {
+        "lesson_num": 0
+    },
+    "enemy_speed_multiplier": {
+        "lesson_num": 0
+    },
+    "difficulty": {
+        "lesson_num": 0
+    },
+    "enemy_spawn_radius": {
+        "lesson_num": 0
+    },
+    "EnemyShip": {
+        "checkpoints": [
+            {
+                "steps": 5599,
+                "file_path": "results/ppo/EnemyShip/EnemyShip-5599.onnx",
+                "reward": -6.224346670237455,
+                "creation_time": 1767718462.3639834,
+                "auxillary_file_paths": [
+                    "results/ppo/EnemyShip/EnemyShip-5599.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 5599,
+            "file_path": "results/ppo/EnemyShip.onnx",
+            "reward": -6.224346670237455,
+            "creation_time": 1767718462.3639834,
+            "auxillary_file_paths": [
+                "results/ppo/EnemyShip/EnemyShip-5599.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.8.0+cu128"
+    }
+}

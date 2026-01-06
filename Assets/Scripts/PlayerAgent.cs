@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerShipController))]
+[RequireComponent(typeof(ShipMovement))]
+[RequireComponent(typeof(ShipRaycast))]
 public class PlayerAgent : Agent
 {
     private PlayerShipController _controller;
@@ -13,8 +15,6 @@ public class PlayerAgent : Agent
     private ShipRaycast _raycast;
 
     private Vector2 _targetPos;
-    private float _lastDist;
-    private float _startDist;
 
     public GameManager gm;
 
@@ -34,13 +34,12 @@ public class PlayerAgent : Agent
     public override void OnEpisodeBegin()
     {
         gm.RestartGame();
+
         _movement.speedMult = Academy.Instance.EnvironmentParameters.GetWithDefault(
             "player_speed_multiplier",
             1.0f
         );
         _targetPos = gm.targetLake.lakeCenter;
-        _startDist = Vector2.Distance(transform.localPosition, _targetPos);
-        _lastDist = _startDist;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -71,21 +70,106 @@ public class PlayerAgent : Agent
     {
         float targetThrottle = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
         float targetRudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
+
         _movement.SetInput(targetThrottle, targetRudder);
 
-        float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
-        float diff = _lastDist - currentDist;
+        CalculateMovementRewards();
+        CalculateRadarRewards();
 
-        if (_startDist > 0 && Mathf.Abs(diff) > 0.001f)
+        AddReward(-0.0002f);
+    }
+
+    private void CalculateMovementRewards()
+    {
+        float[] surroundings = _raycast.GetSensors();
+        float rayDist = _raycast.GetRayDistance();
+        Vector2 shipVelocity = _movement.Velocity;
+
+        float totalDanger = 0f;
+
+        for (int i = 0; i < surroundings.Length; i++)
         {
-            float progress = diff / _startDist;
-            progress = Mathf.Clamp(progress, -0.01f, 0.01f);
-            AddReward(progress);
+            float dist = surroundings[i];
+
+            float angleStep = 360f / surroundings.Length;
+            float angle = i * angleStep;
+            Vector2 rayDir = Quaternion.Euler(0f, 0f, angle) * transform.up;
+
+            float closingSpeed = Vector2.Dot(shipVelocity, rayDir);
+
+            if (closingSpeed > 0.1f)
+            {
+                float risk = closingSpeed / (dist + 0.1f);
+                if (risk > 0.5f)
+                {
+                    totalDanger += risk;
+                }
+            }
         }
 
-        AddReward(-1f / gm.GetMaxStep());
+        float ttcPenalty = Mathf.Clamp(totalDanger * 0.05f, 0f, 1.0f);
+        AddReward(-ttcPenalty);
 
-        _lastDist = currentDist;
+        float speed = _movement.Velocity.magnitude;
+
+        if (speed > 0.1f)
+        {
+            Vector2 dirToTarget = (_targetPos - (Vector2)transform.localPosition).normalized;
+            Vector2 moveDir = _movement.Velocity.normalized;
+
+            float alignment = Vector2.Dot(moveDir, dirToTarget);
+
+            if (alignment > 0)
+            {
+                int lastIndex = surroundings.Length - 1;
+                float frontDist = surroundings[0] / rayDist;
+                float leftDist = surroundings[1] / rayDist;
+                float rightDist = surroundings[lastIndex] / rayDist;
+
+                float forwardClearance = (frontDist + leftDist + rightDist) / 3.0f;
+                float speedFactor = Mathf.Clamp01(speed / _movement.maxSpeed);
+                AddReward(alignment * speedFactor * 0.002f * forwardClearance);
+            }
+        }
+    }
+
+    private void CalculateRadarRewards()
+    {
+        var mines = _controller._radarDetector.DetectedMines;
+        float mineDanger = 0f;
+
+        foreach (var mine in mines)
+        {
+            if (mine.ClosingSpeed > 0.5f && mine.Distance < 20f)
+            {
+                float tti = mine.Distance / mine.ClosingSpeed;
+
+                if (tti < 3.0f)
+                {
+                    float risk = 0.01f / tti;
+                    mineDanger += risk;
+                }
+            }
+        }
+        AddReward(-Mathf.Clamp(mineDanger, 0f, 0.1f));
+
+        var enemies = _controller._radarDetector.VisibleTargets;
+        float enemyPressure = 0f;
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy.Distance < 25f && enemy.ClosingSpeed > 1.0f)
+            {
+                float pressure = enemy.ClosingSpeed / enemy.Distance;
+
+                if (pressure > 0.2f)
+                {
+                    enemyPressure += pressure;
+                }
+            }
+        }
+
+        AddReward(-Mathf.Clamp(enemyPressure * 0.05f, 0f, 0.05f));
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

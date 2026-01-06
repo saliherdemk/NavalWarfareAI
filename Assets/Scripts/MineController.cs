@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class MineController : MonoBehaviour
 {
-    public float ExplosionDelay = 3.0f;
-    public float ExplosionRadius = 5f;
+    private float ExplosionDelay = 5.0f;
+    private float ExplosionRadius = 5f;
     public float MineDrag = 0.5f;
     public LayerMask ObstacleMask;
 
-    public float MaxTravelDistance = 5f;
+    private float MaxTravelDistance = 20f;
 
     private Transform _owner;
 

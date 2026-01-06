@@ -4,8 +4,11 @@ namespace NormalizerClass
 {
     public static class Normalizer
     {
-        public const int PLAYER_OBS_SIZE = 37;
-        public const int ENEMY_OBS_SIZE = 33;
+        public const int PLAYER_OBS_SIZE = 41;
+        public const int ENEMY_OBS_SIZE = 37;
+
+        public static float mineCount = 10;
+        public static float mineCooldownTime = 5f;
 
         public static float mapWidth = 200f;
         public static float mapHeight = 200f;
@@ -37,13 +40,13 @@ namespace NormalizerClass
             }
 
             NormalizeTarget(destination, ref index, s, 18);
-            NormalizeTarget(destination, ref index, s, 21);
-            NormalizeTarget(destination, ref index, s, 24);
-            NormalizeTarget(destination, ref index, s, 27);
+            NormalizeTarget(destination, ref index, s, 23);
+            NormalizeMine(destination, ref index, s, 28);
+            NormalizeMine(destination, ref index, s, 31);
 
-            destination[index++] = NormalizeRange(s[30], minSpeed, maxSpeed);
-            destination[index++] = NormalizeRange(s[31], minAcceleration, maxAcceleration);
-            destination[index++] = NormalizeRange(s[32], minTurnSpeed, maxTurnSpeed);
+            destination[index++] = NormalizeRange(s[34], minSpeed, maxSpeed);
+            destination[index++] = NormalizeRange(s[35], minAcceleration, maxAcceleration);
+            destination[index++] = NormalizeRange(s[36], minTurnSpeed, maxTurnSpeed);
         }
 
         public static void NormalizeEnemyController(float[] s, float[] destination)
@@ -59,12 +62,15 @@ namespace NormalizerClass
             }
 
             NormalizeTarget(destination, ref index, s, 18);
-            NormalizeTarget(destination, ref index, s, 21);
-            NormalizeTarget(destination, ref index, s, 24);
+            NormalizeMine(destination, ref index, s, 23);
+            NormalizeMine(destination, ref index, s, 26);
 
-            destination[index++] = NormalizeRange(s[27], minSpeed, maxSpeed);
-            destination[index++] = NormalizeRange(s[28], minAcceleration, maxAcceleration);
-            destination[index++] = NormalizeRange(s[29], minTurnSpeed, maxTurnSpeed);
+            destination[index++] = s[29] / mineCount;
+            destination[index++] = s[30] / mineCooldownTime;
+
+            destination[index++] = NormalizeRange(s[31], minSpeed, maxSpeed);
+            destination[index++] = NormalizeRange(s[32], minAcceleration, maxAcceleration);
+            destination[index++] = NormalizeRange(s[33], minTurnSpeed, maxTurnSpeed);
         }
 
         public static float NormalizeTargetDistance(float d)
@@ -80,6 +86,15 @@ namespace NormalizerClass
         }
 
         private static void NormalizeTarget(float[] destination, ref int index, float[] s, int i)
+        {
+            destination[index++] = s[i] / radarRange;
+            AddSinCos(destination, ref index, s[i + 1]);
+            destination[index++] = s[i + 2] / maxSpeed;
+            destination[index++] = s[i + 3] / maxSpeed;
+            destination[index++] = s[i + 4] / maxSpeed;
+        }
+
+        private static void NormalizeMine(float[] destination, ref int index, float[] s, int i)
         {
             destination[index++] = s[i] / radarRange;
             AddSinCos(destination, ref index, s[i + 1]);
