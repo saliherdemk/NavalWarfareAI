@@ -9,8 +9,6 @@ public class MineController : MonoBehaviour
 
     private float MaxTravelDistance = 20f;
 
-    private Transform _owner;
-
     private float _explosionTimer;
     private Vector2 _velocity;
 
@@ -35,15 +33,12 @@ public class MineController : MonoBehaviour
         }
     }
 
-    public void SetOwner(Transform owner)
-    {
-        _owner = owner;
-    }
-
     public void SetInitialVelocity(Vector2 initialVelocity)
     {
         _velocity = initialVelocity;
     }
+
+    public float TimeToExplosion01 => Mathf.Clamp01(_explosionTimer / ExplosionDelay);
 
     void Update()
     {
@@ -81,6 +76,8 @@ public class MineController : MonoBehaviour
         if (!_reachedMaxRange)
         {
             _velocity = Vector2.Lerp(_velocity, Vector2.zero, MineDrag * dt);
+            // _velocity *= Mathf.Exp(-MineDrag * dt);
+
             transform.position += (Vector3)_velocity * dt;
         }
     }
@@ -108,10 +105,7 @@ public class MineController : MonoBehaviour
 
         foreach (Collider2D col in objects)
         {
-            if (_owner != null && col.transform == _owner)
-                continue;
-
-            if (col.CompareTag("EnemyShip") || col.CompareTag("PlayerShip"))
+            if (col.CompareTag("PlayerShip"))
                 return true;
         }
 
@@ -127,12 +121,7 @@ public class MineController : MonoBehaviour
 
         foreach (Collider2D col in objectsInRange)
         {
-            if (col.CompareTag("EnemyShip"))
-            {
-                var enemyShip = col.GetComponent<EnemyShipController>();
-                enemyShip.hitByMine = true;
-            }
-            else if (col.CompareTag("PlayerShip"))
+            if (col.CompareTag("PlayerShip"))
             {
                 var playerShip = col.GetComponent<PlayerShipController>();
                 playerShip.hitByMine = true;

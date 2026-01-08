@@ -1,48 +1,61 @@
-Player Input: | 2 + 16 + 8 + 8 + 3 + 3 = 40
-    shipForwardVel -> 0-maxSpeed 
-    shipSidewaysVel -> 0-maxSpeed 
+Enemy Input: 
+shipForwardVel 
+shipSidewaysVel
 
-    ray0 - ray15 -> 0-rayDistance | 16 INPUT
+ray0 - ray15
 
-    enemy 1-2: | 8 INPUT
-        distance -> 0-radarRange
-        angleSin -> -1,1
-        angleCos -> -1,1
-        closingSpeed -> 0, maxSpeed
+mineAmmoCount
+mineCooldown
 
-    mine 1-2: | 8 INPUT
-        distance -> 0-radarRange
-        angleSin -> -1,1
-        angleCos -> -1,1
-        closingSpeed -> 0, maxSpeed
-    
-    maxSpeed -> 4-10
-    acceleration -> 3-6
-    turnSpeed -> 40-100
+playerDirectionSin
+playerDirectionCos
+playerDistance
 
-    targetDistance -> 0-(200 * (2 ** 0.5))
-    targetAngleSin -> -1,1
-    targetAngleCos -> -1,1
+targetDirectionSin
+targetDirectionCos
+targetDistance
 
-Enemy Input: 2 + 16 + 4 + 8 + 3 = 33
-    shipForwardVel -> 0-maxSpeed 
-    shipSidewaysVel -> 0-maxSpeed 
+relativeVelX
+relativeVelY
 
-    ray0 - ray15 -> 0-rayDistance | 16 INPUT
+Player Input: 
+shipForwardVel 
+shipSidewaysVel
 
-    enemy 1: | 4 INPUT
-        distance -> 0-radarRange
-        angleSin -> -1,1
-        angleCos -> -1,1
-        closingSpeed -> 0, maxSpeed
+ray0 - ray15
 
-    mine 1-2: | 8 INPUT
-        distance -> 0-radarRange
-        angleSin -> -1,1
-        angleCos -> -1,1
-        closingSpeed -> 0, maxSpeed
-    
-    maxSpeed -> 4-10
-    acceleration -> 3-6
-    turnSpeed -> 40-100
+enemy1Exists
+enemy1Distance
+enemy1DirectionSin
+enemy1DirectionCos
+enemy1ClosingSpeed
+
+enemy2Exists
+enemy2Distance
+enemy2DirectionSin
+enemy2DirectionCos
+enemy2ClosingSpeed
+
+mine1Exists
+mine1Distance
+mine1DirectionSin
+mine1DirectionCos
+mine1TTE
+
+mine2Exists
+mine2Distance
+mine2DirectionSin
+mine2DirectionCos
+mine2TTE
+
+targetDistance
+targetDirX
+targetDirY
+
+
+
+
+
+
+
 

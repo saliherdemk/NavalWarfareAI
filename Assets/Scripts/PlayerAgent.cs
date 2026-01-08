@@ -13,22 +13,24 @@ public class PlayerAgent : Agent
     private PlayerShipController _controller;
     private ShipMovement _movement;
     private ShipRaycast _raycast;
+    private RadarDetector _radar;
 
-    private Vector2 _targetPos;
+    float _prevTargetDist;
 
     public GameManager gm;
 
-    private float[] _normalizedSensors;
-    private float[] _normalizedAngle;
+    private float[] _nControllerSensors;
+    private float[] _nTargetSensors;
 
     public override void Initialize()
     {
         _controller = GetComponent<PlayerShipController>();
         _movement = GetComponent<ShipMovement>();
         _raycast = GetComponent<ShipRaycast>();
+        _radar = GetComponentInChildren<RadarDetector>();
 
-        _normalizedSensors = new float[Normalizer.GetPlayerSensorCount()];
-        _normalizedAngle = new float[Normalizer.GetTargetAngleCount()];
+        _nControllerSensors = new float[Normalizer.PLAYER_CONTROLLER_OBS_SIZE];
+        _nTargetSensors = new float[Normalizer.PLAYER_TARGET_OBS_SIZE];
     }
 
     public override void OnEpisodeBegin()
@@ -39,147 +41,113 @@ public class PlayerAgent : Agent
             "player_speed_multiplier",
             1.0f
         );
-        _targetPos = gm.targetLake.lakeCenter;
+        _prevTargetDist = Vector2.Distance(transform.localPosition, gm.targetLake.lakeCenter);
+    }
+
+    public float[] GetRelativePositionData(Vector2 targetWorldPosition)
+    {
+        Vector2 selfPos = transform.localPosition;
+        Vector2 toTargetWorld = targetWorldPosition - selfPos;
+        float distance = toTargetWorld.magnitude;
+        Vector2 localDir = transform.InverseTransformDirection(toTargetWorld.normalized);
+        return new float[] { localDir.x, localDir.y, distance };
+    }
+
+    private void AddArray(VectorSensor sensor, float[] values)
+    {
+        for (int i = 0; i < values.Length; i++)
+            sensor.AddObservation(values[i]);
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        Normalizer.NormalizePlayerController(_controller.GetSensors(), _normalizedSensors);
-        foreach (var s in _normalizedSensors)
-        {
-            sensor.AddObservation(s);
-        }
-
-        float currentDist = Vector2.Distance(transform.localPosition, _targetPos);
-        float normalizedDist = Normalizer.NormalizeTargetDistance(currentDist);
-        sensor.AddObservation(normalizedDist);
-
-        float angleToTarget = Vector2.SignedAngle(
-            transform.up,
-            _targetPos - (Vector2)transform.localPosition
+        Normalizer.NormalizePlayerController(_controller.GetSensors(), _nControllerSensors);
+        Normalizer.NormalizeRelativePositionData(
+            GetRelativePositionData(gm.targetLake.lakeCenter),
+            _nTargetSensors
         );
 
-        Normalizer.NormalizeTargetAngle(angleToTarget, _normalizedAngle);
-        foreach (float item in _normalizedAngle)
-        {
-            sensor.AddObservation(item);
-        }
+        AddArray(sensor, _nControllerSensors);
+        AddArray(sensor, _nTargetSensors);
+        // Debug.Log($"controller sensors[{string.Join(", ", _nControllerSensors)}]");
+        // Debug.Log($"target sensors[{string.Join(", ", _nTargetSensors)}]");
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        float targetThrottle = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
-        float targetRudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
+        float throttle = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
+        float rudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
 
-        _movement.SetInput(targetThrottle, targetRudder);
+        _movement.SetInput(throttle, rudder);
 
-        CalculateMovementRewards();
-        CalculateRadarRewards();
+        TargetProgressReward();
+        MineDangerReward();
+        EnemyDangerReward();
 
-        AddReward(-0.0002f);
+        AddReward(0.0005f);
     }
 
-    private void CalculateMovementRewards()
+    void TargetProgressReward()
     {
-        float[] surroundings = _raycast.GetSensors();
-        float rayDist = _raycast.GetRayDistance();
-        Vector2 shipVelocity = _movement.Velocity;
-
-        float totalDanger = 0f;
-
-        for (int i = 0; i < surroundings.Length; i++)
-        {
-            float dist = surroundings[i];
-
-            float angleStep = 360f / surroundings.Length;
-            float angle = i * angleStep;
-            Vector2 rayDir = Quaternion.Euler(0f, 0f, angle) * transform.up;
-
-            float closingSpeed = Vector2.Dot(shipVelocity, rayDir);
-
-            if (closingSpeed > 0.1f)
-            {
-                float risk = closingSpeed / (dist + 0.1f);
-                if (risk > 0.5f)
-                {
-                    totalDanger += risk;
-                }
-            }
-        }
-
-        float ttcPenalty = Mathf.Clamp(totalDanger * 0.05f, 0f, 1.0f);
-        AddReward(-ttcPenalty);
-
-        float speed = _movement.Velocity.magnitude;
-
-        if (speed > 0.1f)
-        {
-            Vector2 dirToTarget = (_targetPos - (Vector2)transform.localPosition).normalized;
-            Vector2 moveDir = _movement.Velocity.normalized;
-
-            float alignment = Vector2.Dot(moveDir, dirToTarget);
-
-            if (alignment > 0)
-            {
-                int lastIndex = surroundings.Length - 1;
-                float frontDist = surroundings[0] / rayDist;
-                float leftDist = surroundings[1] / rayDist;
-                float rightDist = surroundings[lastIndex] / rayDist;
-
-                float forwardClearance = (frontDist + leftDist + rightDist) / 3.0f;
-                float speedFactor = Mathf.Clamp01(speed / _movement.maxSpeed);
-                AddReward(alignment * speedFactor * 0.002f * forwardClearance);
-            }
-        }
+        float curr = Vector2.Distance(transform.localPosition, gm.targetLake.lakeCenter);
+        float delta = _prevTargetDist - curr;
+        AddReward(delta * 0.01f);
+        _prevTargetDist = curr;
     }
 
-    private void CalculateRadarRewards()
+    void MineDangerReward()
     {
-        var mines = _controller._radarDetector.DetectedMines;
-        float mineDanger = 0f;
+        if (!_radar.TryGetClosestMine(out var mine))
+            return;
 
-        foreach (var mine in mines)
+        if (mine.Distance > 10f)
+            return;
+
+        float distDanger = 1f - Mathf.Clamp01(mine.Distance / 50f);
+        float timeDanger = 1f - mine.TimeToExplosion;
+
+        float danger = distDanger * timeDanger;
+        AddReward(-danger * 0.01f);
+    }
+
+    void EnemyDangerReward()
+    {
+        Vector2 p = transform.localPosition;
+        Vector2 t = gm.targetLake.lakeCenter;
+
+        Vector2 ptWorld = (t - p).normalized;
+        Vector2 ptLocal = transform.InverseTransformDirection(ptWorld);
+
+        float worstThreat = 0f;
+
+        foreach (var e in _radar.DetectedTargets)
         {
-            if (mine.ClosingSpeed > 0.5f && mine.Distance < 20f)
-            {
-                float tti = mine.Distance / mine.ClosingSpeed;
+            if (e.Distance > 20f)
+                continue;
 
-                if (tti < 3.0f)
-                {
-                    float risk = 0.01f / tti;
-                    mineDanger += risk;
-                }
-            }
-        }
-        AddReward(-Mathf.Clamp(mineDanger, 0f, 0.1f));
+            Vector2 peLocal = e.LocalDir;
 
-        var enemies = _controller._radarDetector.VisibleTargets;
-        float enemyPressure = 0f;
+            float alignment = Vector2.Dot(ptLocal, peLocal);
+            if (alignment <= 0f)
+                continue;
 
-        foreach (var enemy in enemies)
-        {
-            if (enemy.Distance < 25f && enemy.ClosingSpeed > 1.0f)
-            {
-                float pressure = enemy.ClosingSpeed / enemy.Distance;
+            float distWeight = 1f - Mathf.Clamp01(e.Distance / 20f);
+            float threat = alignment * distWeight;
 
-                if (pressure > 0.2f)
-                {
-                    enemyPressure += pressure;
-                }
-            }
+            worstThreat = Mathf.Max(worstThreat, threat);
         }
 
-        AddReward(-Mathf.Clamp(enemyPressure * 0.05f, 0f, 0.05f));
+        AddReward(-worstThreat * 0.003f);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var cont = actionsOut.ContinuousActions;
 
-        cont[0] = Keyboard.current.wKey.isPressed ? 1 : 0;
-        cont[0] = Keyboard.current.sKey.isPressed ? -1 : cont[0];
+        cont[0] = Keyboard.current.upArrowKey.isPressed ? 1 : 0;
+        cont[0] = Keyboard.current.downArrowKey.isPressed ? -1 : cont[0];
 
-        cont[1] = Keyboard.current.aKey.isPressed ? -1 : 0;
-        cont[1] = Keyboard.current.dKey.isPressed ? 1 : cont[1];
+        cont[1] = Keyboard.current.leftArrowKey.isPressed ? -1 : 0;
+        cont[1] = Keyboard.current.rightArrowKey.isPressed ? 1 : cont[1];
     }
 }

@@ -35,17 +35,10 @@ public class PlayerShipController : MonoBehaviour
     {
         float[] shipInputs = _shipMovement.GetSensors();
         float[] raycastInputs = _shipRaycast.GetSensors();
-        float[] radarInputs = _radarDetector.GetSensors(2);
-
-        float[] globalFeatures = new float[]
-        {
-            _shipMovement.maxSpeed,
-            _shipMovement.acceleration,
-            _shipMovement.turnSpeed,
-        };
+        float[] radarInputs = _radarDetector.GetSensors();
 
         float[] inputVector = new float[
-            shipInputs.Length + raycastInputs.Length + radarInputs.Length + globalFeatures.Length
+            shipInputs.Length + raycastInputs.Length + radarInputs.Length
         ];
 
         int offset = 0;
@@ -57,8 +50,6 @@ public class PlayerShipController : MonoBehaviour
 
         radarInputs.CopyTo(inputVector, offset);
         offset += radarInputs.Length;
-
-        globalFeatures.CopyTo(inputVector, offset);
 
         return inputVector;
     }

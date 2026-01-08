@@ -5,17 +5,15 @@ using UnityEngine;
 public struct DetectedTarget
 {
     public float Distance;
-    public float RelativeAngle;
+    public Vector2 LocalDir;
     public float ClosingSpeed;
-    public bool HasLOS;
-    public Vector2 WorldVelocity;
 }
 
 public struct DetectedMine
 {
     public float Distance;
-    public float RelativeAngle;
-    public float ClosingSpeed;
+    public Vector2 LocalDir;
+    public float TimeToExplosion;
 }
 
 public class RadarDetector : MonoBehaviour
@@ -24,14 +22,13 @@ public class RadarDetector : MonoBehaviour
     public float Range = 50f;
 
     public LayerMask TargetMask;
-
     public LayerMask ObstacleMask;
 
     [Header("Mine Detection")]
     public LayerMask MineMask;
 
-    public List<DetectedTarget> VisibleTargets { get; private set; } = new List<DetectedTarget>();
-    public List<DetectedMine> DetectedMines { get; private set; } = new List<DetectedMine>();
+    public List<DetectedTarget> DetectedTargets { get; private set; } = new();
+    public List<DetectedMine> DetectedMines { get; private set; } = new();
 
     private ShipMovement _shipMovement;
 
@@ -40,51 +37,68 @@ public class RadarDetector : MonoBehaviour
         _shipMovement = GetComponent<ShipMovement>();
     }
 
+    public void TickRadar()
+    {
+        DetectTargets();
+        DetectMines();
+    }
+
+    public bool TryGetClosestTarget(out DetectedTarget target)
+    {
+        if (DetectedTargets.Count == 0)
+        {
+            target = default;
+            return false;
+        }
+
+        target = DetectedTargets.OrderBy(t => t.Distance).First();
+        return true;
+    }
+
+    public bool TryGetClosestMine(out DetectedMine mine)
+    {
+        if (DetectedMines.Count == 0)
+        {
+            mine = default;
+            return false;
+        }
+
+        mine = DetectedMines.OrderBy(m => m.Distance).First();
+        return true;
+    }
+
     private void DetectTargets()
     {
-        VisibleTargets.Clear();
+        DetectedTargets.Clear();
 
-        Collider2D[] potentialTargets = Physics2D.OverlapCircleAll(
-            transform.position,
-            Range,
-            TargetMask
-        );
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, Range, TargetMask);
 
-        foreach (Collider2D targetCollider in potentialTargets)
+        Vector2 selfPos = transform.position;
+
+        foreach (Collider2D col in hits)
         {
-            if (targetCollider.transform == transform)
-            {
+            Transform t = col.transform;
+            Vector2 toTarget = (Vector2)t.position - selfPos;
+            float dist = toTarget.magnitude;
+            if (dist < 0.001f)
                 continue;
-            }
 
-            Transform target = targetCollider.transform;
-            Vector2 targetPosition = target.position;
-            Vector2 selfPosition = transform.position;
+            Vector2 dirWorld = toTarget / dist;
+            Vector2 dirLocal = transform.InverseTransformDirection(dirWorld);
 
-            Vector2 directionToTarget = targetPosition - selfPosition;
-            float distance = directionToTarget.magnitude;
+            ShipMovement sm = t.GetComponent<ShipMovement>();
+            if (sm == null)
+                continue;
 
-            bool losClear = CheckLineOfSight(selfPosition, targetPosition, distance);
-
-            float angleToTarget = Vector2.SignedAngle(transform.up, directionToTarget);
-
-            ShipMovement sm = target.GetComponent<ShipMovement>();
             Vector2 relVel = sm.Velocity - _shipMovement.Velocity;
+            float closingSpeed = Vector2.Dot(relVel, dirWorld);
 
-            float closingSpeed = 0f;
-            if (distance > 0.001f)
-            {
-                closingSpeed = Vector2.Dot(relVel, directionToTarget / distance);
-            }
-
-            VisibleTargets.Add(
+            DetectedTargets.Add(
                 new DetectedTarget
                 {
-                    Distance = distance,
-                    RelativeAngle = angleToTarget,
+                    Distance = dist,
+                    LocalDir = dirLocal,
                     ClosingSpeed = closingSpeed,
-                    HasLOS = losClear,
-                    WorldVelocity = sm.Velocity,
                 }
             );
         }
@@ -94,155 +108,80 @@ public class RadarDetector : MonoBehaviour
     {
         DetectedMines.Clear();
 
-        Collider2D[] nearbyMines = Physics2D.OverlapCircleAll(transform.position, Range, MineMask);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, Range, MineMask);
 
-        foreach (Collider2D mineCollider in nearbyMines)
+        Vector2 selfPos = transform.position;
+
+        foreach (Collider2D col in hits)
         {
-            Transform target = mineCollider.transform;
-            Vector2 targetPosition = target.position;
-            Vector2 selfPosition = transform.position;
+            Transform m = col.transform;
+            Vector2 toMine = (Vector2)m.position - selfPos;
+            float dist = toMine.magnitude;
+            if (dist < 0.001f)
+                continue;
 
-            Vector2 directionToTarget = targetPosition - selfPosition;
-            float distance = directionToTarget.magnitude;
+            Vector2 dirWorld = toMine / dist;
+            Vector2 dirLocal = transform.InverseTransformDirection(dirWorld);
 
-            float angleToTarget = Vector2.SignedAngle(transform.up, directionToTarget);
-
-            MineController mc = mineCollider.GetComponent<MineController>();
-            Vector2 relVel = mc.Velocity - _shipMovement.Velocity;
-
-            float closingSpeed = 0f;
-            if (distance > 0.001f)
-            {
-                closingSpeed = Vector2.Dot(relVel, directionToTarget / distance);
-            }
+            MineController mc = col.GetComponent<MineController>();
+            if (mc == null)
+                continue;
 
             DetectedMines.Add(
                 new DetectedMine
                 {
-                    Distance = distance,
-                    RelativeAngle = angleToTarget,
-                    ClosingSpeed = closingSpeed,
+                    Distance = dist,
+                    LocalDir = dirLocal,
+                    TimeToExplosion = mc.TimeToExplosion01,
                 }
             );
         }
     }
 
-    private bool CheckLineOfSight(Vector2 origin, Vector2 target, float distance)
+    public float[] GetSensors(int maxTargets = 2, int maxMines = 2)
     {
-        Vector2 direction = (target - origin).normalized;
+        TickRadar();
 
-        RaycastHit2D hit = Physics2D.Raycast(origin, direction, distance, ObstacleMask);
+        List<float> inputs = new();
 
-        if (hit.collider == null)
+        var targets = DetectedTargets.OrderBy(t => t.Distance).Take(maxTargets).ToList();
+
+        for (int i = 0; i < maxTargets; i++)
         {
-            return true;
-        }
-
-        return false;
-    }
-
-    private void DrawDebugRadar()
-    {
-        DebugExtension.DrawCircle(transform.position, Range, Color.yellow);
-
-        foreach (var t in VisibleTargets)
-        {
-            Vector2 dir = Quaternion.Euler(0f, 0f, t.RelativeAngle) * transform.up;
-            Vector2 end = (Vector2)transform.position + dir * t.Distance;
-
-            Color color = t.HasLOS ? Color.red : Color.blue;
-            Debug.DrawLine(transform.position, end, color);
-        }
-
-        foreach (var m in DetectedMines)
-        {
-            Vector2 dir = Quaternion.Euler(0f, 0f, m.RelativeAngle) * transform.up;
-            Vector2 end = (Vector2)transform.position + dir * m.Distance;
-
-            Debug.DrawLine(transform.position, end, Color.green);
-        }
-    }
-
-    public float[] GetSensors(int enemyCount)
-    {
-        DetectTargets();
-        DetectMines();
-        // DrawDebugRadar();
-        List<float> inputs = new List<float>();
-        Transform self = transform;
-
-        var visibleEnemies = VisibleTargets
-            .Where(t => t.HasLOS)
-            .OrderBy(t => t.Distance)
-            .Take(2)
-            .ToList();
-
-        for (int i = 0; i < enemyCount; i++)
-        {
-            if (i < visibleEnemies.Count)
+            if (i < targets.Count)
             {
-                var e = visibleEnemies[i];
-
-                Vector2 localVel = transform.InverseTransformVector(e.WorldVelocity);
-
-                inputs.Add(e.Distance);
-                inputs.Add(e.RelativeAngle);
-                inputs.Add(e.ClosingSpeed);
-                inputs.Add(localVel.x);
-                inputs.Add(localVel.y);
+                var t = targets[i];
+                inputs.Add(1f);
+                inputs.Add(t.Distance);
+                inputs.Add(t.LocalDir.x);
+                inputs.Add(t.LocalDir.y);
+                inputs.Add(t.ClosingSpeed);
             }
             else
             {
-                inputs.Add(0f);
-                inputs.Add(0f);
-                inputs.Add(0f);
-                inputs.Add(0f);
-                inputs.Add(0f);
+                inputs.AddRange(new float[5]);
             }
         }
 
-        var closestMines = DetectedMines.OrderBy(m => m.Distance).Take(2).ToList();
+        var mines = DetectedMines.OrderBy(m => m.Distance).Take(maxMines).ToList();
 
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < maxMines; i++)
         {
-            if (i < closestMines.Count)
+            if (i < mines.Count)
             {
-                var m = closestMines[i];
-
+                var m = mines[i];
+                inputs.Add(1f);
                 inputs.Add(m.Distance);
-                inputs.Add(m.RelativeAngle);
-                inputs.Add(m.ClosingSpeed);
+                inputs.Add(m.LocalDir.x);
+                inputs.Add(m.LocalDir.y);
+                inputs.Add(m.TimeToExplosion);
             }
             else
             {
-                inputs.Add(0f);
-                inputs.Add(0f);
-                inputs.Add(0f);
+                inputs.AddRange(new float[5]);
             }
         }
 
         return inputs.ToArray();
-    }
-}
-
-public static class DebugExtension
-{
-    public static void DrawCircle(Vector3 position, float radius, Color color, float duration = 0f)
-    {
-        int segments = 32;
-        Vector3 previousPoint = position + new Vector3(radius, 0, 0);
-        for (int i = 1; i <= segments; i++)
-        {
-            float angle = i * 360f / segments;
-            Vector3 newPoint =
-                position
-                + new Vector3(
-                    Mathf.Cos(angle * Mathf.Deg2Rad) * radius,
-                    Mathf.Sin(angle * Mathf.Deg2Rad) * radius,
-                    0
-                );
-            Debug.DrawLine(previousPoint, newPoint, color, duration);
-            previousPoint = newPoint;
-        }
     }
 }

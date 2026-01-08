@@ -4,8 +4,21 @@ namespace NormalizerClass
 {
     public static class Normalizer
     {
-        public const int PLAYER_OBS_SIZE = 41;
-        public const int ENEMY_OBS_SIZE = 37;
+        public const int ENEMY_CONTROLLER_OBS_SIZE = 20;
+        public const int ENEMY_PLAYER_OBS_SIZE = 3;
+        public const int ENEMY_TARGET_OBS_SIZE = 3;
+        public const int ENEMY_REL_VELOCITY_OBS_SIZE = 2;
+
+        public const int ENEMY_OBS_SIZE =
+            ENEMY_CONTROLLER_OBS_SIZE
+            + ENEMY_PLAYER_OBS_SIZE
+            + ENEMY_TARGET_OBS_SIZE
+            + ENEMY_REL_VELOCITY_OBS_SIZE;
+
+        public const int PLAYER_CONTROLLER_OBS_SIZE = 38;
+        public const int PLAYER_TARGET_OBS_SIZE = 3;
+
+        public const int PLAYER_OBS_SIZE = PLAYER_CONTROLLER_OBS_SIZE + PLAYER_TARGET_OBS_SIZE;
 
         public static float mineCount = 10;
         public static float mineCooldownTime = 5f;
@@ -21,11 +34,36 @@ namespace NormalizerClass
         public static float minTurnSpeed = 40f;
         public static float maxTurnSpeed = 100f;
 
-        public static int GetPlayerSensorCount() => PLAYER_OBS_SIZE;
+        public static void NormalizeEnemyController(float[] s, float[] destination)
+        {
+            int index = 0;
 
-        public static int GetEnemySensorCount() => ENEMY_OBS_SIZE;
+            destination[index++] = s[0] / maxSpeed;
+            destination[index++] = s[1] / maxSpeed;
 
-        public static int GetTargetAngleCount() => 2;
+            for (int i = 2; i < 2 + 16; i++)
+            {
+                destination[index++] = s[i] / rayDistance;
+            }
+
+            destination[index++] = s[18] / mineCount;
+            destination[index++] = s[19] / mineCooldownTime;
+        }
+
+        public static void NormalizeRelativePositionData(float[] s, float[] destination)
+        {
+            int index = 0;
+            destination[index++] = s[0];
+            destination[index++] = s[1];
+            destination[index++] = s[2] / 283f; // 200 * sqrt(2) ;
+        }
+
+        public static void NormalizeRelativeVelocity(float[] s, float[] destination)
+        {
+            int index = 0;
+            destination[index++] = s[0] / maxSpeed;
+            destination[index++] = s[1] / maxSpeed;
+        }
 
         public static void NormalizePlayerController(float[] s, float[] destination)
         {
@@ -39,78 +77,29 @@ namespace NormalizerClass
                 destination[index++] = s[i] / rayDistance;
             }
 
-            NormalizeTarget(destination, ref index, s, 18);
-            NormalizeTarget(destination, ref index, s, 23);
-            NormalizeMine(destination, ref index, s, 28);
-            NormalizeMine(destination, ref index, s, 31);
+            destination[index++] = s[18];
+            destination[index++] = s[19] / radarRange;
+            destination[index++] = s[20];
+            destination[index++] = s[21];
+            destination[index++] = s[22] / maxSpeed;
 
-            destination[index++] = NormalizeRange(s[34], minSpeed, maxSpeed);
-            destination[index++] = NormalizeRange(s[35], minAcceleration, maxAcceleration);
-            destination[index++] = NormalizeRange(s[36], minTurnSpeed, maxTurnSpeed);
-        }
+            destination[index++] = s[23];
+            destination[index++] = s[24] / radarRange;
+            destination[index++] = s[25];
+            destination[index++] = s[26];
+            destination[index++] = s[27] / maxSpeed;
 
-        public static void NormalizeEnemyController(float[] s, float[] destination)
-        {
-            int index = 0;
+            destination[index++] = s[28];
+            destination[index++] = s[29] / radarRange;
+            destination[index++] = s[30];
+            destination[index++] = s[31];
+            destination[index++] = s[32];
 
-            destination[index++] = s[0] / maxSpeed;
-            destination[index++] = s[1] / maxSpeed;
-
-            for (int i = 2; i < 2 + 16; i++)
-            {
-                destination[index++] = s[i] / rayDistance;
-            }
-
-            NormalizeTarget(destination, ref index, s, 18);
-            NormalizeMine(destination, ref index, s, 23);
-            NormalizeMine(destination, ref index, s, 26);
-
-            destination[index++] = s[29] / mineCount;
-            destination[index++] = s[30] / mineCooldownTime;
-
-            destination[index++] = NormalizeRange(s[31], minSpeed, maxSpeed);
-            destination[index++] = NormalizeRange(s[32], minAcceleration, maxAcceleration);
-            destination[index++] = NormalizeRange(s[33], minTurnSpeed, maxTurnSpeed);
-        }
-
-        public static float NormalizeTargetDistance(float d)
-        {
-            return d / 283f; // 200 * sqrt(2)
-        }
-
-        public static void NormalizeTargetAngle(float angleDeg, float[] destination)
-        {
-            float rad = angleDeg * Mathf.Deg2Rad;
-            destination[0] = Mathf.Cos(rad);
-            destination[1] = Mathf.Sin(rad);
-        }
-
-        private static void NormalizeTarget(float[] destination, ref int index, float[] s, int i)
-        {
-            destination[index++] = s[i] / radarRange;
-            AddSinCos(destination, ref index, s[i + 1]);
-            destination[index++] = s[i + 2] / maxSpeed;
-            destination[index++] = s[i + 3] / maxSpeed;
-            destination[index++] = s[i + 4] / maxSpeed;
-        }
-
-        private static void NormalizeMine(float[] destination, ref int index, float[] s, int i)
-        {
-            destination[index++] = s[i] / radarRange;
-            AddSinCos(destination, ref index, s[i + 1]);
-            destination[index++] = s[i + 2] / maxSpeed;
-        }
-
-        private static void AddSinCos(float[] destination, ref int index, float angleDeg)
-        {
-            float rad = angleDeg * Mathf.Deg2Rad;
-            destination[index++] = Mathf.Cos(rad);
-            destination[index++] = Mathf.Sin(rad);
-        }
-
-        private static float NormalizeRange(float value, float min, float max)
-        {
-            return (value - min) / (max - min);
+            destination[index++] = s[33];
+            destination[index++] = s[34] / radarRange;
+            destination[index++] = s[35];
+            destination[index++] = s[36];
+            destination[index++] = s[37];
         }
     }
 }

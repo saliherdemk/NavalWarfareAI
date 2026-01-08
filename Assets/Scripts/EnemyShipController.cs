@@ -6,12 +6,9 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(RadarDetector))]
 public class EnemyShipController : MonoBehaviour
 {
-    public bool hitByMine = false;
-
     public GameObject minePrefab;
 
     public int initialMineCount = 10;
-
     public float mineCooldownTime = 5f;
 
     public float mineLaunchOffset = 5.0f;
@@ -22,14 +19,10 @@ public class EnemyShipController : MonoBehaviour
 
     private ShipMovement _shipMovement;
     private ShipRaycast _shipRaycast;
-    public RadarDetector _radarDetector;
-
-    private List<MineController> spawnedMines = new List<MineController>();
 
     void Awake()
     {
         _shipMovement = GetComponent<ShipMovement>();
-        _radarDetector = GetComponent<RadarDetector>();
         _shipRaycast = GetComponent<ShipRaycast>();
 
         _currentMineCount = initialMineCount;
@@ -41,7 +34,6 @@ public class EnemyShipController : MonoBehaviour
         gameObject.SetActive(true);
         _shipMovement.ResetMovement();
         transform.eulerAngles = Vector3.zero;
-        hitByMine = false;
         _currentMineCount = initialMineCount;
         _mineCooldownTimer = 0f;
         transform.localPosition = new Vector3(spawnCoorinates.x, spawnCoorinates.y, 0f);
@@ -67,9 +59,7 @@ public class EnemyShipController : MonoBehaviour
         if (mineController != null)
         {
             Vector2 initialVelocity = direction * mineLaunchSpeed;
-            mineController.SetOwner(transform);
             mineController.SetInitialVelocity(initialVelocity);
-            spawnedMines.Add(mineController);
         }
         else
         {
@@ -85,23 +75,11 @@ public class EnemyShipController : MonoBehaviour
     {
         float[] shipInputs = _shipMovement.GetSensors();
         float[] raycastInputs = _shipRaycast.GetSensors();
-        float[] radarInputs = _radarDetector.GetSensors(1);
 
         float[] mineInputs = new float[] { _currentMineCount, _mineCooldownTimer };
 
-        float[] globalFeatures = new float[]
-        {
-            _shipMovement.maxSpeed,
-            _shipMovement.acceleration,
-            _shipMovement.turnSpeed,
-        };
-
         float[] inputVector = new float[
-            shipInputs.Length
-                + raycastInputs.Length
-                + radarInputs.Length
-                + mineInputs.Length
-                + globalFeatures.Length
+            shipInputs.Length + raycastInputs.Length + mineInputs.Length
         ];
 
         int offset = 0;
@@ -111,13 +89,8 @@ public class EnemyShipController : MonoBehaviour
         raycastInputs.CopyTo(inputVector, offset);
         offset += raycastInputs.Length;
 
-        radarInputs.CopyTo(inputVector, offset);
-        offset += radarInputs.Length;
-
         mineInputs.CopyTo(inputVector, offset);
         offset += mineInputs.Length;
-
-        globalFeatures.CopyTo(inputVector, offset);
 
         return inputVector;
     }

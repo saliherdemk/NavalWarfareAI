@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     private EnemyShipController enemy2;
     private EnemyAgent enemy2Agent;
 
-    private PlayerShipController player;
+    public PlayerShipController player;
     private PlayerAgent playerAgent;
 
     private GameObject targetMarkerInstance;
@@ -51,16 +51,18 @@ public class GameManager : MonoBehaviour
 
     public void CheckDeaths()
     {
-        if (enemy1.gameObject.activeSelf && CheckEnemyDeath(enemy1))
+        if (enemy1.gameObject.activeSelf && CommitedSuicide(enemy1.transform))
         {
-            enemy1Agent.AddReward(-0.5f);
+            enemy1Agent.AddReward(-1.0f);
+            playerAgent.AddReward(+0.3f);
             enemy1Agent.EndEpisode();
             enemy1.gameObject.SetActive(false);
         }
 
-        if (enemy2.gameObject.activeSelf && CheckEnemyDeath(enemy2))
+        if (enemy2.gameObject.activeSelf && CommitedSuicide(enemy2.transform))
         {
-            enemy2Agent.AddReward(-0.5f);
+            enemy2Agent.AddReward(-1.0f);
+            playerAgent.AddReward(+0.3f);
             enemy2Agent.EndEpisode();
             enemy2.gameObject.SetActive(false);
         }
@@ -68,14 +70,12 @@ public class GameManager : MonoBehaviour
         if (CommitedSuicide(player.transform))
         {
             playerAgent.AddReward(-1.0f);
+
             if (enemy1.gameObject.activeSelf)
-            {
-                enemy1Agent.AddReward(2.0f);
-            }
+                enemy1Agent.AddReward(+1.0f);
             if (enemy2.gameObject.activeSelf)
-            {
-                enemy2Agent.AddReward(2.0f);
-            }
+                enemy2Agent.AddReward(+1.0f);
+
             EndEpisode();
             return;
         }
@@ -83,51 +83,62 @@ public class GameManager : MonoBehaviour
         if (player.hitByMine)
         {
             playerAgent.AddReward(-1.0f);
+
             if (enemy1.gameObject.activeSelf)
-            {
-                enemy1Agent.AddReward(2.0f);
-            }
+                enemy1Agent.AddReward(+1.0f);
             if (enemy2.gameObject.activeSelf)
-            {
-                enemy2Agent.AddReward(2.0f);
-            }
+                enemy2Agent.AddReward(+1.0f);
+
             EndEpisode();
             return;
         }
 
         Vector2 pos = player.transform.localPosition;
 
-        float dist1 = Vector2.Distance(pos, enemy1.transform.localPosition);
-        float dist2 = Vector2.Distance(pos, enemy2.transform.localPosition);
-
-        if (dist1 < 3f)
+        if (
+            enemy1.gameObject.activeSelf
+            && Vector2.Distance(pos, enemy1.transform.localPosition) < 3f
+        )
         {
             playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(2.0f);
+            enemy1Agent.AddReward(+1.0f);
             EndEpisode();
             return;
         }
 
-        if (dist2 < 3f)
+        if (
+            enemy2.gameObject.activeSelf
+            && Vector2.Distance(pos, enemy2.transform.localPosition) < 3f
+        )
         {
             playerAgent.AddReward(-1.0f);
-            enemy2Agent.AddReward(2.0f);
+            enemy2Agent.AddReward(+1.0f);
             EndEpisode();
             return;
         }
 
         if (PlayerReachedTarget())
         {
-            playerAgent.AddReward(2.0f);
-            enemy1Agent.AddReward(-1.0f);
-            enemy2Agent.AddReward(-1.0f);
+            playerAgent.AddReward(+1.0f);
+
+            if (enemy1.gameObject.activeSelf)
+                enemy1Agent.AddReward(-1.0f);
+            if (enemy2.gameObject.activeSelf)
+                enemy2Agent.AddReward(-1.0f);
+
             EndEpisode();
             return;
         }
 
         if (playerAgent.StepCount >= MaxStep)
         {
-            // playerAgent.AddReward(-0.5f);
+            playerAgent.AddReward(-0.5f);
+
+            if (enemy1.gameObject.activeSelf)
+                enemy1Agent.AddReward(+0.5f);
+            if (enemy2.gameObject.activeSelf)
+                enemy2Agent.AddReward(+0.5f);
+
             EndEpisode();
             return;
         }
@@ -136,8 +147,8 @@ public class GameManager : MonoBehaviour
     private void EndEpisode()
     {
         // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
-        // Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
-        // Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
+        Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
+        Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
         // Debug.Log(playerAgent.StepCount);
 
         if (player.gameObject.activeSelf)
@@ -146,11 +157,6 @@ public class GameManager : MonoBehaviour
             enemy1Agent.EndEpisode();
         if (enemy2.gameObject.activeSelf)
             enemy2Agent.EndEpisode();
-    }
-
-    public bool CheckEnemyDeath(EnemyShipController enemy)
-    {
-        return CommitedSuicide(enemy.transform) || enemy.hitByMine;
     }
 
     public bool PlayerReachedTarget()

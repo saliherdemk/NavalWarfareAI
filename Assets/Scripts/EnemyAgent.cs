@@ -14,7 +14,12 @@ public class EnemyAgent : Agent
     private ShipMovement _movement;
     private ShipRaycast _raycast;
 
-    private float[] _normalizedSensors;
+    private float[] _nControllerSensors;
+    private float[] _nPlayerSensors;
+    private float[] _nTargetSensors;
+    private float[] _nRelVelSensors;
+
+    private float _prevPlayerTargetDist;
 
     public override void Initialize()
     {
@@ -22,7 +27,10 @@ public class EnemyAgent : Agent
         _movement = GetComponent<ShipMovement>();
         _raycast = GetComponent<ShipRaycast>();
 
-        _normalizedSensors = new float[Normalizer.GetEnemySensorCount()];
+        _nControllerSensors = new float[Normalizer.ENEMY_CONTROLLER_OBS_SIZE];
+        _nPlayerSensors = new float[Normalizer.ENEMY_PLAYER_OBS_SIZE];
+        _nTargetSensors = new float[Normalizer.ENEMY_TARGET_OBS_SIZE];
+        _nRelVelSensors = new float[Normalizer.ENEMY_REL_VELOCITY_OBS_SIZE];
     }
 
     public override void OnEpisodeBegin()
@@ -31,15 +39,53 @@ public class EnemyAgent : Agent
             "enemy_speed_multiplier",
             1.0f
         );
+
+        _prevPlayerTargetDist = Vector2.Distance(
+            gm.player.transform.localPosition,
+            gm.targetLake.lakeCenter
+        );
+    }
+
+    public float[] GetRelativePositionData(Vector2 targetWorldPosition)
+    {
+        Vector2 selfPos = transform.localPosition;
+        Vector2 toTargetWorld = targetWorldPosition - selfPos;
+        float distance = toTargetWorld.magnitude;
+        Vector2 localDir = transform.InverseTransformDirection(toTargetWorld.normalized);
+        return new float[] { localDir.x, localDir.y, distance };
+    }
+
+    public float[] GetRelativeVelocityData()
+    {
+        Vector2 playerVel = gm.player.GetComponent<ShipMovement>().Velocity;
+        Vector2 worldRelativeVel = playerVel - _movement.Velocity;
+        Vector3 localRelativeVel = transform.InverseTransformDirection(worldRelativeVel);
+        return new float[] { localRelativeVel.x, localRelativeVel.y };
+    }
+
+    private void AddArray(VectorSensor sensor, float[] values)
+    {
+        for (int i = 0; i < values.Length; i++)
+            sensor.AddObservation(values[i]);
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        Normalizer.NormalizeEnemyController(_controller.GetSensors(), _normalizedSensors);
-        foreach (var s in _normalizedSensors)
-        {
-            sensor.AddObservation(s);
-        }
+        Normalizer.NormalizeEnemyController(_controller.GetSensors(), _nControllerSensors);
+        Normalizer.NormalizeRelativePositionData(
+            GetRelativePositionData(gm.player.transform.localPosition),
+            _nPlayerSensors
+        );
+        Normalizer.NormalizeRelativePositionData(
+            GetRelativePositionData(gm.targetLake.lakeCenter),
+            _nTargetSensors
+        );
+        Normalizer.NormalizeRelativeVelocity(GetRelativeVelocityData(), _nRelVelSensors);
+
+        AddArray(sensor, _nControllerSensors);
+        AddArray(sensor, _nPlayerSensors);
+        AddArray(sensor, _nTargetSensors);
+        AddArray(sensor, _nRelVelSensors);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -57,58 +103,42 @@ public class EnemyAgent : Agent
         if (fireSignal == 1)
         {
             _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
-
             AddReward(-0.002f);
         }
 
-        CalculateMovementPenalty();
-        CalculateMineAvoidancePenalty();
+        PlayerDistanceReward();
+        TargetPlayerTriangleReward();
 
-        AddReward(-0.0001f);
+        AddReward(0.0005f);
     }
 
-    private void CalculateMovementPenalty()
+    public void PlayerDistanceReward()
     {
-        float[] surroundings = _raycast.GetSensors();
-        Vector2 shipVelocity = _movement.Velocity;
+        float currDist = Vector2.Distance(
+            gm.player.transform.localPosition,
+            gm.targetLake.lakeCenter
+        );
 
-        float totalDanger = 0f;
-        float angleStep = 360f / surroundings.Length;
-
-        for (int i = 0; i < surroundings.Length; i++)
-        {
-            float dist = surroundings[i];
-            float angle = i * angleStep;
-            Vector2 rayDir = Quaternion.Euler(0f, 0f, angle) * transform.up;
-
-            float closingSpeed = Vector2.Dot(shipVelocity, rayDir);
-
-            if (closingSpeed > 0.1f)
-            {
-                float risk = closingSpeed / (dist + 0.1f);
-                if (risk > 0.5f)
-                    totalDanger += risk;
-            }
-        }
-
-        float ttcPenalty = Mathf.Clamp(totalDanger * 0.01f, 0f, 0.2f);
-        AddReward(-ttcPenalty);
+        float delta = _prevPlayerTargetDist - currDist;
+        AddReward(-delta * 0.005f);
+        _prevPlayerTargetDist = currDist;
     }
 
-    private void CalculateMineAvoidancePenalty()
+    public void TargetPlayerTriangleReward()
     {
-        var mines = _controller._radarDetector.DetectedMines;
+        Vector2 p = gm.player.transform.localPosition;
+        Vector2 e = transform.localPosition;
+        Vector2 t = gm.targetLake.lakeCenter;
 
-        foreach (var mine in mines)
+        Vector2 pt = (t - p).normalized;
+        Vector2 pe = (e - p).normalized;
+
+        float alignment = Vector2.Dot(pt, pe);
+        float distPE = Vector2.Distance(p, e);
+
+        if (distPE < 15f)
         {
-            if (mine.Distance < 10f && mine.ClosingSpeed > 0.3f)
-            {
-                float tti = mine.Distance / Mathf.Max(mine.ClosingSpeed, 0.1f);
-                if (tti < 2.0f)
-                {
-                    AddReward(-0.01f / tti);
-                }
-            }
+            AddReward(Mathf.Clamp(alignment, 0f, 1f) * 0.002f);
         }
     }
 
@@ -121,5 +151,13 @@ public class EnemyAgent : Agent
 
         cont[1] = Keyboard.current.aKey.isPressed ? -1 : 0;
         cont[1] = Keyboard.current.dKey.isPressed ? 1 : cont[1];
+
+        if (Keyboard.current.spaceKey.isPressed)
+        {
+            float[] playerDirection = GetRelativePositionData(gm.player.transform.localPosition);
+            float[] targetDirection = GetRelativePositionData(gm.targetLake.lakeCenter);
+            float[] relVelocity = GetRelativeVelocityData();
+            Debug.Log($"playerDirection: [{string.Join(", ", relVelocity)}]");
+        }
     }
 }
