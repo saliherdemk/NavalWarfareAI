@@ -84,7 +84,7 @@ public class PlayerAgent : Agent
         MineDangerReward();
         EnemyDangerReward();
 
-        AddReward(0.0005f);
+        AddReward(-0.0005f);
     }
 
     void TargetProgressReward()

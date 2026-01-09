@@ -23,16 +23,9 @@ namespace NormalizerClass
         public static float mineCount = 10;
         public static float mineCooldownTime = 5f;
 
-        public static float mapWidth = 200f;
-        public static float mapHeight = 200f;
-        public static float minSpeed = 4f;
         public static float maxSpeed = 8f;
         public static float rayDistance = 32f;
         public static float radarRange = 50f;
-        public static float minAcceleration = 3f;
-        public static float maxAcceleration = 6f;
-        public static float minTurnSpeed = 40f;
-        public static float maxTurnSpeed = 100f;
 
         public static void NormalizeEnemyController(float[] s, float[] destination)
         {

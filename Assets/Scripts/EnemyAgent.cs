@@ -103,24 +103,28 @@ public class EnemyAgent : Agent
         if (fireSignal == 1)
         {
             _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
-            AddReward(-0.002f);
+            AddReward(-0.005f);
         }
 
         PlayerDistanceReward();
         TargetPlayerTriangleReward();
 
-        AddReward(0.0005f);
+        // AddReward(0.0005f);
     }
 
     public void PlayerDistanceReward()
     {
-        float currDist = Vector2.Distance(
-            gm.player.transform.localPosition,
-            gm.targetLake.lakeCenter
-        );
+        Vector3 playerLocalPos = gm.player.transform.localPosition;
+        float currDist = Vector2.Distance(playerLocalPos, gm.targetLake.lakeCenter);
 
-        float delta = _prevPlayerTargetDist - currDist;
-        AddReward(-delta * 0.005f);
+        float playerTargetDelta = _prevPlayerTargetDist - currDist;
+        float distPE = Vector2.Distance(playerLocalPos, transform.localPosition);
+
+        if (distPE < 30f)
+        {
+            AddReward(-playerTargetDelta * 0.003f);
+        }
+
         _prevPlayerTargetDist = currDist;
     }
 
@@ -138,7 +142,8 @@ public class EnemyAgent : Agent
 
         if (distPE < 15f)
         {
-            AddReward(Mathf.Clamp(alignment, 0f, 1f) * 0.002f);
+            float distWeight = 1f - Mathf.Clamp01(distPE / 15f);
+            AddReward(alignment * distWeight * 0.003f);
         }
     }
 

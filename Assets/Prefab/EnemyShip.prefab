@@ -213,12 +213,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3193c109777fc7629f1a539f1707139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShipController
-  hitByMine: 0
   minePrefab: {fileID: 4838542427059691886, guid: 20bf11ce06f1513588caacdd8bbb1485, type: 3}
   initialMineCount: 10
   mineCooldownTime: 5
   mineLaunchOffset: 5
-  _radarDetector: {fileID: 0}
 --- !u!114 &2997237366345771690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,7 +230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
   m_BrainParameters:
-    VectorObservationSize: 37
+    VectorObservationSize: 28
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 4
@@ -243,7 +241,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 5022602860645237092, guid: d56b405fec5eb83d493df64ca92ef78b, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 2
   m_BehaviorName: EnemyShip
   TeamId: 0
   m_UseChildSensors: 1

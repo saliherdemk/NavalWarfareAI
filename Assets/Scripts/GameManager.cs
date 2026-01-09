@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
         {
             enemy1Agent.AddReward(-1.0f);
             playerAgent.AddReward(+0.3f);
+            Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
             enemy1Agent.EndEpisode();
             enemy1.gameObject.SetActive(false);
         }
@@ -63,6 +64,8 @@ public class GameManager : MonoBehaviour
         {
             enemy2Agent.AddReward(-1.0f);
             playerAgent.AddReward(+0.3f);
+            Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
+
             enemy2Agent.EndEpisode();
             enemy2.gameObject.SetActive(false);
         }
@@ -119,7 +122,7 @@ public class GameManager : MonoBehaviour
 
         if (PlayerReachedTarget())
         {
-            playerAgent.AddReward(+1.0f);
+            playerAgent.AddReward(+5.0f);
 
             if (enemy1.gameObject.activeSelf)
                 enemy1Agent.AddReward(-1.0f);
@@ -147,16 +150,22 @@ public class GameManager : MonoBehaviour
     private void EndEpisode()
     {
         // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
-        Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
-        Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
+        // Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
+        // Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
         // Debug.Log(playerAgent.StepCount);
 
         if (player.gameObject.activeSelf)
             playerAgent.EndEpisode();
         if (enemy1.gameObject.activeSelf)
+        {
+            Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
             enemy1Agent.EndEpisode();
+        }
         if (enemy2.gameObject.activeSelf)
+        {
+            Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
             enemy2Agent.EndEpisode();
+        }
     }
 
     public bool PlayerReachedTarget()
