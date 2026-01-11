@@ -5,6 +5,28 @@
     "difficulty": {
         "lesson_num": 0
     },
+    "EnemyShip": {
+        "checkpoints": [
+            {
+                "steps": 12960,
+                "file_path": "results/ppo/EnemyShip/EnemyShip-12960.onnx",
+                "reward": -21.676772072911263,
+                "creation_time": 1768039531.1153185,
+                "auxillary_file_paths": [
+                    "results/ppo/EnemyShip/EnemyShip-12960.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 12960,
+            "file_path": "results/ppo/EnemyShip.onnx",
+            "reward": -21.676772072911263,
+            "creation_time": 1768039531.1153185,
+            "auxillary_file_paths": [
+                "results/ppo/EnemyShip/EnemyShip-12960.pt"
+            ]
+        }
+    },
     "metadata": {
         "stats_format_version": "0.3.0",
         "mlagents_version": "1.2.0.dev0",

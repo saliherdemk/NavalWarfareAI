@@ -38,17 +38,17 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 5000000
+    max_steps: 10000000
     time_horizon: 1024
     summary_freq: 10000
     threaded: false
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: null
+  env_path: Builds/EnemySolo/game.x86_64
   env_args: null
   base_port: 5005
-  num_envs: 1
+  num_envs: 4
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -59,10 +59,10 @@ engine_settings:
   width: 84
   height: 84
   quality_level: 5
-  time_scale: 20.0
+  time_scale: 40.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: false
+  no_graphics: true
   no_graphics_monitor: false
 environment_parameters:
   player_speed_multiplier:
@@ -70,20 +70,20 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7053
-          value: 0
-      name: Freeze
+          seed: 416
+          value: 1
+      name: Fast
       completion_criteria: null
   difficulty:
     curriculum:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7054
-          value: 0
+          seed: 417
+          value: 1
       name: Phase0_Close_NoWalls
       completion_criteria:
-        behavior: PlayerShip
+        behavior: EnemyShip
         measure: reward
         min_lesson_length: 100
         signal_smoothing: true
@@ -92,11 +92,11 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7055
+          seed: 418
           value: 1
       name: Phase2_Medium_FewWalls
       completion_criteria:
-        behavior: PlayerShip
+        behavior: EnemyShip
         measure: reward
         min_lesson_length: 100
         signal_smoothing: true
@@ -105,11 +105,11 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7056
+          seed: 419
           value: 2
       name: Phase3_Medium_ManyWalls
       completion_criteria:
-        behavior: PlayerShip
+        behavior: EnemyShip
         measure: reward
         min_lesson_length: 100
         signal_smoothing: true
@@ -118,16 +118,16 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7057
+          seed: 420
           value: 3
       name: Phase4_Far_ManyWalls
       completion_criteria: null
 checkpoint_settings:
-  run_id: ppo
+  run_id: enemyShip_v1
   initialize_from: null
   load_model: false
-  resume: false
-  force: true
+  resume: true
+  force: false
   train_model: false
   inference: false
   results_dir: results

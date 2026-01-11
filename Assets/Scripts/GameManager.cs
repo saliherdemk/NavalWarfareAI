@@ -75,9 +75,9 @@ public class GameManager : MonoBehaviour
             playerAgent.AddReward(-1.0f);
 
             if (enemy1.gameObject.activeSelf)
-                enemy1Agent.AddReward(+1.0f);
+                enemy1Agent.AddReward(+5.0f);
             if (enemy2.gameObject.activeSelf)
-                enemy2Agent.AddReward(+1.0f);
+                enemy2Agent.AddReward(+5.0f);
 
             EndEpisode();
             return;
@@ -88,9 +88,9 @@ public class GameManager : MonoBehaviour
             playerAgent.AddReward(-1.0f);
 
             if (enemy1.gameObject.activeSelf)
-                enemy1Agent.AddReward(+1.0f);
+                enemy1Agent.AddReward(+5.0f);
             if (enemy2.gameObject.activeSelf)
-                enemy2Agent.AddReward(+1.0f);
+                enemy2Agent.AddReward(+5.0f);
 
             EndEpisode();
             return;
@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
         )
         {
             playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+1.0f);
+            enemy1Agent.AddReward(+5.0f);
             EndEpisode();
             return;
         }
@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviour
         )
         {
             playerAgent.AddReward(-1.0f);
-            enemy2Agent.AddReward(+1.0f);
+            enemy2Agent.AddReward(+5.0f);
             EndEpisode();
             return;
         }
@@ -125,9 +125,9 @@ public class GameManager : MonoBehaviour
             playerAgent.AddReward(+5.0f);
 
             if (enemy1.gameObject.activeSelf)
-                enemy1Agent.AddReward(-1.0f);
+                enemy1Agent.AddReward(-5.0f);
             if (enemy2.gameObject.activeSelf)
-                enemy2Agent.AddReward(-1.0f);
+                enemy2Agent.AddReward(-5.0f);
 
             EndEpisode();
             return;
@@ -135,12 +135,12 @@ public class GameManager : MonoBehaviour
 
         if (playerAgent.StepCount >= MaxStep)
         {
-            playerAgent.AddReward(-0.5f);
+            // playerAgent.AddReward(-0.5f);
 
-            if (enemy1.gameObject.activeSelf)
-                enemy1Agent.AddReward(+0.5f);
-            if (enemy2.gameObject.activeSelf)
-                enemy2Agent.AddReward(+0.5f);
+            // if (enemy1.gameObject.activeSelf)
+            //     enemy1Agent.AddReward(-0.5f);
+            // if (enemy2.gameObject.activeSelf)
+            //     enemy2Agent.AddReward(-0.5f);
 
             EndEpisode();
             return;

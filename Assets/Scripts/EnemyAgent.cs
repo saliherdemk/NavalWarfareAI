@@ -109,7 +109,7 @@ public class EnemyAgent : Agent
         PlayerDistanceReward();
         TargetPlayerTriangleReward();
 
-        // AddReward(0.0005f);
+        AddReward(-0.0002f);
     }
 
     public void PlayerDistanceReward()
@@ -143,6 +143,7 @@ public class EnemyAgent : Agent
         if (distPE < 15f)
         {
             float distWeight = 1f - Mathf.Clamp01(distPE / 15f);
+            alignment = Mathf.Clamp01(alignment);
             AddReward(alignment * distWeight * 0.003f);
         }
     }
