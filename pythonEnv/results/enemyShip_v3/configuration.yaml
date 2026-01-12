@@ -38,17 +38,17 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 15000000
+    max_steps: 10000000
     time_horizon: 512
     summary_freq: 10000
     threaded: false
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: null
+  env_path: Builds/EnemySolov2
   env_args: null
   base_port: 5005
-  num_envs: 1
+  num_envs: 4
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -59,10 +59,10 @@ engine_settings:
   width: 84
   height: 84
   quality_level: 5
-  time_scale: 20
+  time_scale: 40.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: false
+  no_graphics: true
   no_graphics_monitor: false
 environment_parameters:
   training_phase:
@@ -70,33 +70,33 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7424
+          seed: 6726
           value: 0
       name: Phase1_BasicPursuit
       completion_criteria:
         behavior: EnemyShip
         measure: reward
-        min_lesson_length: 100
+        min_lesson_length: 200
         signal_smoothing: true
-        threshold: 0.5
+        threshold: 1.5
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7425
+          seed: 6727
           value: 1
       name: Phase2_PathInterception
       completion_criteria:
         behavior: EnemyShip
         measure: reward
-        min_lesson_length: 150
+        min_lesson_length: 200
         signal_smoothing: true
-        threshold: 1.0
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7426
+          seed: 6728
           value: 2
       name: Phase3_AdvancedTactics
       completion_criteria: null
@@ -105,33 +105,46 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7427
+          seed: 6729
           value: 0
       name: SmallMap_NoWalls
       completion_criteria:
         behavior: EnemyShip
         measure: reward
-        min_lesson_length: 100
+        min_lesson_length: 200
         signal_smoothing: true
-        threshold: 0.5
+        threshold: 1.5
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7428
+          seed: 6730
           value: 1
       name: MediumMap_SomeWalls
       completion_criteria:
         behavior: EnemyShip
         measure: reward
-        min_lesson_length: 150
+        min_lesson_length: 200
         signal_smoothing: true
-        threshold: 1.0
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7429
+          seed: 6731
+          value: 2
+      name: LargeMap_SomeWalls
+      completion_criteria:
+        behavior: EnemyShip
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 1.5
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 6732
           value: 3
       name: LargeMap_FullComplexity
       completion_criteria: null
@@ -140,33 +153,33 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7430
+          seed: 6733
           value: 0.6
       name: SlowPlayer
       completion_criteria:
         behavior: EnemyShip
         measure: reward
-        min_lesson_length: 100
+        min_lesson_length: 200
         signal_smoothing: true
-        threshold: 0.5
+        threshold: 1.5
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7431
+          seed: 6734
           value: 0.8
       name: MediumPlayer
       completion_criteria:
         behavior: EnemyShip
         measure: reward
-        min_lesson_length: 150
+        min_lesson_length: 200
         signal_smoothing: true
-        threshold: 1.0
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7432
+          seed: 6735
           value: 1.0
       name: FastPlayer
       completion_criteria: null
@@ -175,42 +188,55 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7433
+          seed: 6736
           value: 30
       name: CloseSpawn
       completion_criteria:
         behavior: EnemyShip
         measure: reward
-        min_lesson_length: 100
+        min_lesson_length: 200
         signal_smoothing: true
-        threshold: 0.5
+        threshold: 1.5
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7434
+          seed: 6737
           value: 60
       name: MediumSpawn
       completion_criteria:
         behavior: EnemyShip
         measure: reward
-        min_lesson_length: 150
+        min_lesson_length: 200
         signal_smoothing: true
-        threshold: 1.0
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7435
+          seed: 6738
+          value: 100
+      name: FarSpawn
+      completion_criteria:
+        behavior: EnemyShip
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 1.5
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 6739
           value: -1
       name: VariableSpawn
       completion_criteria: null
 checkpoint_settings:
-  run_id: ppo
+  run_id: enemyShip_v3
   initialize_from: null
   load_model: false
-  resume: false
-  force: true
+  resume: true
+  force: false
   train_model: false
   inference: false
   results_dir: results

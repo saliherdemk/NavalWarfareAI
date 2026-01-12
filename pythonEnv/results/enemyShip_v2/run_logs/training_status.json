@@ -8,58 +8,58 @@
     "EnemyShip": {
         "checkpoints": [
             {
-                "steps": 8499890,
-                "file_path": "results/enemyShip_v1/EnemyShip/EnemyShip-8499890.onnx",
-                "reward": 0.5537115693092346,
-                "creation_time": 1768127762.1516008,
+                "steps": 10999967,
+                "file_path": "results/enemyShip_v2/EnemyShip/EnemyShip-10999967.onnx",
+                "reward": -2.0889651527007422,
+                "creation_time": 1768150127.774133,
                 "auxillary_file_paths": [
-                    "results/enemyShip_v1/EnemyShip/EnemyShip-8499890.pt"
+                    "results/enemyShip_v2/EnemyShip/EnemyShip-10999967.pt"
                 ]
             },
             {
-                "steps": 8999580,
-                "file_path": "results/enemyShip_v1/EnemyShip/EnemyShip-8999580.onnx",
-                "reward": -1.082369400216983,
-                "creation_time": 1768128443.6166606,
+                "steps": 11499871,
+                "file_path": "results/enemyShip_v2/EnemyShip/EnemyShip-11499871.onnx",
+                "reward": -0.06150706801563501,
+                "creation_time": 1768150728.139253,
                 "auxillary_file_paths": [
-                    "results/enemyShip_v1/EnemyShip/EnemyShip-8999580.pt"
+                    "results/enemyShip_v2/EnemyShip/EnemyShip-11499871.pt"
                 ]
             },
             {
-                "steps": 9499911,
-                "file_path": "results/enemyShip_v1/EnemyShip/EnemyShip-9499911.onnx",
-                "reward": -0.6759847860534985,
-                "creation_time": 1768129130.030304,
+                "steps": 11999631,
+                "file_path": "results/enemyShip_v2/EnemyShip/EnemyShip-11999631.onnx",
+                "reward": 0.4601650120730096,
+                "creation_time": 1768151359.2881198,
                 "auxillary_file_paths": [
-                    "results/enemyShip_v1/EnemyShip/EnemyShip-9499911.pt"
+                    "results/enemyShip_v2/EnemyShip/EnemyShip-11999631.pt"
                 ]
             },
             {
-                "steps": 9999911,
-                "file_path": "results/enemyShip_v1/EnemyShip/EnemyShip-9999911.onnx",
-                "reward": null,
-                "creation_time": 1768129844.1627765,
+                "steps": 12499744,
+                "file_path": "results/enemyShip_v2/EnemyShip/EnemyShip-12499744.onnx",
+                "reward": 0.12901897231737772,
+                "creation_time": 1768152006.2953246,
                 "auxillary_file_paths": [
-                    "results/enemyShip_v1/EnemyShip/EnemyShip-9999911.pt"
+                    "results/enemyShip_v2/EnemyShip/EnemyShip-12499744.pt"
                 ]
             },
             {
-                "steps": 10000198,
-                "file_path": "results/enemyShip_v1/EnemyShip/EnemyShip-10000198.onnx",
-                "reward": -5.461599826812744,
-                "creation_time": 1768129844.2128394,
+                "steps": 12525224,
+                "file_path": "results/enemyShip_v2/EnemyShip/EnemyShip-12525224.onnx",
+                "reward": -0.015872258788500078,
+                "creation_time": 1768152036.5826683,
                 "auxillary_file_paths": [
-                    "results/enemyShip_v1/EnemyShip/EnemyShip-10000198.pt"
+                    "results/enemyShip_v2/EnemyShip/EnemyShip-12525224.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 10000198,
-            "file_path": "results/enemyShip_v1/EnemyShip.onnx",
-            "reward": -5.461599826812744,
-            "creation_time": 1768129844.2128394,
+            "steps": 12525224,
+            "file_path": "results/enemyShip_v2/EnemyShip.onnx",
+            "reward": -0.015872258788500078,
+            "creation_time": 1768152036.5826683,
             "auxillary_file_paths": [
-                "results/enemyShip_v1/EnemyShip/EnemyShip-10000198.pt"
+                "results/enemyShip_v2/EnemyShip/EnemyShip-12525224.pt"
             ]
         }
     },

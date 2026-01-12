@@ -239,7 +239,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 463121c81e3925902a76249bc7712920, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 5367696c7bc498fda8d91ba9d4797d03, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: EnemyShip

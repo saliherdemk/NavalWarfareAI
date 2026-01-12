@@ -5,8 +5,8 @@ behaviors:
     hyperparameters:
       batch_size: 2048
       buffer_size: 20480
-      learning_rate: 0.0003
-      beta: 0.005
+      learning_rate: 0.0002
+      beta: 0.01
       epsilon: 0.2
       lambd: 0.99
       num_epoch: 3
@@ -38,7 +38,7 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 10000000
+    max_steps: 15000000
     time_horizon: 1024
     summary_freq: 10000
     threaded: false
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 416
+          seed: 4242
           value: 1
       name: Fast
       completion_criteria: null
@@ -79,7 +79,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 417
+          seed: 4243
           value: 1
       name: Phase0_Close_NoWalls
       completion_criteria:
@@ -92,7 +92,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 418
+          seed: 4244
           value: 1
       name: Phase2_Medium_FewWalls
       completion_criteria:
@@ -105,7 +105,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 419
+          seed: 4245
           value: 2
       name: Phase3_Medium_ManyWalls
       completion_criteria:
@@ -118,12 +118,12 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 420
+          seed: 4246
           value: 3
       name: Phase4_Far_ManyWalls
       completion_criteria: null
 checkpoint_settings:
-  run_id: enemyShip_v1
+  run_id: enemyShip_v2
   initialize_from: null
   load_model: false
   resume: true

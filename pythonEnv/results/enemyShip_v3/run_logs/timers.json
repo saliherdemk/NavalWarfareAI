@@ -1,0 +1,47 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1768213519",
+        "python_version": "3.10.12 (main, Dec 11 2025, 14:11:37) [GCC 15.2.1 20251112]",
+        "command_line_arguments": "/home/saliherdemk/projects/NavalGameTrain/pythonEnv/.venv/bin/mlagents-learn config/enemyOnly2.yaml --env=Builds/EnemySolov2 --run-id=enemyShip_v3 --resume --no-graphics --num-env=4 --time-scale=40",
+        "mlagents_version": "1.2.0.dev0",
+        "mlagents_envs_version": "1.2.0.dev0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.8.0+cu128",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1768213519"
+    },
+    "total": 0.07497530799992091,
+    "count": 1,
+    "self": 0.024091899000268313,
+    "children": {
+        "run_training.setup": {
+            "total": 0.05015620799986209,
+            "count": 1,
+            "self": 0.05015620799986209
+        },
+        "TrainerController.start_learning": {
+            "total": 0.0007272009997905116,
+            "count": 1,
+            "self": 0.00030059500022616703,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 0.00041661599971121177,
+                    "count": 1,
+                    "self": 0.00041661599971121177
+                },
+                "trainer_threads": {
+                    "total": 8.699998943484388e-07,
+                    "count": 1,
+                    "self": 8.699998943484388e-07
+                },
+                "TrainerController._save_models": {
+                    "total": 9.11999995878432e-06,
+                    "count": 1,
+                    "self": 9.11999995878432e-06
+                }
+            }
+        }
+    }
+}
