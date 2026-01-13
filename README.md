@@ -31,7 +31,7 @@ mlagents-learn config/playerOnly.yaml --env=yourpath.x86_64 --run-id=playerShip_
 
 In 10M steps, here is the result:
 
-<img src="../media/playerv1.png">
+<img src="./media/playerv1.png">
 
 It can consistently reach the target.
 
@@ -54,7 +54,7 @@ Set playerShip_v1 to player and set behaviour type to inference. Set enemyShip b
  mlagents-learn config/enemyOnly.yaml --env=Builds/yourpath/game.x86_64 --run-id=enemyShip_v1 --time-scale=40
 ```
 
-<img src="../media/enemyv1.png">
+<img src="./media/enemyv1.png">
 
 
 
