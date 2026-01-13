@@ -1,0 +1,35 @@
+{
+    "training_phase": {
+        "lesson_num": 0
+    },
+    "player_speed_multiplier": {
+        "lesson_num": 0
+    },
+    "EnemyShip": {
+        "checkpoints": [
+            {
+                "steps": 1100,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-1100.onnx",
+                "reward": -12.956729769706726,
+                "creation_time": 1768312249.578572,
+                "auxillary_file_paths": [
+                    "results/enemyship_v1/EnemyShip/EnemyShip-1100.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1100,
+            "file_path": "results/enemyship_v1/EnemyShip.onnx",
+            "reward": -12.956729769706726,
+            "creation_time": 1768312249.578572,
+            "auxillary_file_paths": [
+                "results/enemyship_v1/EnemyShip/EnemyShip-1100.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.8.0+cu128"
+    }
+}

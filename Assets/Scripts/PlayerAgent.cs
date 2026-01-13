@@ -22,6 +22,8 @@ public class PlayerAgent : Agent
     private float[] _nControllerSensors;
     private float[] _nTargetSensors;
 
+    float _progressAccum;
+
     public override void Initialize()
     {
         _controller = GetComponent<PlayerShipController>();
@@ -42,6 +44,7 @@ public class PlayerAgent : Agent
             1.0f
         );
         _prevTargetDist = Vector2.Distance(transform.localPosition, gm.targetLake.lakeCenter);
+        _progressAccum = 0f;
     }
 
     public float[] GetRelativePositionData(Vector2 targetWorldPosition)
@@ -84,14 +87,22 @@ public class PlayerAgent : Agent
         MineDangerReward();
         EnemyDangerReward();
 
-        AddReward(-0.0005f);
+        AddReward(-0.001f);
     }
 
     void TargetProgressReward()
     {
         float curr = Vector2.Distance(transform.localPosition, gm.targetLake.lakeCenter);
         float delta = _prevTargetDist - curr;
-        AddReward(delta * 0.01f);
+
+        float r = delta * 0.01f;
+
+        if (_progressAccum + r > 0.5f)
+            r = Mathf.Max(0f, 0.5f - _progressAccum);
+
+        _progressAccum += r;
+        AddReward(r);
+
         _prevTargetDist = curr;
     }
 

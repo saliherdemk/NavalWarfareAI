@@ -27,6 +27,11 @@ behaviors:
     summary_freq: 10_000
  
 environment_parameters:
+  player_phase0:
+    curriculum:
+      - name: phase0
+        value: 1
+
   enemy_speed_multiplier:
     curriculum:
       - name: Freeze
@@ -38,7 +43,7 @@ environment_parameters:
         completion_criteria:
           measure: reward
           behavior: PlayerShip
-          threshold: 0.9
+          threshold: 4.0
           min_lesson_length: 100
           signal_smoothing: true
         value: 0
@@ -47,7 +52,7 @@ environment_parameters:
         completion_criteria:
           measure: reward
           behavior: PlayerShip
-          threshold: 0.8
+          threshold: 4.0
           min_lesson_length: 100
           signal_smoothing: true
         value: 1

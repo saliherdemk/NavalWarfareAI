@@ -23,7 +23,7 @@ We need decent player first.
 - On enemy death +0.3 (not sure about that)
 - -0.0005f as step penalty
 
-Run selfplay config to initialize the enemyShip model. Then assign to the enemy prefab and make behaviour type inference only. Set player behaviour type to default and get a build. Then inside `pythonEnv`
+Assign the dummy enemy model to enemy prefab and make behaviour type inference only. Set player behaviour type to default and get a build. Then inside `pythonEnv`
 
 ```
 mlagents-learn config/playerOnly.yaml --env=yourpath.x86_64 --run-id=playerShip_v1 --time-scale=40

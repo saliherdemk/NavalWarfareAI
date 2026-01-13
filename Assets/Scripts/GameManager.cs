@@ -23,9 +23,8 @@ public class GameManager : MonoBehaviour
     private Leaf enemy1Lake;
     private Leaf enemy2Lake;
 
-    private int MaxStep = 5000;
+    private int MaxStep = 3000;
 
-    public int totalMineHits = 0;
 
     void Start()
     {
@@ -47,7 +46,6 @@ public class GameManager : MonoBehaviour
         if (enemy1.gameObject.activeSelf && CommitedSuicide(enemy1.transform))
         {
             enemy1Agent.AddReward(-0.5f);
-            playerAgent.AddReward(+0.3f);
             enemy1Agent.EndEpisode();
             enemy1.gameObject.SetActive(false);
         }
@@ -55,19 +53,25 @@ public class GameManager : MonoBehaviour
         if (enemy2.gameObject.activeSelf && CommitedSuicide(enemy2.transform))
         {
             enemy2Agent.AddReward(-0.5f);
-            playerAgent.AddReward(+0.3f);
             enemy2Agent.EndEpisode();
             enemy2.gameObject.SetActive(false);
         }
+
+        Vector2 playerPos = player.transform.localPosition;
+        Vector2 enemy1Pos = enemy1.transform.localPosition;
+        Vector2 enemy2Pos = enemy2.transform.localPosition;
+        float dist1 = Vector2.Distance(enemy1Pos, playerPos);
+        float dist2 = Vector2.Distance(enemy2Pos, playerPos);
+
 
         if (CommitedSuicide(player.transform))
         {
             playerAgent.AddReward(-1.0f);
 
-            if (enemy1.gameObject.activeSelf)
-                enemy1Agent.AddReward(+2.0f);
-            if (enemy2.gameObject.activeSelf)
-                enemy2Agent.AddReward(+2.0f);
+            if (enemy1.gameObject.activeSelf && dist1 < 20f)
+                enemy1Agent.AddReward(+1.5f);
+            if (enemy2.gameObject.activeSelf && dist2 < 20f)
+                enemy2Agent.AddReward(+1.5f);
 
             EndEpisode();
             return;
@@ -77,37 +81,34 @@ public class GameManager : MonoBehaviour
         {
             playerAgent.AddReward(-1.0f);
 
-            if (enemy1.gameObject.activeSelf)
-                enemy1Agent.AddReward(+3.0f);
-            if (enemy2.gameObject.activeSelf)
-                enemy2Agent.AddReward(+3.0f);
-
-            totalMineHits++;
+            if (enemy1.gameObject.activeSelf && dist1 < 30f)
+                enemy1Agent.AddReward(+5.0f);
+            if (enemy2.gameObject.activeSelf && dist2 < 30f)
+                enemy2Agent.AddReward(+5.0f);
 
             EndEpisode();
             return;
         }
 
-        Vector2 pos = player.transform.localPosition;
 
         if (
             enemy1.gameObject.activeSelf
-            && Vector2.Distance(pos, enemy1.transform.localPosition) < 3f
+            && dist1 < 3f
         )
         {
             playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+3.0f);
+            enemy1Agent.AddReward(+5.0f);
             EndEpisode();
             return;
         }
 
         if (
             enemy2.gameObject.activeSelf
-            && Vector2.Distance(pos, enemy2.transform.localPosition) < 3f
+            && dist2 < 3f
         )
         {
             playerAgent.AddReward(-1.0f);
-            enemy2Agent.AddReward(+3.0f);
+            enemy2Agent.AddReward(+5.0f);
             EndEpisode();
             return;
         }
@@ -117,40 +118,9 @@ public class GameManager : MonoBehaviour
             playerAgent.AddReward(+5.0f);
 
             if (enemy1.gameObject.activeSelf)
-            {
-                float distToPlayer = Vector2.Distance(
-                    enemy1.transform.localPosition,
-                    player.transform.localPosition
-                );
-
-                if (distToPlayer < 20f)
-                {
-                    float partialCredit = (20f - distToPlayer) / 20f;
-                    enemy1Agent.AddReward(-2.0f + partialCredit * 1.0f);
-                }
-                else
-                {
-                    enemy1Agent.AddReward(-2.0f);
-                }
-            }
-
+                enemy1Agent.AddReward(-3.0f);
             if (enemy2.gameObject.activeSelf)
-            {
-                float distToPlayer = Vector2.Distance(
-                    enemy2.transform.localPosition,
-                    player.transform.localPosition
-                );
-
-                if (distToPlayer < 20f)
-                {
-                    float partialCredit = (20f - distToPlayer) / 20f;
-                    enemy2Agent.AddReward(-2.0f + partialCredit * 1.0f);
-                }
-                else
-                {
-                    enemy2Agent.AddReward(-2.0f);
-                }
-            }
+                enemy2Agent.AddReward(-3.0f);
 
             EndEpisode();
             return;
@@ -201,12 +171,12 @@ public class GameManager : MonoBehaviour
     private void EndEpisode()
     {
         if (player.gameObject.activeSelf)
-            Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
+            // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
 
         playerAgent.EndEpisode();
         if (enemy1.gameObject.activeSelf)
         {
-            // Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
+            Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
             enemy1Agent.EndEpisode();
         }
         if (enemy2.gameObject.activeSelf)
@@ -227,7 +197,10 @@ public class GameManager : MonoBehaviour
             return;
 
         MapGenerator.GenerateMap();
-        bool succeed = ChooseSpawnTargetLakes();
+        bool isPhase0 =
+            Academy.Instance.EnvironmentParameters.GetWithDefault("player_phase0", 0.0f) > 0.5f;
+
+        bool succeed = isPhase0 ? ChooseSpawnTargetLakesPhase0() : ChooseSpawnTargetLakes();
         if (!succeed)
         {
             RestartGame();
@@ -276,6 +249,72 @@ public class GameManager : MonoBehaviour
         enemy2 = Instantiate(enemyPrefab, mapEnvironment);
         enemy2Agent = enemy2.GetComponent<EnemyAgent>();
         enemy2Agent.gm = this;
+    }
+
+    bool ChooseSpawnTargetLakesPhase0()
+    {
+        List<Leaf> allLeafs = MapGenerator.allLeafs;
+        if (allLeafs.Count < 4)
+            return false;
+
+        spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
+
+        float diff = Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 2.0f);
+
+        int[] values = new int[] { 50, 100, -1 };
+        int trainingRadius = values[(int)diff];
+
+        List<Leaf> validTargets = new List<Leaf>();
+
+        if (trainingRadius > 0)
+        {
+            foreach (Leaf leaf in allLeafs)
+            {
+                if (leaf == spawnLake)
+                    continue;
+                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
+                if (dist <= trainingRadius && dist > 5f)
+                    validTargets.Add(leaf);
+            }
+        }
+        else
+        {
+            float minDistance = Mathf.Min(MapGenerator.mapWidth, MapGenerator.mapHeight) * 0.5f;
+            foreach (Leaf leaf in allLeafs)
+            {
+                if (leaf == spawnLake)
+                    continue;
+                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
+                if (dist >= minDistance)
+                    validTargets.Add(leaf);
+            }
+        }
+
+        if (validTargets.Count == 0)
+        {
+            do
+            {
+                targetLake = allLeafs[Random.Range(0, allLeafs.Count)];
+            } while (targetLake == spawnLake);
+        }
+        else
+        {
+            targetLake = validTargets[Random.Range(0, validTargets.Count)];
+        }
+
+        List<Leaf> availableLakes = new List<Leaf>();
+        foreach (var lake in allLeafs)
+        {
+            if (lake != spawnLake && lake != targetLake)
+                availableLakes.Add(lake);
+        }
+
+        int r = Random.Range(0, availableLakes.Count);
+        enemy1Lake = availableLakes[r];
+        availableLakes.RemoveAt(r);
+
+        enemy2Lake = availableLakes[Random.Range(0, availableLakes.Count)];
+        return true;
     }
 
     bool ChooseSpawnTargetLakes()
