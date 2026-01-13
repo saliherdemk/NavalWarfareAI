@@ -5,13 +5,6 @@ using Unity.MLAgents.Sensors;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum TrainingPhase
-{
-    BasicPursuit, // Learn to chase
-    PathInterception, // Learn to cut off
-    AdvancedTactics, // Learn mines & shortcuts
-}
-
 [RequireComponent(typeof(EnemyShipController))]
 public class EnemyAgent : Agent
 {
@@ -27,7 +20,7 @@ public class EnemyAgent : Agent
     private float[] _nRelVelSensors;
 
     private float _prevPlayerTargetDist;
-    private TrainingPhase currentPhase;
+    private int currentPhase;
 
     public override void Initialize()
     {
@@ -53,7 +46,12 @@ public class EnemyAgent : Agent
             0f
         );
 
-        currentPhase = (TrainingPhase)Mathf.RoundToInt(phaseValue);
+        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 0);
+
+        int currentPhase =
+            d <= 3 ? 0
+            : d <= 6 ? 1
+            : 2;
 
         _prevPlayerTargetDist = Vector2.Distance(
             gm.player.transform.localPosition,
@@ -103,7 +101,7 @@ public class EnemyAgent : Agent
         AddArray(sensor, _nRelVelSensors);
     }
 
-  public override void OnActionReceived(ActionBuffers actions)
+    public override void OnActionReceived(ActionBuffers actions)
     {
         float targetThrottle = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
         float targetRudder = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
@@ -115,7 +113,7 @@ public class EnemyAgent : Agent
 
         switch (currentPhase)
         {
-            case TrainingPhase.BasicPursuit:
+            case 0:
                 BasicPursuitRewards();
                 if (fireSignal == 1)
                 {
@@ -124,7 +122,7 @@ public class EnemyAgent : Agent
                 }
                 break;
 
-            case TrainingPhase.PathInterception:
+            case 1:
                 PathInterceptionRewards();
                 if (fireSignal == 1)
                 {
@@ -132,7 +130,7 @@ public class EnemyAgent : Agent
                 }
                 break;
 
-            case TrainingPhase.AdvancedTactics:
+            case 2:
                 AdvancedTacticsRewards(fireSignal == 1);
                 if (fireSignal == 1)
                 {
@@ -141,7 +139,7 @@ public class EnemyAgent : Agent
                 break;
         }
 
-        AddReward(-0.00005f); 
+        AddReward(-0.00005f);
     }
 
     private void BasicPursuitRewards()
@@ -149,13 +147,13 @@ public class EnemyAgent : Agent
         Vector2 playerPos = gm.player.transform.localPosition;
         Vector2 enemyPos = transform.localPosition;
         float distToPlayer = Vector2.Distance(playerPos, enemyPos);
-        
+
         if (distToPlayer < 50f)
         {
             float proximityReward = (50f - distToPlayer) / 50f;
             AddReward(proximityReward * 0.005f);
         }
-        
+
         Vector2 toPlayer = (playerPos - enemyPos).normalized;
         float velocityAlignment = Vector2.Dot(_movement.Velocity.normalized, toPlayer);
         if (velocityAlignment > 0)
@@ -172,42 +170,42 @@ public class EnemyAgent : Agent
 
         Vector2 playerToTarget = t - p;
         float distPlayerToTarget = playerToTarget.magnitude;
-        
-        if (distPlayerToTarget > 5f) 
+
+        if (distPlayerToTarget > 5f)
         {
             Vector2 playerToEnemy = e - p;
             float projection = Vector2.Dot(playerToEnemy, playerToTarget.normalized);
-            
+
             if (projection > 0 && projection < distPlayerToTarget)
             {
                 Vector2 perpendicular = playerToEnemy - (playerToTarget.normalized * projection);
                 float lateralDist = perpendicular.magnitude;
-                
+
                 if (lateralDist < 25f)
                 {
                     float pathAlignment = 1f - (lateralDist / 25f);
                     float progressAlongPath = projection / distPlayerToTarget;
-                    
+
                     AddReward(pathAlignment * progressAlongPath * 0.015f);
                 }
             }
         }
-        
+
         float distPE = Vector2.Distance(p, e);
         if (distPE < 30f)
         {
             AddReward((30f - distPE) / 30f * 0.002f);
         }
-        
+
         Vector2 playerVel = gm.player.GetComponent<ShipMovement>().Velocity;
         if (playerVel.magnitude > 0.1f)
         {
             Vector2 playerToEnemy = e - p;
             float behindAlignment = Vector2.Dot(playerToEnemy.normalized, -playerVel.normalized);
-            
+
             if (behindAlignment > 0.7f && distPE > 15f)
             {
-                AddReward(-0.003f); 
+                AddReward(-0.003f);
             }
         }
     }
@@ -217,18 +215,21 @@ public class EnemyAgent : Agent
         Vector2 p = gm.player.transform.localPosition;
         Vector2 e = transform.localPosition;
         Vector2 t = gm.targetLake.lakeCenter;
-        
+
         Vector2 playerVel = gm.player.GetComponent<ShipMovement>().Velocity;
         Vector2 enemyVel = _movement.Velocity;
-        
+
         float distPE = Vector2.Distance(p, e);
 
         if (playerVel.magnitude > 0.5f)
         {
-            Vector2 predictedPlayerPos = p + playerVel * 3f; 
+            Vector2 predictedPlayerPos = p + playerVel * 3f;
             Vector2 toInterceptPoint = predictedPlayerPos - e;
-            
-            float interceptAlignment = Vector2.Dot(enemyVel.normalized, toInterceptPoint.normalized);
+
+            float interceptAlignment = Vector2.Dot(
+                enemyVel.normalized,
+                toInterceptPoint.normalized
+            );
             if (interceptAlignment > 0.5f && distPE < 50f && distPE > 10f)
             {
                 AddReward(interceptAlignment * 0.008f);
@@ -241,36 +242,35 @@ public class EnemyAgent : Agent
             {
                 Vector2 playerToEnemy = (e - p).normalized;
                 float approachAlignment = Vector2.Dot(playerVel.normalized, playerToEnemy);
-                
-                if (approachAlignment > 0.3f) 
+
+                if (approachAlignment > 0.3f)
                 {
                     AddReward(0.05f);
                 }
                 else
                 {
-                    AddReward(-0.02f); 
+                    AddReward(-0.02f);
                 }
             }
             else
             {
                 AddReward(-0.01f);
             }
-            
         }
-        
+
         Vector2 playerToTarget = t - p;
         float distPlayerToTarget = playerToTarget.magnitude;
-        
+
         if (distPlayerToTarget > 5f)
         {
             Vector2 playerToEnemy = e - p;
             float projection = Vector2.Dot(playerToEnemy, playerToTarget.normalized);
-            
+
             if (projection > 0 && projection < distPlayerToTarget)
             {
                 Vector2 perpendicular = playerToEnemy - (playerToTarget.normalized * projection);
                 float lateralDist = perpendicular.magnitude;
-                
+
                 if (lateralDist < 20f)
                 {
                     float pathAlignment = 1f - (lateralDist / 20f);
@@ -282,13 +282,14 @@ public class EnemyAgent : Agent
 
         float enemyDistToTarget = Vector2.Distance(e, t);
         float playerDistToTarget = Vector2.Distance(p, t);
-        
+
         if (enemyDistToTarget < playerDistToTarget && distPE < 40f)
         {
             float shortcutAdvantage = (playerDistToTarget - enemyDistToTarget) / playerDistToTarget;
             AddReward(shortcutAdvantage * 0.005f);
         }
-    } 
+    }
+
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var cont = actionsOut.ContinuousActions;

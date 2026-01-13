@@ -6,7 +6,7 @@ This repository is an attempt to create enemy ship agent in 2d naval game. The a
 
 Since we have walls in our game, we need to teach agents to navigate first. For that I used curriculum learning with some dense reward shaping. Also, in order to train the enemy, we first need decent player. So our initial goal is the train the player.
 
-
+Below are the quick recap. See config files for curriculums.
 
 
 #### Phase 0
@@ -43,15 +43,18 @@ Note: I tried to use radar for enemies and not giving the target information bec
 
 - Dense rewards based on phases. At the end, we basically give reward for being between player and target.
 - -0.5 on death
-- +2 on player death by hittin walls
-- +3 on player death by hitting mines
-- +3 for colliding with player
+- +1.5 on player death by hittin walls
+- +5 on player death by hitting mines
+- +5 for colliding with player
+- -10 for player reaches the target
 
+Set playerShip_v1 to player and set behaviour type to inference. Set enemyShip behaviour type to default and get a build.
 
+```
+ mlagents-learn config/enemyOnly.yaml --env=Builds/yourpath/game.x86_64 --run-id=enemyShip_v1 --time-scale=40
+```
 
-
-mlagents-learn config/your_config.yaml --env=your_path.x86_64 --run-id=ship_v1
- --resume --no-graphics --time-scale=40
+<img src="../media/enemyv1.png">
 
 
 

@@ -23,8 +23,7 @@ public class GameManager : MonoBehaviour
     private Leaf enemy1Lake;
     private Leaf enemy2Lake;
 
-    private int MaxStep = 3000;
-
+    private int MaxStep = 5000;
 
     void Start()
     {
@@ -63,7 +62,6 @@ public class GameManager : MonoBehaviour
         float dist1 = Vector2.Distance(enemy1Pos, playerPos);
         float dist2 = Vector2.Distance(enemy2Pos, playerPos);
 
-
         if (CommitedSuicide(player.transform))
         {
             playerAgent.AddReward(-1.0f);
@@ -90,11 +88,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-
-        if (
-            enemy1.gameObject.activeSelf
-            && dist1 < 3f
-        )
+        if (enemy1.gameObject.activeSelf && dist1 < 3f)
         {
             playerAgent.AddReward(-1.0f);
             enemy1Agent.AddReward(+5.0f);
@@ -102,10 +96,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (
-            enemy2.gameObject.activeSelf
-            && dist2 < 3f
-        )
+        if (enemy2.gameObject.activeSelf && dist2 < 3f)
         {
             playerAgent.AddReward(-1.0f);
             enemy2Agent.AddReward(+5.0f);
@@ -118,9 +109,9 @@ public class GameManager : MonoBehaviour
             playerAgent.AddReward(+5.0f);
 
             if (enemy1.gameObject.activeSelf)
-                enemy1Agent.AddReward(-3.0f);
+                enemy1Agent.AddReward(-10.0f);
             if (enemy2.gameObject.activeSelf)
-                enemy2Agent.AddReward(-3.0f);
+                enemy2Agent.AddReward(-10.0f);
 
             EndEpisode();
             return;
@@ -173,7 +164,7 @@ public class GameManager : MonoBehaviour
         if (player.gameObject.activeSelf)
             // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
 
-        playerAgent.EndEpisode();
+            playerAgent.EndEpisode();
         if (enemy1.gameObject.activeSelf)
         {
             Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
