@@ -201,7 +201,9 @@ public class GameManager : MonoBehaviour
     private void EndEpisode()
     {
         if (player.gameObject.activeSelf)
-            playerAgent.EndEpisode();
+            Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
+
+        playerAgent.EndEpisode();
         if (enemy1.gameObject.activeSelf)
         {
             // Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
@@ -283,115 +285,77 @@ public class GameManager : MonoBehaviour
             return false;
 
         spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
+        Vector2 P = spawnLake.lakeCenter;
 
-        float diff = Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 0.0f);
+        float maxDist = -1f;
+        Leaf furthest = null;
 
-        int[] values = new int[] { 30, 60, 100, -1 };
-        int trainingRadius = values[Mathf.Clamp((int)diff, 0, 3)];
-
-        List<Leaf> validTargets = new List<Leaf>();
-
-        if (trainingRadius > 0)
+        foreach (var leaf in allLeafs)
         {
-            foreach (Leaf leaf in allLeafs)
+            if (leaf == spawnLake)
+                continue;
+
+            float d = Vector2.Distance(P, leaf.lakeCenter);
+            if (d > maxDist)
             {
-                if (leaf == spawnLake)
-                    continue;
-                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
-                if (dist <= trainingRadius && dist > 5f)
-                    validTargets.Add(leaf);
-            }
-        }
-        else
-        {
-            float minDistance = Mathf.Min(MapGenerator.mapWidth, MapGenerator.mapHeight) * 0.5f;
-            foreach (Leaf leaf in allLeafs)
-            {
-                if (leaf == spawnLake)
-                    continue;
-                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
-                if (dist >= minDistance)
-                    validTargets.Add(leaf);
+                maxDist = d;
+                furthest = leaf;
             }
         }
 
-        if (validTargets.Count == 0)
+        if (furthest == null)
+            return false;
+
+        targetLake = furthest;
+        Vector2 T = targetLake.lakeCenter;
+        float dPT = Vector2.Distance(P, T);
+
+        List<Leaf> enemyCandidates = new List<Leaf>();
+
+        foreach (var leaf in allLeafs)
         {
-            do
-            {
-                targetLake = allLeafs[Random.Range(0, allLeafs.Count)];
-            } while (targetLake == spawnLake);
-        }
-        else
-        {
-            targetLake = validTargets[Random.Range(0, validTargets.Count)];
-        }
+            if (leaf == spawnLake || leaf == targetLake)
+                continue;
 
-        List<Leaf> availableLakes = new List<Leaf>();
-        foreach (var lake in allLeafs)
-        {
-            if (lake != spawnLake && lake != targetLake)
-                availableLakes.Add(lake);
-        }
+            Vector2 E = leaf.lakeCenter;
 
-        float enemySpawnRadius = Academy.Instance.EnvironmentParameters.GetWithDefault(
-            "enemy_spawn_radius",
-            -1
-        );
+            float dPE = Vector2.Distance(P, E);
+            float dET = Vector2.Distance(E, T);
 
-        if (enemySpawnRadius > 0)
-        {
-            List<Leaf> closeLakes = new List<Leaf>();
+            if (dPE >= dPT)
+                continue;
 
-            foreach (var lake in availableLakes)
-            {
-                float dist = Vector2Int.Distance(spawnLake.lakeCenter, lake.lakeCenter);
-                if (dist <= enemySpawnRadius)
-                {
-                    closeLakes.Add(lake);
-                }
-            }
+            if (dET < dPE)
+                continue;
 
-            if (closeLakes.Count > 0)
-            {
-                enemy1Lake = closeLakes[Random.Range(0, closeLakes.Count)];
-                availableLakes.Remove(enemy1Lake);
-            }
-            else
-            {
-                Leaf closest = null;
-                float minDist = float.MaxValue;
+            float lateral = DistancePointToSegment(E, P, T);
+            if (lateral > dPT * 0.35f)
+                continue;
 
-                foreach (var lake in availableLakes)
-                {
-                    float d = Vector2Int.Distance(spawnLake.lakeCenter, lake.lakeCenter);
-                    if (d < minDist)
-                    {
-                        minDist = d;
-                        closest = lake;
-                    }
-                }
-                enemy1Lake = closest;
-                availableLakes.Remove(closest);
-            }
-        }
-        else
-        {
-            int r = Random.Range(0, availableLakes.Count);
-            enemy1Lake = availableLakes[r];
-            availableLakes.RemoveAt(r);
+            enemyCandidates.Add(leaf);
         }
 
-        if (availableLakes.Count > 0)
-        {
-            enemy2Lake = availableLakes[Random.Range(0, availableLakes.Count)];
-        }
-        else
-        {
-            enemy2Lake = enemy1Lake;
-        }
+        if (enemyCandidates.Count == 0)
+            return false;
+
+        enemy1Lake = enemyCandidates[Random.Range(0, enemyCandidates.Count)];
+        enemyCandidates.Remove(enemy1Lake);
+
+        enemy2Lake =
+            enemyCandidates.Count > 0
+                ? enemyCandidates[Random.Range(0, enemyCandidates.Count)]
+                : enemy1Lake;
 
         return true;
+    }
+
+    float DistancePointToSegment(Vector2 p, Vector2 a, Vector2 b)
+    {
+        Vector2 ab = b - a;
+        float t = Vector2.Dot(p - a, ab) / ab.sqrMagnitude;
+        t = Mathf.Clamp01(t);
+        Vector2 proj = a + t * ab;
+        return Vector2.Distance(p, proj);
     }
 
     private bool CommitedSuicide(Transform shipTransform)

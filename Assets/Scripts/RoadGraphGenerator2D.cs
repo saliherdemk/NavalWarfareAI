@@ -68,10 +68,10 @@ public class RoadGraphGenerator2D : MonoBehaviour
     void SplitMap()
     {
         int difficulty = Mathf.RoundToInt(
-            Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 3)
+            Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 2)
         );
 
-        int[] values = new int[] {16, 8, 4, 4};
+        int[] values = new int[] {16, 8, 4};
        
         int minLeafSize = Mathf.Max(mapWidth, mapHeight) / 16;
         int maxLeafSize = Mathf.Max(mapWidth, mapHeight) / values[difficulty];

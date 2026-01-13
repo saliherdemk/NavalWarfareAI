@@ -1,0 +1,51 @@
+{
+    "training_phase": {
+        "lesson_num": 0
+    },
+    "difficulty": {
+        "lesson_num": 0
+    },
+    "player_speed_multiplier": {
+        "lesson_num": 0
+    },
+    "enemy_speed_multiplier": {
+        "lesson_num": 0
+    },
+    "PlayerShip": {
+        "elo": 1145.0906786364071,
+        "checkpoints": [
+            {
+                "steps": 10009204,
+                "file_path": "results/selfPlayEnv/PlayerShip/PlayerShip-10009204.onnx",
+                "reward": 1.1944434724507793,
+                "creation_time": 1768300808.5472784,
+                "auxillary_file_paths": [
+                    "results/selfPlayEnv/PlayerShip/PlayerShip-10009204.pt"
+                ]
+            },
+            {
+                "steps": 10020025,
+                "file_path": "results/selfPlayEnv/PlayerShip/PlayerShip-10020025.onnx",
+                "reward": 0.8939814294906373,
+                "creation_time": 1768301037.677001,
+                "auxillary_file_paths": [
+                    "results/selfPlayEnv/PlayerShip/PlayerShip-10020025.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 10020025,
+            "file_path": "results/selfPlayEnv/PlayerShip.onnx",
+            "reward": 0.8939814294906373,
+            "creation_time": 1768301037.677001,
+            "auxillary_file_paths": [
+                "results/selfPlayEnv/PlayerShip/PlayerShip-10020025.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.8.0+cu128"
+    }
+}
