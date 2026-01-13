@@ -45,10 +45,10 @@ behaviors:
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: null
+  env_path: Builds/enemytry/game.x86_64
   env_args: null
   base_port: 5005
-  num_envs: 1
+  num_envs: 4
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -62,7 +62,7 @@ engine_settings:
   time_scale: 40.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: false
+  no_graphics: true
   no_graphics_monitor: false
 environment_parameters:
   enemy_difficulty:
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7372
+          seed: 4247
           value: 0
       name: BP_Freeze
       completion_criteria:
@@ -83,7 +83,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7373
+          seed: 4248
           value: 1
       name: BP_Slow
       completion_criteria:
@@ -96,7 +96,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7374
+          seed: 4249
           value: 2
       name: BP_Medium
       completion_criteria:
@@ -109,7 +109,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7375
+          seed: 4250
           value: 3
       name: BP_Fast
       completion_criteria:
@@ -122,7 +122,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7376
+          seed: 4251
           value: 4
       name: PI_Slow
       completion_criteria:
@@ -135,7 +135,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7377
+          seed: 4252
           value: 5
       name: PI_Medium
       completion_criteria:
@@ -148,7 +148,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7378
+          seed: 4253
           value: 6
       name: PI_Fast
       completion_criteria:
@@ -161,7 +161,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7379
+          seed: 4254
           value: 7
       name: AT_Slow
       completion_criteria:
@@ -174,7 +174,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7380
+          seed: 4255
           value: 8
       name: AT_Medium
       completion_criteria:
@@ -187,7 +187,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 7381
+          seed: 4256
           value: 9
       name: AT_Fast
       completion_criteria: null
