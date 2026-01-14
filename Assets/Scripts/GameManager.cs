@@ -10,12 +10,8 @@ public class GameManager : MonoBehaviour
     public GameObject targetMarkerPrefab;
     public Transform mapEnvironment;
 
-    public bool isTraining = false;
-
     private EnemyShipController enemy1;
     private EnemyAgent enemy1Agent;
-    private EnemyShipController enemy2;
-    private EnemyAgent enemy2Agent;
     public PlayerShipController player;
     private PlayerAgent playerAgent;
     private GameObject targetMarkerInstance;
@@ -41,35 +37,20 @@ public class GameManager : MonoBehaviour
 
     public void CheckDeaths()
     {
-        if (enemy1.gameObject.activeSelf && CommitedSuicide(enemy1.transform))
+        if (CommitedSuicide(enemy1.transform))
         {
-            enemy1Agent.AddReward(-0.5f);
-            enemy1Agent.EndEpisode();
-            enemy1.gameObject.SetActive(false);
-        }
-
-        if (enemy2.gameObject.activeSelf && CommitedSuicide(enemy2.transform))
-        {
-            enemy2Agent.AddReward(-0.5f);
-            enemy2Agent.EndEpisode();
-            enemy2.gameObject.SetActive(false);
+            enemy1Agent.AddReward(-5.0f);
+            EndEpisode();
         }
 
         Vector2 playerPos = player.transform.localPosition;
         Vector2 enemy1Pos = enemy1.transform.localPosition;
-        Vector2 enemy2Pos = enemy2.transform.localPosition;
         float dist1 = Vector2.Distance(enemy1Pos, playerPos);
-        float dist2 = Vector2.Distance(enemy2Pos, playerPos);
 
         if (CommitedSuicide(player.transform))
         {
             playerAgent.AddReward(-1.0f);
-
-            if (enemy1.gameObject.activeSelf && dist1 < 20f)
-                enemy1Agent.AddReward(+1.5f);
-            if (enemy2.gameObject.activeSelf && dist2 < 20f)
-                enemy2Agent.AddReward(+1.5f);
-
+            enemy1Agent.AddReward(+1.5f);
             EndEpisode();
             return;
         }
@@ -77,17 +58,12 @@ public class GameManager : MonoBehaviour
         if (player.hitByMine)
         {
             playerAgent.AddReward(-1.0f);
-
-            if (enemy1.gameObject.activeSelf && dist1 < 30f)
-                enemy1Agent.AddReward(+5.0f);
-            if (enemy2.gameObject.activeSelf && dist2 < 30f)
-                enemy2Agent.AddReward(+5.0f);
-
+            enemy1Agent.AddReward(+5.0f);
             EndEpisode();
             return;
         }
 
-        if (enemy1.gameObject.activeSelf && dist1 < 3f)
+        if (dist1 < 3f)
         {
             playerAgent.AddReward(-1.0f);
             enemy1Agent.AddReward(+5.0f);
@@ -95,23 +71,10 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (enemy2.gameObject.activeSelf && dist2 < 3f)
-        {
-            playerAgent.AddReward(-1.0f);
-            enemy2Agent.AddReward(+5.0f);
-            EndEpisode();
-            return;
-        }
-
         if (PlayerReachedTarget())
         {
             playerAgent.AddReward(+5.0f);
-
-            if (enemy1.gameObject.activeSelf)
-                enemy1Agent.AddReward(-10.0f);
-            if (enemy2.gameObject.activeSelf)
-                enemy2Agent.AddReward(-10.0f);
-
+            enemy1Agent.AddReward(-5.0f);
             EndEpisode();
             return;
         }
@@ -120,19 +83,9 @@ public class GameManager : MonoBehaviour
         {
             float playerProgress = CalculatePlayerProgress();
 
-            if (playerProgress < 0.5f)
+            if (playerProgress < 0.5f && playerProgress != 0)
             {
-                if (enemy1.gameObject.activeSelf)
-                    enemy1Agent.AddReward(+1.0f);
-                if (enemy2.gameObject.activeSelf)
-                    enemy2Agent.AddReward(+1.0f);
-            }
-            else if (playerProgress < 0.8f)
-            {
-                if (enemy1.gameObject.activeSelf)
-                    enemy1Agent.AddReward(+0.3f);
-                if (enemy2.gameObject.activeSelf)
-                    enemy2Agent.AddReward(+0.3f);
+                enemy1Agent.AddReward(+3.0f);
             }
 
             EndEpisode();
@@ -160,22 +113,14 @@ public class GameManager : MonoBehaviour
 
     private void EndEpisode()
     {
-        if (player.gameObject.activeSelf)
-            // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
+        // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
 
-            playerAgent.EndEpisode();
-        if (enemy1.gameObject.activeSelf)
-        {
-            Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
-            enemy1Agent.EndEpisode();
-        }
-        if (enemy2.gameObject.activeSelf)
-        {
-            // Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
-            enemy2Agent.EndEpisode();
-        }
+        Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
+        playerAgent.EndEpisode();
+        enemy1Agent.EndEpisode();
 
-        if(!isTraining){
+        if (!Academy.Instance.IsCommunicatorOn)
+        {
             RestartGame();
         }
     }
@@ -203,7 +148,6 @@ public class GameManager : MonoBehaviour
 
         player.Reset(spawnLake.lakeCenter);
         enemy1.Reset(enemy1Lake.lakeCenter);
-        enemy2.Reset(enemy2Lake.lakeCenter);
 
         PlaceTargetMarker();
     }
@@ -240,9 +184,9 @@ public class GameManager : MonoBehaviour
         enemy1Agent = enemy1.GetComponent<EnemyAgent>();
         enemy1Agent.gm = this;
 
-        enemy2 = Instantiate(enemyPrefab, mapEnvironment);
-        enemy2Agent = enemy2.GetComponent<EnemyAgent>();
-        enemy2Agent.gm = this;
+        // enemy2 = Instantiate(enemyPrefab, mapEnvironment);
+        // enemy2Agent = enemy2.GetComponent<EnemyAgent>();
+        // enemy2Agent.gm = this;
     }
 
     bool ChooseSpawnTargetLakesPhase0()
@@ -354,12 +298,6 @@ public class GameManager : MonoBehaviour
 
             float dPE = Vector2.Distance(P, E);
             float dET = Vector2.Distance(E, T);
-
-            if (dPE >= dPT)
-                continue;
-
-            if (dET < dPE)
-                continue;
 
             float lateral = DistancePointToSegment(E, P, T);
             if (lateral > dPT * 0.35f)

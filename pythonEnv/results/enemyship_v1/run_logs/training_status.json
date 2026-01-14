@@ -1,0 +1,68 @@
+{
+    "enemy_difficulty": {
+        "lesson_num": 2
+    },
+    "EnemyShip": {
+        "checkpoints": [
+            {
+                "steps": 3999761,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-3999761.onnx",
+                "reward": 2.190082295735677,
+                "creation_time": 1768407774.2771993,
+                "auxillary_file_paths": [
+                    "results/enemyship_v1/EnemyShip/EnemyShip-3999761.pt"
+                ]
+            },
+            {
+                "steps": 4499951,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-4499951.onnx",
+                "reward": -8.126140743494034,
+                "creation_time": 1768408276.7436101,
+                "auxillary_file_paths": [
+                    "results/enemyship_v1/EnemyShip/EnemyShip-4499951.pt"
+                ]
+            },
+            {
+                "steps": 4677055,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-4677055.onnx",
+                "reward": -7.979523026174115,
+                "creation_time": 1768408569.6145968,
+                "auxillary_file_paths": [
+                    "results/enemyship_v1/EnemyShip/EnemyShip-4677055.pt"
+                ]
+            },
+            {
+                "steps": 4681803,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-4681803.onnx",
+                "reward": -5.811280250549316,
+                "creation_time": 1768408757.3790205,
+                "auxillary_file_paths": [
+                    "results/enemyship_v1/EnemyShip/EnemyShip-4681803.pt"
+                ]
+            },
+            {
+                "steps": 4682803,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-4682803.onnx",
+                "reward": -0.5000000596046448,
+                "creation_time": 1768408980.8743207,
+                "auxillary_file_paths": [
+                    "results/enemyship_v1/EnemyShip/EnemyShip-4682803.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 4682803,
+            "file_path": "results/enemyship_v1/EnemyShip.onnx",
+            "reward": -0.5000000596046448,
+            "creation_time": 1768408980.8743207,
+            "auxillary_file_paths": [
+                "results/enemyship_v1/EnemyShip/EnemyShip-4682803.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.8.0+cu128"
+    }
+}

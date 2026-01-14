@@ -171,6 +171,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Environment (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7723148891557616173, guid: 2e3d148fa1f2bb0b488fe9977eefd336, type: 3}
+      propertyPath: mapWidth
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 7723148891557616173, guid: 2e3d148fa1f2bb0b488fe9977eefd336, type: 3}
+      propertyPath: mapHeight
+      value: 200
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

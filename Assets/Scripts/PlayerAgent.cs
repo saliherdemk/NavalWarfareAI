@@ -39,13 +39,10 @@ public class PlayerAgent : Agent
     {
         gm.RestartGame();
 
-        float[] speeds = { 0f, 0.6f, 0.8f, 1.0f };
+        float[] speeds = { 0f, 0.5f, 1.0f };
 
-        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 3);
-        _movement.speedMult =
-            d <= 3 ? speeds[d]
-            : d <= 6 ? speeds[d - 3]
-            : speeds[d - 6];
+        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 8);
+        _movement.speedMult = speeds[d / 3];
 
         _prevTargetDist = Vector2.Distance(transform.localPosition, gm.targetLake.lakeCenter);
         _progressAccum = 0f;

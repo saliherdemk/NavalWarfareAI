@@ -40,6 +40,13 @@ public class RoadGraphGenerator2D : MonoBehaviour
 
     public void GenerateMap()
     {
+        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 3);
+        int[] mapSizes = {50, 125, 200};
+
+        int mapSize = mapSizes[d % 3];
+        mapWidth = mapSize;
+        mapHeight = mapSize;
+
         ResetMap();
         SplitMap();
         AssignNeighbors();
@@ -67,14 +74,8 @@ public class RoadGraphGenerator2D : MonoBehaviour
 
     void SplitMap()
     {
-        int difficulty = Mathf.RoundToInt(
-            Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 2)
-        );
-
-        int[] values = new int[] {16, 8, 4};
-       
         int minLeafSize = Mathf.Max(mapWidth, mapHeight) / 16;
-        int maxLeafSize = Mathf.Max(mapWidth, mapHeight) / values[difficulty];
+        int maxLeafSize = Mathf.Max(mapWidth, mapHeight) / 4;
         SplitBSP(new RectInt(0, 0, mapWidth, mapHeight), minLeafSize, maxLeafSize);
     }
 

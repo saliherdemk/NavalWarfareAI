@@ -19,10 +19,6 @@ public class EnemyAgent : Agent
     private float[] _nRelVelSensors;
 
     private float _prevPlayerTargetDist;
-    private int currentPhase;
-    
-    private float _lastMineFireTime;
-    private const float MINE_COOLDOWN_PENALTY_TIME = 2f;
 
     public override void Initialize()
     {
@@ -42,16 +38,10 @@ public class EnemyAgent : Agent
             1.0f
         );
 
-        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 0);
-
-        this.currentPhase = d <= 3 ? 0 : d <= 6 ? 1 : 2;
-
         _prevPlayerTargetDist = Vector2.Distance(
             gm.player.transform.localPosition,
             gm.targetLake.lakeCenter
         );
-        
-        _lastMineFireTime = -100f;
     }
 
     public float[] GetRelativePositionData(Vector2 targetWorldPosition)
@@ -106,204 +96,24 @@ public class EnemyAgent : Agent
 
         _movement.SetInput(targetThrottle, targetRudder);
 
-        AddReward(-0.0002f);
+        AddReward(-0.0001f);
 
-        float currentPlayerTargetDist = Vector2.Distance(
+        float currDist = Vector2.Distance(
             gm.player.transform.localPosition,
             gm.targetLake.lakeCenter
         );
-        float progressDelta = _prevPlayerTargetDist - currentPlayerTargetDist;
-        
-        if (progressDelta < 0)
-        {
-            AddReward(progressDelta * 0.01f); 
-        }
-        
-        _prevPlayerTargetDist = currentPlayerTargetDist;
 
-        bool justFiredMine = false;
+        float delta = currDist - _prevPlayerTargetDist;
+
+        delta = Mathf.Clamp(delta, -2f, 2f);
+        AddReward(delta * 0.05f);
+
+        _prevPlayerTargetDist = currDist;
+
         if (fireSignal == 1)
         {
-            float timeSinceLastFire = Time.time - _lastMineFireTime;
-            
-            if (timeSinceLastFire < MINE_COOLDOWN_PENALTY_TIME)
-            {
-                AddReward(-0.05f); 
-            }
-            else
-            {
-                _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
-                _lastMineFireTime = Time.time;
-                justFiredMine = true;
-            }
-        }
-
-        switch (currentPhase)
-        {
-            case 0:
-                BasicPursuitRewards();
-                break;
-            case 1:
-                PathInterceptionRewards();
-                break;
-            case 2:
-                AdvancedTacticsRewards(justFiredMine);
-                break;
-        }
-    }
-
-    private void BasicPursuitRewards()
-    {
-        Vector2 playerPos = gm.player.transform.localPosition;
-        Vector2 enemyPos = transform.localPosition;
-        float distToPlayer = Vector2.Distance(playerPos, enemyPos);
-
-        if (distToPlayer < 60f)
-        {
-            float proximityReward = Mathf.Pow((60f - distToPlayer) / 60f, 2);
-            AddReward(proximityReward * 0.02f);
-        }
-
-        Vector2 toPlayer = (playerPos - enemyPos).normalized;
-        float velocityAlignment = Vector2.Dot(_movement.Velocity.normalized, toPlayer);
-        if (velocityAlignment > 0)
-        {
-            AddReward(velocityAlignment * 0.01f);
-        }
-        
-        if (distToPlayer < 10f)
-        {
-            AddReward(0.02f);
-        }
-    }
-
-    private void PathInterceptionRewards()
-    {
-        Vector2 p = gm.player.transform.localPosition;
-        Vector2 e = transform.localPosition;
-        Vector2 t = gm.targetLake.lakeCenter;
-
-        Vector2 playerToTarget = t - p;
-        float distPlayerToTarget = playerToTarget.magnitude;
-
-        if (distPlayerToTarget > 5f)
-        {
-            Vector2 playerToEnemy = e - p;
-            float projection = Vector2.Dot(playerToEnemy, playerToTarget.normalized);
-
-            if (projection > 0 && projection < distPlayerToTarget)
-            {
-                Vector2 perpendicular = playerToEnemy - (playerToTarget.normalized * projection);
-                float lateralDist = perpendicular.magnitude;
-
-                if (lateralDist < 30f)
-                {
-                    float pathAlignment = 1f - (lateralDist / 30f);
-                    float progressAlongPath = projection / distPlayerToTarget;
-                    
-                    AddReward(pathAlignment * progressAlongPath * 0.03f);
-                    
-                    if (progressAlongPath > 0.3f && progressAlongPath < 0.7f && lateralDist < 15f)
-                    {
-                        AddReward(0.02f);
-                    }
-                }
-            }
-        }
-
-        float distPE = Vector2.Distance(p, e);
-        if (distPE < 40f)
-        {
-            AddReward((40f - distPE) / 40f * 0.015f);
-        }
-    }
-
-    private void AdvancedTacticsRewards(bool justFiredMine)
-    {
-        Vector2 p = gm.player.transform.localPosition;
-        Vector2 e = transform.localPosition;
-        Vector2 t = gm.targetLake.lakeCenter;
-
-        Vector2 playerVel = gm.player.GetComponent<ShipMovement>().Velocity;
-        Vector2 enemyVel = _movement.Velocity;
-
-        float distPE = Vector2.Distance(p, e);
-
-        if (playerVel.magnitude > 0.5f)
-        {
-            Vector2 predictedPlayerPos = p + playerVel * 3f;
-            Vector2 toInterceptPoint = predictedPlayerPos - e;
-
-            float interceptAlignment = Vector2.Dot(
-                enemyVel.normalized,
-                toInterceptPoint.normalized
-            );
-            
-            if (interceptAlignment > 0.3f && distPE < 60f && distPE > 8f)
-            {
-                AddReward(interceptAlignment * 0.02f);
-            }
-        }
-
-        if (justFiredMine)
-        {
-            bool goodFire = false;
-            
-            if (distPE > 6f && distPE < 35f)
-            {
-                Vector2 playerToEnemy = (e - p).normalized;
-                float approachAlignment = Vector2.Dot(playerVel.normalized, playerToEnemy);
-
-                if (approachAlignment > 0.2f)
-                {
-                    AddReward(0.15f);
-                    goodFire = true;
-                }
-                else if (Mathf.Abs(approachAlignment) < 0.3f && distPE < 25f)
-                {
-                    AddReward(0.1f);
-                    goodFire = true;
-                }
-            }
-            
-            if (!goodFire)
-            {
-                if (distPE < 6f || distPE > 40f)
-                {
-                    AddReward(-0.08f);
-                }
-            }
-        }
-
-        Vector2 playerToTarget = t - p;
-        float distPlayerToTarget = playerToTarget.magnitude;
-
-        if (distPlayerToTarget > 5f)
-        {
-            Vector2 playerToEnemy = e - p;
-            float projection = Vector2.Dot(playerToEnemy, playerToTarget.normalized);
-
-            if (projection > 0 && projection < distPlayerToTarget)
-            {
-                Vector2 perpendicular = playerToEnemy - (playerToTarget.normalized * projection);
-                float lateralDist = perpendicular.magnitude;
-
-                if (lateralDist < 25f)
-                {
-                    float pathAlignment = 1f - (lateralDist / 25f);
-                    float progressAlongPath = projection / distPlayerToTarget;
-                    AddReward(pathAlignment * progressAlongPath * 0.025f);
-                }
-            }
-        }
-
-        float enemyDistToTarget = Vector2.Distance(e, t);
-        float playerDistToTarget = Vector2.Distance(p, t);
-
-        if (enemyDistToTarget < playerDistToTarget && distPE < 50f)
-        {
-            float shortcutAdvantage = (playerDistToTarget - enemyDistToTarget) / playerDistToTarget;
-            AddReward(shortcutAdvantage * 0.015f);
+            _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
+            // AddReward(-0.01f);
         }
     }
 
@@ -322,7 +132,6 @@ public class EnemyAgent : Agent
             float[] playerDirection = GetRelativePositionData(gm.player.transform.localPosition);
             float[] targetDirection = GetRelativePositionData(gm.targetLake.lakeCenter);
             float[] relVelocity = GetRelativeVelocityData();
-            Debug.Log($"Phase: {currentPhase}, PlayerDist: {playerDirection[2]:F1}");
         }
     }
 }
