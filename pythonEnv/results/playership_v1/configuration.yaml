@@ -1,6 +1,6 @@
 default_settings: null
 behaviors:
-  EnemyShip:
+  PlayerShip:
     trainer_type: ppo
     hyperparameters:
       batch_size: 2048
@@ -25,7 +25,7 @@ behaviors:
       deterministic: false
     reward_signals:
       extrinsic:
-        gamma: 0.99
+        gamma: 0.995
         strength: 1.0
         network_settings:
           normalize: false
@@ -38,17 +38,17 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 10000000
-    time_horizon: 512
+    max_steps: 20000000
+    time_horizon: 1024
     summary_freq: 10000
     threaded: false
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: null
+  env_path: Builds/playerv1/game.x86_64
   env_args: null
   base_port: 5005
-  num_envs: 1
+  num_envs: 4
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -62,85 +62,68 @@ engine_settings:
   time_scale: 40.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: false
+  no_graphics: true
   no_graphics_monitor: false
 environment_parameters:
-  training_phase:
+  player_phase0:
     curriculum:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 8231
-          value: 0
-      name: Phase1_BasicPursuit
-      completion_criteria:
-        behavior: EnemyShip
-        measure: reward
-        min_lesson_length: 200
-        signal_smoothing: true
-        threshold: 1.5
-        require_reset: false
-    - value:
-        sampler_type: constant
-        sampler_parameters:
-          seed: 8232
+          seed: 3593
           value: 1
-      name: Phase2_PathInterception
-      completion_criteria:
-        behavior: EnemyShip
-        measure: reward
-        min_lesson_length: 200
-        signal_smoothing: true
-        threshold: 2.0
-        require_reset: false
-    - value:
-        sampler_type: constant
-        sampler_parameters:
-          seed: 8233
-          value: 2
-      name: Phase3_AdvancedTactics
+      name: phase0
       completion_criteria: null
-  player_speed_multiplier:
+  enemy_speed_multiplier:
     curriculum:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 8234
-          value: 0.6
-      name: SlowPlayer
+          seed: 3594
+          value: 0
+      name: Freeze
+      completion_criteria: null
+  difficulty:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 3595
+          value: 0
+      name: NoWalls
       completion_criteria:
-        behavior: EnemyShip
+        behavior: PlayerShip
         measure: reward
-        min_lesson_length: 200
+        min_lesson_length: 100
         signal_smoothing: true
-        threshold: 1.5
+        threshold: 4.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 8235
-          value: 0.8
-      name: MediumPlayer
+          seed: 3596
+          value: 1
+      name: FewWalls
       completion_criteria:
-        behavior: EnemyShip
+        behavior: PlayerShip
         measure: reward
-        min_lesson_length: 200
+        min_lesson_length: 100
         signal_smoothing: true
-        threshold: 2.0
+        threshold: 4.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 8236
-          value: 1.0
-      name: FastPlayer
+          seed: 3597
+          value: 2
+      name: ManyWalls
       completion_criteria: null
 checkpoint_settings:
-  run_id: enemyship_v1
+  run_id: playership_v1
   initialize_from: null
   load_model: false
-  resume: false
-  force: true
+  resume: true
+  force: false
   train_model: false
   inference: false
   results_dir: results

@@ -1,0 +1,74 @@
+{
+    "player_phase0": {
+        "lesson_num": 0
+    },
+    "enemy_speed_multiplier": {
+        "lesson_num": 0
+    },
+    "difficulty": {
+        "lesson_num": 2
+    },
+    "PlayerShip": {
+        "checkpoints": [
+            {
+                "steps": 10999757,
+                "file_path": "results/playership_v1/PlayerShip/PlayerShip-10999757.onnx",
+                "reward": 3.0949997901916504,
+                "creation_time": 1768361538.8073814,
+                "auxillary_file_paths": [
+                    "results/playership_v1/PlayerShip/PlayerShip-10999757.pt"
+                ]
+            },
+            {
+                "steps": 11499767,
+                "file_path": "results/playership_v1/PlayerShip/PlayerShip-11499767.onnx",
+                "reward": 0.7322513535618782,
+                "creation_time": 1768365732.4865909,
+                "auxillary_file_paths": [
+                    "results/playership_v1/PlayerShip/PlayerShip-11499767.pt"
+                ]
+            },
+            {
+                "steps": 11999895,
+                "file_path": "results/playership_v1/PlayerShip/PlayerShip-11999895.onnx",
+                "reward": 1.870540472768968,
+                "creation_time": 1768369950.6501071,
+                "auxillary_file_paths": [
+                    "results/playership_v1/PlayerShip/PlayerShip-11999895.pt"
+                ]
+            },
+            {
+                "steps": 12499882,
+                "file_path": "results/playership_v1/PlayerShip/PlayerShip-12499882.onnx",
+                "reward": 1.201890788179763,
+                "creation_time": 1768374430.5652032,
+                "auxillary_file_paths": [
+                    "results/playership_v1/PlayerShip/PlayerShip-12499882.pt"
+                ]
+            },
+            {
+                "steps": 12504053,
+                "file_path": "results/playership_v1/PlayerShip/PlayerShip-12504053.onnx",
+                "reward": 0.8857380012671153,
+                "creation_time": 1768374463.0795608,
+                "auxillary_file_paths": [
+                    "results/playership_v1/PlayerShip/PlayerShip-12504053.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 12504053,
+            "file_path": "results/playership_v1/PlayerShip.onnx",
+            "reward": 0.8857380012671153,
+            "creation_time": 1768374463.0795608,
+            "auxillary_file_paths": [
+                "results/playership_v1/PlayerShip/PlayerShip-12504053.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.8.0+cu128"
+    }
+}
