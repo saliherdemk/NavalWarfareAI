@@ -45,7 +45,7 @@ behaviors:
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: Builds/playerv1/game.x86_64
+  env_path: Builds/playerOnly/game.x86_64
   env_args: null
   base_port: 5005
   num_envs: 4
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 3593
+          seed: 3439
           value: 1
       name: phase0
       completion_criteria: null
@@ -79,7 +79,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 3594
+          seed: 3440
           value: 0
       name: Freeze
       completion_criteria: null
@@ -88,7 +88,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 3595
+          seed: 3441
           value: 0
       name: NoWalls
       completion_criteria:
@@ -101,7 +101,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 3596
+          seed: 3442
           value: 1
       name: FewWalls
       completion_criteria:
@@ -114,7 +114,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 3597
+          seed: 3443
           value: 2
       name: ManyWalls
       completion_criteria: null

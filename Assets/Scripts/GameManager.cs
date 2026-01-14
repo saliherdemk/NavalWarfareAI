@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public GameObject targetMarkerPrefab;
     public Transform mapEnvironment;
 
+    public bool isTraining = false;
+
     private EnemyShipController enemy1;
     private EnemyAgent enemy1Agent;
     private EnemyShipController enemy2;
@@ -34,9 +36,6 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!Academy.Instance.IsCommunicatorOn)
-            return;
-
         CheckDeaths();
     }
 
@@ -174,6 +173,10 @@ public class GameManager : MonoBehaviour
         {
             // Debug.Log($"Enemy2 Reward: {enemy2Agent.GetCumulativeReward():F2}");
             enemy2Agent.EndEpisode();
+        }
+
+        if(!isTraining){
+            RestartGame();
         }
     }
 

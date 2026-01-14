@@ -12,7 +12,6 @@ public class EnemyAgent : Agent
 
     private EnemyShipController _controller;
     private ShipMovement _movement;
-    private ShipRaycast _raycast;
 
     private float[] _nControllerSensors;
     private float[] _nPlayerSensors;
@@ -21,12 +20,14 @@ public class EnemyAgent : Agent
 
     private float _prevPlayerTargetDist;
     private int currentPhase;
+    
+    private float _lastMineFireTime;
+    private const float MINE_COOLDOWN_PENALTY_TIME = 2f;
 
     public override void Initialize()
     {
         _controller = GetComponent<EnemyShipController>();
         _movement = GetComponent<ShipMovement>();
-        _raycast = GetComponent<ShipRaycast>();
 
         _nControllerSensors = new float[Normalizer.ENEMY_CONTROLLER_OBS_SIZE];
         _nPlayerSensors = new float[Normalizer.ENEMY_PLAYER_OBS_SIZE];
@@ -41,22 +42,16 @@ public class EnemyAgent : Agent
             1.0f
         );
 
-        float phaseValue = Academy.Instance.EnvironmentParameters.GetWithDefault(
-            "training_phase",
-            0f
-        );
-
         int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 0);
 
-        int currentPhase =
-            d <= 3 ? 0
-            : d <= 6 ? 1
-            : 2;
+        this.currentPhase = d <= 3 ? 0 : d <= 6 ? 1 : 2;
 
         _prevPlayerTargetDist = Vector2.Distance(
             gm.player.transform.localPosition,
             gm.targetLake.lakeCenter
         );
+        
+        _lastMineFireTime = -100f;
     }
 
     public float[] GetRelativePositionData(Vector2 targetWorldPosition)
@@ -111,35 +106,50 @@ public class EnemyAgent : Agent
 
         _movement.SetInput(targetThrottle, targetRudder);
 
+        AddReward(-0.0002f);
+
+        float currentPlayerTargetDist = Vector2.Distance(
+            gm.player.transform.localPosition,
+            gm.targetLake.lakeCenter
+        );
+        float progressDelta = _prevPlayerTargetDist - currentPlayerTargetDist;
+        
+        if (progressDelta < 0)
+        {
+            AddReward(progressDelta * 0.01f); 
+        }
+        
+        _prevPlayerTargetDist = currentPlayerTargetDist;
+
+        bool justFiredMine = false;
+        if (fireSignal == 1)
+        {
+            float timeSinceLastFire = Time.time - _lastMineFireTime;
+            
+            if (timeSinceLastFire < MINE_COOLDOWN_PENALTY_TIME)
+            {
+                AddReward(-0.05f); 
+            }
+            else
+            {
+                _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
+                _lastMineFireTime = Time.time;
+                justFiredMine = true;
+            }
+        }
+
         switch (currentPhase)
         {
             case 0:
                 BasicPursuitRewards();
-                if (fireSignal == 1)
-                {
-                    _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
-                    AddReward(-0.01f);
-                }
                 break;
-
             case 1:
                 PathInterceptionRewards();
-                if (fireSignal == 1)
-                {
-                    _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
-                }
                 break;
-
             case 2:
-                AdvancedTacticsRewards(fireSignal == 1);
-                if (fireSignal == 1)
-                {
-                    _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
-                }
+                AdvancedTacticsRewards(justFiredMine);
                 break;
         }
-
-        AddReward(-0.00005f);
     }
 
     private void BasicPursuitRewards()
@@ -148,17 +158,22 @@ public class EnemyAgent : Agent
         Vector2 enemyPos = transform.localPosition;
         float distToPlayer = Vector2.Distance(playerPos, enemyPos);
 
-        if (distToPlayer < 50f)
+        if (distToPlayer < 60f)
         {
-            float proximityReward = (50f - distToPlayer) / 50f;
-            AddReward(proximityReward * 0.005f);
+            float proximityReward = Mathf.Pow((60f - distToPlayer) / 60f, 2);
+            AddReward(proximityReward * 0.02f);
         }
 
         Vector2 toPlayer = (playerPos - enemyPos).normalized;
         float velocityAlignment = Vector2.Dot(_movement.Velocity.normalized, toPlayer);
         if (velocityAlignment > 0)
         {
-            AddReward(velocityAlignment * 0.002f);
+            AddReward(velocityAlignment * 0.01f);
+        }
+        
+        if (distToPlayer < 10f)
+        {
+            AddReward(0.02f);
         }
     }
 
@@ -181,32 +196,25 @@ public class EnemyAgent : Agent
                 Vector2 perpendicular = playerToEnemy - (playerToTarget.normalized * projection);
                 float lateralDist = perpendicular.magnitude;
 
-                if (lateralDist < 25f)
+                if (lateralDist < 30f)
                 {
-                    float pathAlignment = 1f - (lateralDist / 25f);
+                    float pathAlignment = 1f - (lateralDist / 30f);
                     float progressAlongPath = projection / distPlayerToTarget;
-
-                    AddReward(pathAlignment * progressAlongPath * 0.015f);
+                    
+                    AddReward(pathAlignment * progressAlongPath * 0.03f);
+                    
+                    if (progressAlongPath > 0.3f && progressAlongPath < 0.7f && lateralDist < 15f)
+                    {
+                        AddReward(0.02f);
+                    }
                 }
             }
         }
 
         float distPE = Vector2.Distance(p, e);
-        if (distPE < 30f)
+        if (distPE < 40f)
         {
-            AddReward((30f - distPE) / 30f * 0.002f);
-        }
-
-        Vector2 playerVel = gm.player.GetComponent<ShipMovement>().Velocity;
-        if (playerVel.magnitude > 0.1f)
-        {
-            Vector2 playerToEnemy = e - p;
-            float behindAlignment = Vector2.Dot(playerToEnemy.normalized, -playerVel.normalized);
-
-            if (behindAlignment > 0.7f && distPE > 15f)
-            {
-                AddReward(-0.003f);
-            }
+            AddReward((40f - distPE) / 40f * 0.015f);
         }
     }
 
@@ -230,31 +238,40 @@ public class EnemyAgent : Agent
                 enemyVel.normalized,
                 toInterceptPoint.normalized
             );
-            if (interceptAlignment > 0.5f && distPE < 50f && distPE > 10f)
+            
+            if (interceptAlignment > 0.3f && distPE < 60f && distPE > 8f)
             {
-                AddReward(interceptAlignment * 0.008f);
+                AddReward(interceptAlignment * 0.02f);
             }
         }
 
         if (justFiredMine)
         {
-            if (distPE < 25f && distPE > 8f)
+            bool goodFire = false;
+            
+            if (distPE > 6f && distPE < 35f)
             {
                 Vector2 playerToEnemy = (e - p).normalized;
                 float approachAlignment = Vector2.Dot(playerVel.normalized, playerToEnemy);
 
-                if (approachAlignment > 0.3f)
+                if (approachAlignment > 0.2f)
                 {
-                    AddReward(0.05f);
+                    AddReward(0.15f);
+                    goodFire = true;
                 }
-                else
+                else if (Mathf.Abs(approachAlignment) < 0.3f && distPE < 25f)
                 {
-                    AddReward(-0.02f);
+                    AddReward(0.1f);
+                    goodFire = true;
                 }
             }
-            else
+            
+            if (!goodFire)
             {
-                AddReward(-0.01f);
+                if (distPE < 6f || distPE > 40f)
+                {
+                    AddReward(-0.08f);
+                }
             }
         }
 
@@ -271,11 +288,11 @@ public class EnemyAgent : Agent
                 Vector2 perpendicular = playerToEnemy - (playerToTarget.normalized * projection);
                 float lateralDist = perpendicular.magnitude;
 
-                if (lateralDist < 20f)
+                if (lateralDist < 25f)
                 {
-                    float pathAlignment = 1f - (lateralDist / 20f);
+                    float pathAlignment = 1f - (lateralDist / 25f);
                     float progressAlongPath = projection / distPlayerToTarget;
-                    AddReward(pathAlignment * progressAlongPath * 0.008f);
+                    AddReward(pathAlignment * progressAlongPath * 0.025f);
                 }
             }
         }
@@ -283,10 +300,10 @@ public class EnemyAgent : Agent
         float enemyDistToTarget = Vector2.Distance(e, t);
         float playerDistToTarget = Vector2.Distance(p, t);
 
-        if (enemyDistToTarget < playerDistToTarget && distPE < 40f)
+        if (enemyDistToTarget < playerDistToTarget && distPE < 50f)
         {
             float shortcutAdvantage = (playerDistToTarget - enemyDistToTarget) / playerDistToTarget;
-            AddReward(shortcutAdvantage * 0.005f);
+            AddReward(shortcutAdvantage * 0.015f);
         }
     }
 
@@ -305,7 +322,7 @@ public class EnemyAgent : Agent
             float[] playerDirection = GetRelativePositionData(gm.player.transform.localPosition);
             float[] targetDirection = GetRelativePositionData(gm.targetLake.lakeCenter);
             float[] relVelocity = GetRelativeVelocityData();
-            Debug.Log($"playerDirection: [{string.Join(", ", relVelocity)}]");
+            Debug.Log($"Phase: {currentPhase}, PlayerDist: {playerDirection[2]:F1}");
         }
     }
 }
