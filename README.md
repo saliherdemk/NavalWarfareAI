@@ -1,5 +1,5 @@
 ### Overshaped
 
-Not playable. Inspection only.
+Not playable. For reference.
 
 <img src="./media/demo.gif"/>
