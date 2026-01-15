@@ -44,7 +44,7 @@ public class EnemyShipController : MonoBehaviour
         _mineCooldownTimer -= Time.deltaTime;
     }
 
-    public void LaunchMine(Vector2 direction)
+    public void LaunchMine(Vector2 direction, EnemyAgent owner)
     {
         if (_currentMineCount == 0 || _mineCooldownTimer > 0f)
             return;
@@ -60,6 +60,7 @@ public class EnemyShipController : MonoBehaviour
         {
             Vector2 initialVelocity = direction * mineLaunchSpeed;
             mineController.SetInitialVelocity(initialVelocity);
+            mineController.SetOwner(owner);
         }
         else
         {

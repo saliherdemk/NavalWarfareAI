@@ -96,8 +96,6 @@ public class EnemyAgent : Agent
 
         _movement.SetInput(targetThrottle, targetRudder);
 
-        AddReward(-0.0001f);
-
         float currDist = Vector2.Distance(
             gm.player.transform.localPosition,
             gm.targetLake.lakeCenter
@@ -105,15 +103,14 @@ public class EnemyAgent : Agent
 
         float delta = currDist - _prevPlayerTargetDist;
 
-        delta = Mathf.Clamp(delta, -2f, 2f);
-        AddReward(delta * 0.05f);
+        delta = Mathf.Clamp(delta, -0.01f, 0.01f);
+        AddReward(delta * 0.02f);
 
         _prevPlayerTargetDist = currDist;
 
         if (fireSignal == 1)
         {
-            _controller.LaunchMine(new Vector2(mineAimX, mineAimY));
-            // AddReward(-0.01f);
+            _controller.LaunchMine(new Vector2(mineAimX, mineAimY), this);
         }
     }
 

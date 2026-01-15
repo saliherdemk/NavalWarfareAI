@@ -11,6 +11,7 @@ public class MineController : MonoBehaviour
 
     private float _explosionTimer;
     private Vector2 _velocity;
+    private EnemyAgent owner;
 
     public Vector2 Velocity => _velocity;
 
@@ -36,6 +37,11 @@ public class MineController : MonoBehaviour
     public void SetInitialVelocity(Vector2 initialVelocity)
     {
         _velocity = initialVelocity;
+    }
+
+    public void SetOwner(EnemyAgent _owner)
+    {
+        owner = _owner;
     }
 
     public float TimeToExplosion01 => Mathf.Clamp01(_explosionTimer / ExplosionDelay);
@@ -118,6 +124,7 @@ public class MineController : MonoBehaviour
             transform.position,
             ExplosionRadius
         );
+        bool hitPlayer = false;
 
         foreach (Collider2D col in objectsInRange)
         {
@@ -125,7 +132,13 @@ public class MineController : MonoBehaviour
             {
                 var playerShip = col.GetComponent<PlayerShipController>();
                 playerShip.hitByMine = true;
+                hitPlayer = true;
             }
+        }
+
+        if (!hitPlayer)
+        {
+            owner.AddReward(-0.1f);
         }
 
         Destroy(gameObject);
