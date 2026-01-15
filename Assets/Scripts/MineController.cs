@@ -124,7 +124,8 @@ public class MineController : MonoBehaviour
             transform.position,
             ExplosionRadius
         );
-        bool hitPlayer = false;
+
+        owner.EvaluateMine(this);
 
         foreach (Collider2D col in objectsInRange)
         {
@@ -132,13 +133,7 @@ public class MineController : MonoBehaviour
             {
                 var playerShip = col.GetComponent<PlayerShipController>();
                 playerShip.hitByMine = true;
-                hitPlayer = true;
             }
-        }
-
-        if (!hitPlayer)
-        {
-            owner.AddReward(-0.1f);
         }
 
         Destroy(gameObject);

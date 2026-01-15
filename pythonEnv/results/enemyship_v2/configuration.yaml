@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 343
+          seed: 4520
           value: 0
       name: SmallFreeze
       completion_criteria:
@@ -83,7 +83,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 344
+          seed: 4521
           value: 1
       name: MediumFreeze
       completion_criteria:
@@ -96,7 +96,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 345
+          seed: 4522
           value: 2
       name: LargeFreeze
       completion_criteria:
@@ -109,7 +109,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 346
+          seed: 4523
           value: 3
       name: SmallSlow
       completion_criteria:
@@ -122,7 +122,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 347
+          seed: 4524
           value: 4
       name: MediumSlow
       completion_criteria:
@@ -135,7 +135,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 348
+          seed: 4525
           value: 5
       name: LargeSlow
       completion_criteria:
@@ -148,7 +148,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 349
+          seed: 4526
           value: 6
       name: SmallFast
       completion_criteria:
@@ -161,7 +161,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 350
+          seed: 4527
           value: 7
       name: MediumFast
       completion_criteria:
@@ -174,7 +174,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 351
+          seed: 4528
           value: 8
       name: LargeFast
       completion_criteria:
@@ -188,8 +188,8 @@ checkpoint_settings:
   run_id: enemyship_v2
   initialize_from: null
   load_model: false
-  resume: true
-  force: false
+  resume: false
+  force: true
   train_model: false
   inference: false
   results_dir: results

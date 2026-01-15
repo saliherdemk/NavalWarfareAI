@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
         if (dist1 < 3f)
         {
             playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+5.0f);
+            enemy1Agent.AddReward(+1.0f);
             EndEpisode();
             return;
         }

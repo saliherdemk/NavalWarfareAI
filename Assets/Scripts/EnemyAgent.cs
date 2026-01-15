@@ -86,6 +86,18 @@ public class EnemyAgent : Agent
         AddArray(sensor, _nRelVelSensors);
     }
 
+    public void EvaluateMine(MineController mine)
+    {
+        float distance = Vector2.Distance(
+            mine.transform.localPosition,
+            gm.player.transform.localPosition
+        );
+
+        float normalizedDistance = Mathf.Clamp01(distance / 20f);
+        float punishment = -Mathf.Pow(normalizedDistance, 2) * 0.1f;
+        AddReward(punishment);
+    }
+
     public override void OnActionReceived(ActionBuffers actions)
     {
         float targetThrottle = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
