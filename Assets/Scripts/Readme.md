@@ -1,56 +1,56 @@
 Enemy Input: 
-shipForwardVel 
-shipSidewaysVel
+shipForwardVel - 0-1
+shipSidewaysVel 0-1  
 
-ray0 - ray15
+ray0 - ray15 0-1 
 
-mineAmmoCount
-mineCooldown
+mineAmmoCount 0-1 
+mineCooldown 0-1
 
-playerDirectionSin
-playerDirectionCos
-playerDistance
+playerDirectionSin -1-1 
+playerDirectionCos -1 - 1 
+playerDistance 0 - 1 
 
-targetDirectionSin
-targetDirectionCos
-targetDistance
+targetDirectionSin -1 - 1 
+targetDirectionCos -1 - 1 
+targetDistance 0-1 
 
-relativeVelX
-relativeVelY
+relativeVelX -1 - 1 
+relativeVelY -1 - 1
 
 Player Input: 
-shipForwardVel 
-shipSidewaysVel
+shipForwardVel 0 - 1 
+shipSidewaysVel 0 - 1 
 
-ray0 - ray15
+ray0 - ray15 0 - 1 
 
-enemy1Exists
-enemy1Distance
-enemy1DirectionSin
-enemy1DirectionCos
-enemy1ClosingSpeed
+enemy1Exists 0 or  1 
+enemy1Distance 0 - 1 
+enemy1DirectionSin -1 - 1 
+enemy1DirectionCos -1 - 1 
+enemy1ClosingSpeed -1 - 1  
 
-enemy2Exists
-enemy2Distance
-enemy2DirectionSin
-enemy2DirectionCos
-enemy2ClosingSpeed
+enemy2Exists 0 or 1 
+enemy2Distance 0 - 1 
+enemy2DirectionSin -1 - 1 
+enemy2DirectionCos -1 - 1 
+enemy2ClosingSpeed -1 - 1 
 
-mine1Exists
-mine1Distance
-mine1DirectionSin
-mine1DirectionCos
-mine1TTE
+mine1Exists 0 or 1 
+mine1Distance 0 - 1 
+mine1DirectionSin -1 - 1 
+mine1DirectionCos -1 - 1 
+mine1TTE 0 - 1 
 
-mine2Exists
-mine2Distance
-mine2DirectionSin
-mine2DirectionCos
-mine2TTE
+mine2Exists 0 or 1 
+mine2Distance 0 - 1 
+mine2DirectionSin -1 - 1 
+mine2DirectionCos -1 - 1 
+mine2TTE 0 - 1 
 
-targetDistance
-targetDirX
-targetDirY
+targetDistance 0 - 1
+targetDirX -1 - 1 
+targetDirY -1 - 1 
 
 
 
