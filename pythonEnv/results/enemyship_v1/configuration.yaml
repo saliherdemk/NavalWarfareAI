@@ -38,17 +38,17 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 20000000
+    max_steps: 50000000
     time_horizon: 1024
     summary_freq: 10000
     threaded: false
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: null
+  env_path: Builds/enemyOnly/game.x86_64
   env_args: null
   base_port: 5005
-  num_envs: 1
+  num_envs: 6
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -59,10 +59,10 @@ engine_settings:
   width: 84
   height: 84
   quality_level: 5
-  time_scale: 20.0
+  time_scale: 40.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: false
+  no_graphics: true
   no_graphics_monitor: false
 environment_parameters:
   enemy_difficulty:
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2701
+          seed: 2338
           value: 0
       name: SmallFreeze
       completion_criteria:
@@ -83,7 +83,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2702
+          seed: 2339
           value: 1
       name: MediumFreeze
       completion_criteria:
@@ -96,7 +96,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2703
+          seed: 2340
           value: 2
       name: LargeFreeze
       completion_criteria:
@@ -109,7 +109,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2704
+          seed: 2341
           value: 3
       name: SmallSlow
       completion_criteria:
@@ -122,7 +122,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2705
+          seed: 2342
           value: 4
       name: MediumSlow
       completion_criteria:
@@ -135,7 +135,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2706
+          seed: 2343
           value: 5
       name: LargeSlow
       completion_criteria:
@@ -148,7 +148,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2707
+          seed: 2344
           value: 6
       name: SmallFast
       completion_criteria:
@@ -161,7 +161,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2708
+          seed: 2345
           value: 7
       name: MediumFast
       completion_criteria:
@@ -174,7 +174,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 2709
+          seed: 2346
           value: 8
       name: LargeFast
       completion_criteria:

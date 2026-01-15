@@ -1,62 +1,62 @@
 {
     "enemy_difficulty": {
-        "lesson_num": 2
+        "lesson_num": 8
     },
     "EnemyShip": {
         "checkpoints": [
             {
-                "steps": 3999761,
-                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-3999761.onnx",
-                "reward": 2.190082295735677,
-                "creation_time": 1768407774.2771993,
+                "steps": 23499985,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-23499985.onnx",
+                "reward": -0.8668083352477927,
+                "creation_time": 1768460429.5251713,
                 "auxillary_file_paths": [
-                    "results/enemyship_v1/EnemyShip/EnemyShip-3999761.pt"
+                    "results/enemyship_v1/EnemyShip/EnemyShip-23499985.pt"
                 ]
             },
             {
-                "steps": 4499951,
-                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-4499951.onnx",
-                "reward": -8.126140743494034,
-                "creation_time": 1768408276.7436101,
+                "steps": 23999830,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-23999830.onnx",
+                "reward": null,
+                "creation_time": 1768462377.7288692,
                 "auxillary_file_paths": [
-                    "results/enemyship_v1/EnemyShip/EnemyShip-4499951.pt"
+                    "results/enemyship_v1/EnemyShip/EnemyShip-23999830.pt"
                 ]
             },
             {
-                "steps": 4677055,
-                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-4677055.onnx",
-                "reward": -7.979523026174115,
-                "creation_time": 1768408569.6145968,
+                "steps": 24499872,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-24499872.onnx",
+                "reward": -1.1364620327949524,
+                "creation_time": 1768464364.071808,
                 "auxillary_file_paths": [
-                    "results/enemyship_v1/EnemyShip/EnemyShip-4677055.pt"
+                    "results/enemyship_v1/EnemyShip/EnemyShip-24499872.pt"
                 ]
             },
             {
-                "steps": 4681803,
-                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-4681803.onnx",
-                "reward": -5.811280250549316,
-                "creation_time": 1768408757.3790205,
+                "steps": 24999973,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-24999973.onnx",
+                "reward": -0.817748985439539,
+                "creation_time": 1768466318.6782942,
                 "auxillary_file_paths": [
-                    "results/enemyship_v1/EnemyShip/EnemyShip-4681803.pt"
+                    "results/enemyship_v1/EnemyShip/EnemyShip-24999973.pt"
                 ]
             },
             {
-                "steps": 4682803,
-                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-4682803.onnx",
-                "reward": -0.5000000596046448,
-                "creation_time": 1768408980.8743207,
+                "steps": 25187963,
+                "file_path": "results/enemyship_v1/EnemyShip/EnemyShip-25187963.onnx",
+                "reward": -0.9562654610265765,
+                "creation_time": 1768467057.0365715,
                 "auxillary_file_paths": [
-                    "results/enemyship_v1/EnemyShip/EnemyShip-4682803.pt"
+                    "results/enemyship_v1/EnemyShip/EnemyShip-25187963.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 4682803,
+            "steps": 25187963,
             "file_path": "results/enemyship_v1/EnemyShip.onnx",
-            "reward": -0.5000000596046448,
-            "creation_time": 1768408980.8743207,
+            "reward": -0.9562654610265765,
+            "creation_time": 1768467057.0365715,
             "auxillary_file_paths": [
-                "results/enemyship_v1/EnemyShip/EnemyShip-4682803.pt"
+                "results/enemyship_v1/EnemyShip/EnemyShip-25187963.pt"
             ]
         }
     },
