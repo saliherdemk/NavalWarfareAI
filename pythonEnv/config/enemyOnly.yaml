@@ -22,7 +22,7 @@ behaviors:
         strength: 1.0
     
     time_horizon: 512
-    max_steps: 15_000_000  
+    max_steps: 100_000_000  
     summary_freq: 10_000
  
 environment_parameters:
