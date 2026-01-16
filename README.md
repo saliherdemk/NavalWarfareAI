@@ -1,3 +1,7 @@
+# Training 200M Enemy Model
+
+<img src="./media/enemyprogress.png"/>
+
 # 2D Naval Warfare - Enemy Ship AI
 
 This repository is an attempt to create enemy ship agent in 2d naval game. The agent's goal is to prevent the player from reaching the target point by colliding with it or firing a mine in a precedural generated enviroment.
