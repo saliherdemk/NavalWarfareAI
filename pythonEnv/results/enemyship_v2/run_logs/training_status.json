@@ -5,58 +5,58 @@
     "EnemyShip": {
         "checkpoints": [
             {
-                "steps": 53999562,
-                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-53999562.onnx",
-                "reward": 2.100000174814149,
-                "creation_time": 1768564948.109115,
+                "steps": 64499588,
+                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-64499588.onnx",
+                "reward": 2.1000001468719582,
+                "creation_time": 1768622390.9140954,
                 "auxillary_file_paths": [
-                    "results/enemyship_v2/EnemyShip/EnemyShip-53999562.pt"
+                    "results/enemyship_v2/EnemyShip/EnemyShip-64499588.pt"
                 ]
             },
             {
-                "steps": 54499559,
-                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-54499559.onnx",
-                "reward": 1.3250001048048337,
-                "creation_time": 1768566123.423399,
+                "steps": 64999787,
+                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-64999787.onnx",
+                "reward": 2.3746033090920675,
+                "creation_time": 1768626747.96408,
                 "auxillary_file_paths": [
-                    "results/enemyship_v2/EnemyShip/EnemyShip-54499559.pt"
+                    "results/enemyship_v2/EnemyShip/EnemyShip-64999787.pt"
                 ]
             },
             {
-                "steps": 54999929,
-                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-54999929.onnx",
-                "reward": 1.7116280520378158,
-                "creation_time": 1768567320.9065955,
+                "steps": 65499993,
+                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-65499993.onnx",
+                "reward": 2.591666820148627,
+                "creation_time": 1768631003.40513,
                 "auxillary_file_paths": [
-                    "results/enemyship_v2/EnemyShip/EnemyShip-54999929.pt"
+                    "results/enemyship_v2/EnemyShip/EnemyShip-65499993.pt"
                 ]
             },
             {
-                "steps": 55499599,
-                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-55499599.onnx",
-                "reward": 1.3660715455189347,
-                "creation_time": 1768568456.1918375,
+                "steps": 65999866,
+                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-65999866.onnx",
+                "reward": 0.8400000926852226,
+                "creation_time": 1768635420.7828004,
                 "auxillary_file_paths": [
-                    "results/enemyship_v2/EnemyShip/EnemyShip-55499599.pt"
+                    "results/enemyship_v2/EnemyShip/EnemyShip-65999866.pt"
                 ]
             },
             {
-                "steps": 55614785,
-                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-55614785.onnx",
-                "reward": 2.2906251705717295,
-                "creation_time": 1768568704.682187,
+                "steps": 66176769,
+                "file_path": "results/enemyship_v2/EnemyShip/EnemyShip-66176769.onnx",
+                "reward": 1.2750000631293426,
+                "creation_time": 1768637051.5507336,
                 "auxillary_file_paths": [
-                    "results/enemyship_v2/EnemyShip/EnemyShip-55614785.pt"
+                    "results/enemyship_v2/EnemyShip/EnemyShip-66176769.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 55614785,
+            "steps": 66176769,
             "file_path": "results/enemyship_v2/EnemyShip.onnx",
-            "reward": 2.2906251705717295,
-            "creation_time": 1768568704.682187,
+            "reward": 1.2750000631293426,
+            "creation_time": 1768637051.5507336,
             "auxillary_file_paths": [
-                "results/enemyship_v2/EnemyShip/EnemyShip-55614785.pt"
+                "results/enemyship_v2/EnemyShip/EnemyShip-66176769.pt"
             ]
         }
     },
