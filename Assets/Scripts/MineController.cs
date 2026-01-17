@@ -125,16 +125,18 @@ public class MineController : MonoBehaviour
             ExplosionRadius
         );
 
-        owner.EvaluateMine(this);
-
         foreach (Collider2D col in objectsInRange)
         {
             if (col.CompareTag("PlayerShip"))
             {
                 var playerShip = col.GetComponent<PlayerShipController>();
                 playerShip.hitByMine = true;
+                Destroy(gameObject);
+                return;
             }
         }
+
+        owner.EvaluateMine(this);
 
         Destroy(gameObject);
     }

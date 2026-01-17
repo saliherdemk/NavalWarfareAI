@@ -94,8 +94,8 @@ public class EnemyAgent : Agent
         );
 
         float normalizedDistance = Mathf.Clamp01(distance / 20f);
-        float punishment = -Mathf.Pow(normalizedDistance, 2) * 0.1f;
-        AddReward(punishment);
+        float closeness = 1f - normalizedDistance;
+        AddReward(closeness * 0.15f);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -116,7 +116,6 @@ public class EnemyAgent : Agent
         float delta = currDist - _prevPlayerTargetDist;
 
         delta = Mathf.Clamp(delta, -0.01f, 0.01f);
-        AddReward(delta * 0.02f);
 
         _prevPlayerTargetDist = currDist;
 
@@ -124,23 +123,42 @@ public class EnemyAgent : Agent
         {
             _controller.LaunchMine(new Vector2(mineAimX, mineAimY), this);
         }
+        else
+        {
+            AddReward(delta * 0.02f);
+        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var cont = actionsOut.ContinuousActions;
+        var disc = actionsOut.DiscreteActions;
 
-        cont[0] = Keyboard.current.wKey.isPressed ? 1 : 0;
-        cont[0] = Keyboard.current.sKey.isPressed ? -1 : cont[0];
+        cont[0] = 0f;
+        if (Keyboard.current.wKey.isPressed)
+            cont[0] = 1f;
+        if (Keyboard.current.sKey.isPressed)
+            cont[0] = -1f;
 
-        cont[1] = Keyboard.current.aKey.isPressed ? -1 : 0;
-        cont[1] = Keyboard.current.dKey.isPressed ? 1 : cont[1];
+        cont[1] = 0f;
+        if (Keyboard.current.aKey.isPressed)
+            cont[1] = -1f;
+        if (Keyboard.current.dKey.isPressed)
+            cont[1] = 1f;
+
+        disc[0] = 0;
+        cont[2] = 0f;
+        cont[3] = 0f;
 
         if (Keyboard.current.spaceKey.isPressed)
         {
-            float[] playerDirection = GetRelativePositionData(gm.player.transform.localPosition);
-            float[] targetDirection = GetRelativePositionData(gm.targetLake.lakeCenter);
-            float[] relVelocity = GetRelativeVelocityData();
+            Vector2 toPlayer = gm.player.transform.localPosition - transform.localPosition;
+
+            toPlayer.Normalize();
+
+            cont[2] = toPlayer.x;
+            cont[3] = toPlayer.y;
+            disc[0] = 1;
         }
     }
 }

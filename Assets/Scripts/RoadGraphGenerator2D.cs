@@ -40,7 +40,7 @@ public class RoadGraphGenerator2D : MonoBehaviour
 
     public void GenerateMap()
     {
-        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 2);
+        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 1);
         int[] mapSizes = {50, 125, 200};
 
         int mapSize = mapSizes[d % 3];

@@ -41,7 +41,7 @@ public class PlayerAgent : Agent
 
         float[] speeds = { 0f, 0.5f, 1.0f };
 
-        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 8);
+        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 1);
         _movement.speedMult = speeds[d / 3];
 
         _prevTargetDist = Vector2.Distance(transform.localPosition, gm.targetLake.lakeCenter);

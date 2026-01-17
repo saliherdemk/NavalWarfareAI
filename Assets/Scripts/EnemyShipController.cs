@@ -49,9 +49,20 @@ public class EnemyShipController : MonoBehaviour
         if (_currentMineCount == 0 || _mineCooldownTimer > 0f)
             return;
 
+        owner.AddReward(-0.02f);
+
         if (direction.sqrMagnitude < 0.01f)
             direction = transform.up;
         direction.Normalize();
+
+        Vector2 toPlayer = (
+            owner.gm.player.transform.localPosition - owner.transform.localPosition
+        ).normalized;
+
+        float alignment = Vector2.Dot(direction, toPlayer);
+        float shaped = Mathf.Clamp(alignment, -0.3f, 1f);
+        owner.AddReward(shaped * 0.15f);
+
         Vector3 launchPosition = transform.position + (Vector3)direction * mineLaunchOffset;
         GameObject mineInstance = Instantiate(minePrefab, launchPosition, Quaternion.identity);
         MineController mineController = mineInstance.GetComponent<MineController>();

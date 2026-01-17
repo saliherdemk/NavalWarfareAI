@@ -13,15 +13,15 @@ behaviors:
     
     network_settings:
       normalize: true
-      hidden_units: 256
+      hidden_units: 128
       num_layers: 3
     
     reward_signals:
       extrinsic:
-        gamma: 0.99  
+        gamma: 0.995
         strength: 1.0
     
-    time_horizon: 512
+    time_horizon: 256
     max_steps: 100_000_000  
     summary_freq: 10_000
  
