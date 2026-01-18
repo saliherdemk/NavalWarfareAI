@@ -45,10 +45,10 @@ behaviors:
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: Builds/enemyOnlyv3/game.x86_64
+  env_path: null
   env_args: null
   base_port: 5005
-  num_envs: 4
+  num_envs: 1
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -62,7 +62,7 @@ engine_settings:
   time_scale: 40.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: true
+  no_graphics: false
   no_graphics_monitor: false
 environment_parameters:
   enemy_difficulty:
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9317
+          seed: 9807
           value: 0
       name: SmallFreeze
       completion_criteria:
@@ -83,7 +83,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9318
+          seed: 9808
           value: 1
       name: MediumFreeze
       completion_criteria:
@@ -96,7 +96,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9319
+          seed: 9809
           value: 2
       name: LargeFreeze
       completion_criteria:
@@ -109,7 +109,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9320
+          seed: 9810
           value: 3
       name: SmallSlow
       completion_criteria:
@@ -122,7 +122,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9321
+          seed: 9811
           value: 4
       name: MediumSlow
       completion_criteria:
@@ -135,7 +135,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9322
+          seed: 9812
           value: 5
       name: LargeSlow
       completion_criteria:
@@ -148,7 +148,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9323
+          seed: 9813
           value: 6
       name: SmallFast
       completion_criteria:
@@ -161,7 +161,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9324
+          seed: 9814
           value: 7
       name: MediumFast
       completion_criteria:
@@ -174,7 +174,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9325
+          seed: 9815
           value: 8
       name: LargeFast
       completion_criteria:
@@ -188,8 +188,8 @@ checkpoint_settings:
   run_id: enemyship_v3
   initialize_from: null
   load_model: false
-  resume: false
-  force: true
+  resume: true
+  force: false
   train_model: false
   inference: false
   results_dir: results
