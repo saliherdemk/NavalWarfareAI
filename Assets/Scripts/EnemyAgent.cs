@@ -93,9 +93,9 @@ public class EnemyAgent : Agent
             gm.player.transform.localPosition
         );
 
-        float normalizedDistance = Mathf.Clamp01(distance / 20f);
+        float normalizedDistance = Mathf.Clamp01(distance / 30f);
         float closeness = 1f - normalizedDistance;
-        AddReward(closeness * 0.15f);
+        AddReward(closeness * 0.5f);
     }
 
     public override void OnActionReceived(ActionBuffers actions)

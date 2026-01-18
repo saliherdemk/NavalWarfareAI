@@ -53,20 +53,29 @@ public class EnemyShipController : MonoBehaviour
 
         if (direction.sqrMagnitude < 0.01f)
             direction = transform.up;
+
         direction.Normalize();
 
-        Vector2 toPlayer = (
-            owner.gm.player.transform.localPosition - owner.transform.localPosition
-        ).normalized;
+        Vector2 origin = transform.localPosition;
+
+        Vector2 toPlayer = ((Vector2)owner.gm.player.transform.localPosition - origin).normalized;
 
         float alignment = Vector2.Dot(direction, toPlayer);
+
         float shaped = Mathf.Clamp(alignment, -0.3f, 1f);
-        owner.AddReward(shaped * 0.15f);
+
+        owner.AddReward(shaped * 0.1f);
 
         Vector3 launchPosition = transform.position + (Vector3)direction * mineLaunchOffset;
-        GameObject mineInstance = Instantiate(minePrefab, launchPosition, Quaternion.identity);
-        MineController mineController = mineInstance.GetComponent<MineController>();
 
+        GameObject mineInstance = Instantiate(
+            minePrefab,
+            launchPosition,
+            Quaternion.identity,
+            owner.gm.mapEnvironment.transform
+        );
+
+        MineController mineController = mineInstance.GetComponent<MineController>();
         if (mineController != null)
         {
             Vector2 initialVelocity = direction * mineLaunchSpeed;

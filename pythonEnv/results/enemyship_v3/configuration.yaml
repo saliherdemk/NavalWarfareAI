@@ -45,7 +45,7 @@ behaviors:
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: null
+  env_path: Builds/enemyOnlyv3/game.x86_64
   env_args: null
   base_port: 5005
   num_envs: 1
@@ -62,7 +62,7 @@ engine_settings:
   time_scale: 40.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: false
+  no_graphics: true
   no_graphics_monitor: false
 environment_parameters:
   enemy_difficulty:
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9807
+          seed: 4189
           value: 0
       name: SmallFreeze
       completion_criteria:
@@ -78,12 +78,12 @@ environment_parameters:
         measure: reward
         min_lesson_length: 500
         signal_smoothing: true
-        threshold: 2.5
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9808
+          seed: 4190
           value: 1
       name: MediumFreeze
       completion_criteria:
@@ -91,12 +91,12 @@ environment_parameters:
         measure: reward
         min_lesson_length: 750
         signal_smoothing: true
-        threshold: 3.0
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9809
+          seed: 4191
           value: 2
       name: LargeFreeze
       completion_criteria:
@@ -104,12 +104,12 @@ environment_parameters:
         measure: reward
         min_lesson_length: 1000
         signal_smoothing: true
-        threshold: 3.5
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9810
+          seed: 4192
           value: 3
       name: SmallSlow
       completion_criteria:
@@ -117,12 +117,12 @@ environment_parameters:
         measure: reward
         min_lesson_length: 1000
         signal_smoothing: true
-        threshold: 2.5
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9811
+          seed: 4193
           value: 4
       name: MediumSlow
       completion_criteria:
@@ -130,12 +130,12 @@ environment_parameters:
         measure: reward
         min_lesson_length: 1250
         signal_smoothing: true
-        threshold: 3.0
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9812
+          seed: 4194
           value: 5
       name: LargeSlow
       completion_criteria:
@@ -143,12 +143,12 @@ environment_parameters:
         measure: reward
         min_lesson_length: 1500
         signal_smoothing: true
-        threshold: 3.5
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9813
+          seed: 4195
           value: 6
       name: SmallFast
       completion_criteria:
@@ -156,12 +156,12 @@ environment_parameters:
         measure: reward
         min_lesson_length: 1500
         signal_smoothing: true
-        threshold: 2.5
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9814
+          seed: 4196
           value: 7
       name: MediumFast
       completion_criteria:
@@ -169,12 +169,12 @@ environment_parameters:
         measure: reward
         min_lesson_length: 1750
         signal_smoothing: true
-        threshold: 3.0
+        threshold: 2.0
         require_reset: false
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 9815
+          seed: 4197
           value: 8
       name: LargeFast
       completion_criteria:
@@ -182,14 +182,14 @@ environment_parameters:
         measure: reward
         min_lesson_length: 2000
         signal_smoothing: true
-        threshold: 3.5
+        threshold: 2.0
         require_reset: false
 checkpoint_settings:
   run_id: enemyship_v3
   initialize_from: null
   load_model: false
-  resume: true
-  force: false
+  resume: false
+  force: true
   train_model: false
   inference: false
   results_dir: results

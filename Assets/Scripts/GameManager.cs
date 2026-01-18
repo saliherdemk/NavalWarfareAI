@@ -39,18 +39,18 @@ public class GameManager : MonoBehaviour
     {
         if (CommitedSuicide(enemy1.transform))
         {
-            enemy1Agent.AddReward(-5.0f);
+            enemy1Agent.AddReward(-2.0f);
             EndEpisode();
         }
 
-        Vector2 playerPos = player.transform.localPosition;
-        Vector2 enemy1Pos = enemy1.transform.localPosition;
-        float dist1 = Vector2.Distance(enemy1Pos, playerPos);
+        // Vector2 playerPos = player.transform.localPosition;
+        // Vector2 enemy1Pos = enemy1.transform.localPosition;
+        // float dist1 = Vector2.Distance(enemy1Pos, playerPos);
 
         if (CommitedSuicide(player.transform))
         {
             playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+1.5f);
+            enemy1Agent.AddReward(+1.0f);
             EndEpisode();
             return;
         }
@@ -58,23 +58,23 @@ public class GameManager : MonoBehaviour
         if (player.hitByMine)
         {
             playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+5.0f);
+            enemy1Agent.AddReward(+2.0f);
             EndEpisode();
             return;
         }
 
-        if (dist1 < 3f)
-        {
-            playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+0.3f);
-            EndEpisode();
-            return;
-        }
+        // if (dist1 < 3f)
+        // {
+        //     playerAgent.AddReward(-1.0f);
+        //     enemy1Agent.AddReward(+0.3f);
+        //     EndEpisode();
+        //     return;
+        // }
 
         if (PlayerReachedTarget())
         {
             playerAgent.AddReward(+5.0f);
-            enemy1Agent.AddReward(-5.0f);
+            enemy1Agent.AddReward(-2.0f);
             EndEpisode();
             return;
         }
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
 
             if (playerProgress < 0.5f && playerProgress != 0)
             {
-                enemy1Agent.AddReward(+3.0f);
+                enemy1Agent.AddReward(+0.3f);
             }
 
             EndEpisode();
