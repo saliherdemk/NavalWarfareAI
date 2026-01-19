@@ -5,58 +5,58 @@
     "EnemyShip": {
         "checkpoints": [
             {
-                "steps": 4499827,
-                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-4499827.onnx",
-                "reward": 1.5236592175705093,
-                "creation_time": 1768738021.1638541,
+                "steps": 9499749,
+                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-9499749.onnx",
+                "reward": 0.3268167972564697,
+                "creation_time": 1768773715.0900145,
                 "auxillary_file_paths": [
-                    "results/enemyship_v3/EnemyShip/EnemyShip-4499827.pt"
+                    "results/enemyship_v3/EnemyShip/EnemyShip-9499749.pt"
                 ]
             },
             {
-                "steps": 4999932,
-                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-4999932.onnx",
-                "reward": 1.7994250919865935,
-                "creation_time": 1768738727.5232077,
+                "steps": 9999921,
+                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-9999921.onnx",
+                "reward": 2.0663660876452923,
+                "creation_time": 1768780637.921424,
                 "auxillary_file_paths": [
-                    "results/enemyship_v3/EnemyShip/EnemyShip-4999932.pt"
+                    "results/enemyship_v3/EnemyShip/EnemyShip-9999921.pt"
                 ]
             },
             {
-                "steps": 5499996,
-                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-5499996.onnx",
-                "reward": 1.972673544411858,
-                "creation_time": 1768739444.6574152,
+                "steps": 10499814,
+                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-10499814.onnx",
+                "reward": 1.098765307505216,
+                "creation_time": 1768788650.4751058,
                 "auxillary_file_paths": [
-                    "results/enemyship_v3/EnemyShip/EnemyShip-5499996.pt"
+                    "results/enemyship_v3/EnemyShip/EnemyShip-10499814.pt"
                 ]
             },
             {
-                "steps": 5999978,
-                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-5999978.onnx",
-                "reward": -0.7881465136472668,
-                "creation_time": 1768740290.1012206,
+                "steps": 10999899,
+                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-10999899.onnx",
+                "reward": 1.4394234510381585,
+                "creation_time": 1768797535.4526408,
                 "auxillary_file_paths": [
-                    "results/enemyship_v3/EnemyShip/EnemyShip-5999978.pt"
+                    "results/enemyship_v3/EnemyShip/EnemyShip-10999899.pt"
                 ]
             },
             {
-                "steps": 6120885,
-                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-6120885.onnx",
-                "reward": 0.06814418475215252,
-                "creation_time": 1768740747.5864563,
+                "steps": 11293178,
+                "file_path": "results/enemyship_v3/EnemyShip/EnemyShip-11293178.onnx",
+                "reward": 0.801103375852108,
+                "creation_time": 1768802853.885001,
                 "auxillary_file_paths": [
-                    "results/enemyship_v3/EnemyShip/EnemyShip-6120885.pt"
+                    "results/enemyship_v3/EnemyShip/EnemyShip-11293178.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 6120885,
+            "steps": 11293178,
             "file_path": "results/enemyship_v3/EnemyShip.onnx",
-            "reward": 0.06814418475215252,
-            "creation_time": 1768740747.5864563,
+            "reward": 0.801103375852108,
+            "creation_time": 1768802853.885001,
             "auxillary_file_paths": [
-                "results/enemyship_v3/EnemyShip/EnemyShip-6120885.pt"
+                "results/enemyship_v3/EnemyShip/EnemyShip-11293178.pt"
             ]
         }
     },
