@@ -56,6 +56,13 @@ public class Phase0 : Phase
         if (player == null || playerAgent == null)
             return;
 
+        if (playerAgent.IsDead)
+        {
+            playerAgent.AddReward(-1.0f);
+            EndEpisode();
+            return;
+        }
+
         if (Helper.CommitedSuicide(player.transform, MapGenerator))
         {
             playerAgent.AddReward(-1.0f);
@@ -79,6 +86,9 @@ public class Phase0 : Phase
 
     private void EndEpisode()
     {
+        foreach (Bullet b in FindObjectsByType<Bullet>(FindObjectsSortMode.None))
+            Destroy(b.gameObject);
+
         playerAgent.EndEpisode();
     }
 

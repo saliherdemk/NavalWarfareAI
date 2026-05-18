@@ -17,6 +17,12 @@ public class PlayerAgent : Agent
     public Phase gm;
 
     float _progressAccum;
+    public bool IsDead { get; private set; }
+
+    public void Kill()
+    {
+        IsDead = true;
+    }
 
     public override void Initialize()
     {
@@ -30,6 +36,7 @@ public class PlayerAgent : Agent
 
         _prevTargetDist = Vector2.Distance(transform.localPosition, gm.targetLake.lakeCenter);
         _progressAccum = 0f;
+        IsDead = false;
     }
 
     public float[] GetRelativePositionData(Vector2 targetWorldPosition)
@@ -60,6 +67,17 @@ public class PlayerAgent : Agent
 
         _movement.SetInput(throttle, rudder);
 
+        float aimX = Mathf.Clamp(actions.ContinuousActions[2], -1f, 1f);
+        float aimY = Mathf.Clamp(actions.ContinuousActions[3], -1f, 1f);
+        bool fire = actions.DiscreteActions[0] == 1;
+
+        Vector2 aimDir = new Vector2(aimX, aimY);
+        if (fire && aimDir.sqrMagnitude > 0.01f)
+        {
+            _controller.TryFire(aimDir.normalized, gm.MapGenerator, gm.mapEnvironment);
+            AddReward(-0.01f);
+        }
+
         TargetProgressReward();
 
         AddReward(-0.001f);
@@ -84,11 +102,20 @@ public class PlayerAgent : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var cont = actionsOut.ContinuousActions;
+        var disc = actionsOut.DiscreteActions;
 
         cont[0] = Keyboard.current.upArrowKey.isPressed ? 1 : 0;
         cont[0] = Keyboard.current.downArrowKey.isPressed ? -1 : cont[0];
 
         cont[1] = Keyboard.current.leftArrowKey.isPressed ? -1 : 0;
         cont[1] = Keyboard.current.rightArrowKey.isPressed ? 1 : cont[1];
+
+        Vector2 mouseScreen = Mouse.current.position.ReadValue();
+        float vx = mouseScreen.x / Screen.width;
+        float vy = mouseScreen.y / Screen.height;
+        cont[2] = vx * 2f - 1f;
+        cont[3] = vy * 2f - 1f;
+
+        disc[0] = Keyboard.current.spaceKey.isPressed ? 1 : 0;
     }
 }

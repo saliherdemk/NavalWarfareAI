@@ -11,7 +11,10 @@ public class RadarDetector : MonoBehaviour
 {
     public const int TARGET_SLOTS = 2;
     public const int FRIEND_SLOTS = 1;
-    public const int RADAR_OBS_SIZE = (TARGET_SLOTS + FRIEND_SLOTS) * 5;
+    public const int BULLET_TARGET_SLOTS = 2;
+    public const int BULLET_FRIEND_SLOTS = 2;
+    public const int RADAR_OBS_SIZE =
+        (TARGET_SLOTS + FRIEND_SLOTS + BULLET_TARGET_SLOTS + BULLET_FRIEND_SLOTS) * 5;
 
     [Header("Radar Settings")]
     public float Range = 50f;
@@ -24,6 +27,8 @@ public class RadarDetector : MonoBehaviour
 
     public DetectedShip?[] Targets { get; } = new DetectedShip?[TARGET_SLOTS];
     public DetectedShip? Friend { get; private set; }
+    public DetectedShip?[] BulletTargets { get; } = new DetectedShip?[BULLET_TARGET_SLOTS];
+    public DetectedShip?[] BulletFriends { get; } = new DetectedShip?[BULLET_FRIEND_SLOTS];
 
     private ShipMovement _shipMovement;
 
@@ -38,6 +43,10 @@ public class RadarDetector : MonoBehaviour
         for (int i = 0; i < Targets.Length; i++)
             Targets[i] = null;
         Friend = null;
+        for (int i = 0; i < BulletTargets.Length; i++)
+            BulletTargets[i] = null;
+        for (int i = 0; i < BulletFriends.Length; i++)
+            BulletFriends[i] = null;
 
         Vector2 selfPos = transform.position;
         Vector2 up = transform.up;
@@ -85,6 +94,45 @@ public class RadarDetector : MonoBehaviour
                 friendFound = true;
             }
         }
+
+        Bullet[] allBullets = FindObjectsByType<Bullet>(FindObjectsSortMode.None);
+        int bulletTargetWritten = 0;
+        int bulletFriendWritten = 0;
+
+        foreach (Bullet b in allBullets)
+        {
+            if (b == null)
+                continue;
+
+            Vector2 toBullet = (Vector2)b.transform.position - selfPos;
+            float bulletDist = toBullet.magnitude;
+            if (bulletDist < 0.001f || bulletDist > Range)
+                continue;
+
+            Vector2 dirWorld = toBullet / bulletDist;
+            float closingSpeed = Vector2.Dot(b.Velocity - selfVel, dirWorld);
+
+            DetectedShip bulletObs = new DetectedShip
+            {
+                Distance = bulletDist,
+                LocalDir = new Vector2(
+                    dirWorld.x * right.x + dirWorld.y * right.y,
+                    dirWorld.x * up.x + dirWorld.y * up.y
+                ),
+                ClosingSpeed = closingSpeed,
+            };
+
+            if (b.isPlayerBullet)
+            {
+                if (bulletFriendWritten < BulletFriends.Length)
+                    BulletFriends[bulletFriendWritten++] = bulletObs;
+            }
+            else
+            {
+                if (bulletTargetWritten < BulletTargets.Length)
+                    BulletTargets[bulletTargetWritten++] = bulletObs;
+            }
+        }
     }
 
     public bool TryGetClosestTarget(out DetectedShip target)
@@ -130,6 +178,8 @@ public class RadarDetector : MonoBehaviour
 
         WriteShipSlots(buffer, ref offset, Targets);
         WriteShipSlot(buffer, ref offset, Friend);
+        WriteShipSlots(buffer, ref offset, BulletTargets);
+        WriteShipSlots(buffer, ref offset, BulletFriends);
     }
 
     private void WriteShipSlots(float[] buffer, ref int offset, DetectedShip?[] slots)

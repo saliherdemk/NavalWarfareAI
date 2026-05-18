@@ -15,7 +15,7 @@ behaviors:
     network_settings:
       normalize: true
       hidden_units: 256
-      num_layers: 3
+      num_layers: 4
     
     reward_signals:
       extrinsic:
@@ -31,7 +31,6 @@ environment_parameters:
     curriculum:
       - name: phase0
         value: 0
-
       
   difficulty:
     curriculum:
