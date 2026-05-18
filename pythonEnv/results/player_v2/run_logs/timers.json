@@ -1,0 +1,75 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1779034198",
+        "python_version": "3.10.12 (main, Apr 14 2026, 14:25:11) [GCC 15.2.1 20260209]",
+        "command_line_arguments": "/mnt/94D81D0ED81CEFEA/projects/NavalWarfareAI/pythonEnv/.venv/bin/mlagents-learn /mnt/94D81D0ED81CEFEA/projects/NavalWarfareAI/pythonEnv/config/playerOnly.yaml --env=/mnt/94D81D0ED81CEFEA/projects/NavalWarfareAI/pythonEnv/Build/game.x86_64 --run-id=player_v2 --no-graphics",
+        "mlagents_version": "1.2.0.dev0",
+        "mlagents_envs_version": "1.2.0.dev0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.8.0+cu128",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1779034436"
+    },
+    "total": 238.49109726300048,
+    "count": 1,
+    "self": 0.009787265998966177,
+    "children": {
+        "run_training.setup": {
+            "total": 0.04070651800066116,
+            "count": 1,
+            "self": 0.04070651800066116
+        },
+        "TrainerController.start_learning": {
+            "total": 238.44060347900086,
+            "count": 1,
+            "self": 0.0003789180027524708,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 57.02342073,
+                    "count": 1,
+                    "self": 57.02342073
+                },
+                "TrainerController.advance": {
+                    "total": 181.3166447329986,
+                    "count": 1,
+                    "self": 6.935199962754268e-05,
+                    "children": {
+                        "env_step": {
+                            "total": 181.31657538099898,
+                            "count": 1,
+                            "self": 181.3129869359982,
+                            "children": {
+                                "SubprocessEnvManager._take_step": {
+                                    "total": 0.0035884450007870328,
+                                    "count": 1,
+                                    "self": 0.00017506400035927072,
+                                    "children": {
+                                        "TorchPolicy.evaluate": {
+                                            "total": 0.003413381000427762,
+                                            "count": 1,
+                                            "self": 0.003413381000427762
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "TrainerController._save_models": {
+                    "total": 0.1001590979994944,
+                    "count": 1,
+                    "self": 0.0048553970009379555,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 0.09530370099855645,
+                            "count": 1,
+                            "self": 0.09530370099855645
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

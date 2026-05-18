@@ -97,6 +97,6 @@ public class ShipMovement : MonoBehaviour
         Vector2 right = transform.right;
         float forwardVel = Vector2.Dot(_velocity, forward);
         float sidewaysVel = Vector2.Dot(_velocity, right);
-        return new float[] { forwardVel, sidewaysVel };
+        return new float[] { forwardVel / maxSpeed, sidewaysVel / maxSpeed };
     }
 }

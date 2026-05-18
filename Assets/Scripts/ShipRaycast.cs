@@ -50,7 +50,10 @@ public class ShipRaycast : MonoBehaviour
     public float[] GetSensors()
     {
         CastCircleRays();
-        return rays;
+        float[] normalized = new float[rayCount];
+        for (int i = 0; i < rayCount; i++)
+            normalized[i] = rays[i] / rayDistance;
+        return normalized;
     }
 
     public float GetRayDistance()

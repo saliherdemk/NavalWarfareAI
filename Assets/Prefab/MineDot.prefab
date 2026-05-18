@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3599025746349748877}
   - component: {fileID: 6937126480866755952}
   - component: {fileID: 406401418113180876}
-  - component: {fileID: 3722676672909325777}
   m_Layer: 9
   m_Name: MineDot
   m_TagString: Mine
@@ -128,19 +127,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &3722676672909325777
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4838542427059691886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc372109cfa42f0c39176418c3872452, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MineController
-  MineDrag: 1
-  ObstacleMask:
-    serializedVersion: 2
-    m_Bits: 256

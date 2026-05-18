@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-using Unity.MLAgents;
 using UnityEngine;
-#if UNITY_EDITOR
-#endif
 
 public enum TileType
 {
@@ -20,8 +17,8 @@ public class Leaf
 public class RoadGraphGenerator2D : MonoBehaviour
 {
     [Header("Map Settings")]
-    public int mapWidth;
-    public int mapHeight;
+    public int mapWidth = 200;
+    public int mapHeight = 200;
 
     [Header("Lake Settings")]
     public int lakeNoise;
@@ -40,13 +37,6 @@ public class RoadGraphGenerator2D : MonoBehaviour
 
     public void GenerateMap()
     {
-        int d = (int)Academy.Instance.EnvironmentParameters.GetWithDefault("enemy_difficulty", 2);
-        int[] mapSizes = {50, 125, 200};
-
-        int mapSize = mapSizes[d % 3];
-        mapWidth = mapSize;
-        mapHeight = mapSize;
-
         ResetMap();
         SplitMap();
         AssignNeighbors();

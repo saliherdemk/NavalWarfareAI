@@ -1,379 +1,55 @@
-using System.Collections.Generic;
 using Unity.MLAgents;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public RoadGraphGenerator2D MapGenerator;
-    public PlayerShipController playerPrefab;
-    public EnemyShipController enemyPrefab;
-    public GameObject targetMarkerPrefab;
-    public Transform mapEnvironment;
+    [Header("Phases")]
+    public Phase phase0;
+    public Phase phase1;
 
-    private EnemyShipController enemy1;
-    private EnemyAgent enemy1Agent;
-    public PlayerShipController player;
-    private PlayerAgent playerAgent;
-    private GameObject targetMarkerInstance;
+    private Phase currentPhase;
 
-    private Leaf spawnLake;
-    public Leaf targetLake;
-    private Leaf enemy1Lake;
-    private Leaf enemy2Lake;
-
-    private int MaxStep = 5000;
-
-    void Start()
+    private void Start()
     {
-        InstantiatePlayer();
-        InstantiateEnemies();
-        RestartGame();
+        DeterminePhase();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        CheckDeaths();
+        if (currentPhase != null)
+            currentPhase.UpdatePhase();
     }
 
-    public void CheckDeaths()
+    private void DeterminePhase()
     {
-        if (CommitedSuicide(enemy1.transform))
+        float phaseParam = (int)
+            Academy.Instance.EnvironmentParameters.GetWithDefault("player_phase", 0.0f);
+
+        switch ((int)phaseParam)
         {
-            enemy1Agent.AddReward(-5.0f);
-            EndEpisode();
-        }
-
-        Vector2 playerPos = player.transform.localPosition;
-        Vector2 enemy1Pos = enemy1.transform.localPosition;
-        float dist1 = Vector2.Distance(enemy1Pos, playerPos);
-
-        if (CommitedSuicide(player.transform))
-        {
-            playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+1.5f);
-            EndEpisode();
-            return;
-        }
-
-        if (player.hitByMine)
-        {
-            playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+5.0f);
-            EndEpisode();
-            return;
-        }
-
-        if (dist1 < 3f)
-        {
-            playerAgent.AddReward(-1.0f);
-            enemy1Agent.AddReward(+5.0f);
-            EndEpisode();
-            return;
-        }
-
-        if (PlayerReachedTarget())
-        {
-            playerAgent.AddReward(+5.0f);
-            enemy1Agent.AddReward(-5.0f);
-            EndEpisode();
-            return;
-        }
-
-        if (playerAgent.StepCount >= MaxStep)
-        {
-            float playerProgress = CalculatePlayerProgress();
-
-            if (playerProgress < 0.5f && playerProgress != 0)
-            {
-                enemy1Agent.AddReward(+3.0f);
-            }
-
-            EndEpisode();
-            return;
+            case 0:
+                SwitchPhase(phase0);
+                break;
+            case 1:
+                SwitchPhase(phase1);
+                break;
         }
     }
 
-    private float CalculatePlayerProgress()
+    public void SwitchPhase(Phase newPhase)
     {
-        if (spawnLake == null || targetLake == null)
-            return 0f;
-
-        float totalDistance = Vector2.Distance(spawnLake.lakeCenter, targetLake.lakeCenter);
-        float currentDistance = Vector2.Distance(
-            player.transform.localPosition,
-            targetLake.lakeCenter
-        );
-
-        if (totalDistance < 0.1f)
-            return 1f;
-
-        float progress = 1f - (currentDistance / totalDistance);
-        return Mathf.Clamp01(progress);
-    }
-
-    private void EndEpisode()
-    {
-        // Debug.Log($"Player Reward: {playerAgent.GetCumulativeReward():F2}");
-
-        Debug.Log($"Enemy1 Reward: {enemy1Agent.GetCumulativeReward():F2}");
-        playerAgent.EndEpisode();
-        enemy1Agent.EndEpisode();
-
-        if (!Academy.Instance.IsCommunicatorOn)
-        {
-            RestartGame();
-        }
-    }
-
-    public bool PlayerReachedTarget()
-    {
-        return Vector2.Distance(player.transform.localPosition, targetLake.lakeCenter) < 5.0f;
-    }
-
-    public void RestartGame()
-    {
-        if (MapGenerator == null)
+        if (newPhase == null)
             return;
 
-        MapGenerator.GenerateMap();
-        bool isPhase0 =
-            Academy.Instance.EnvironmentParameters.GetWithDefault("player_phase0", 0.0f) > 0.5f;
+        if (phase0 != null)
+            phase0.gameObject.SetActive(false);
+        if (phase1 != null)
+            phase1.gameObject.SetActive(false);
 
-        bool succeed = isPhase0 ? ChooseSpawnTargetLakesPhase0() : ChooseSpawnTargetLakes();
-        if (!succeed)
-        {
-            RestartGame();
-            return;
-        }
+        currentPhase = newPhase;
 
-        player.Reset(spawnLake.lakeCenter);
-        enemy1.Reset(enemy1Lake.lakeCenter);
+        currentPhase.gameObject.SetActive(true);
 
-        PlaceTargetMarker();
-    }
-
-    void PlaceTargetMarker()
-    {
-        if (targetLake == null)
-            return;
-
-        Vector3 worldPos = mapEnvironment.TransformPoint(
-            new Vector3(targetLake.lakeCenter.x, targetLake.lakeCenter.y, 0f)
-        );
-
-        if (targetMarkerInstance == null)
-        {
-            targetMarkerInstance = Instantiate(targetMarkerPrefab, worldPos, Quaternion.identity);
-        }
-        else
-        {
-            targetMarkerInstance.transform.position = worldPos;
-        }
-    }
-
-    void InstantiatePlayer()
-    {
-        player = Instantiate(playerPrefab, mapEnvironment);
-        playerAgent = player.GetComponent<PlayerAgent>();
-        playerAgent.gm = this;
-    }
-
-    void InstantiateEnemies()
-    {
-        enemy1 = Instantiate(enemyPrefab, mapEnvironment);
-        enemy1Agent = enemy1.GetComponent<EnemyAgent>();
-        enemy1Agent.gm = this;
-
-        // enemy2 = Instantiate(enemyPrefab, mapEnvironment);
-        // enemy2Agent = enemy2.GetComponent<EnemyAgent>();
-        // enemy2Agent.gm = this;
-    }
-
-    bool ChooseSpawnTargetLakesPhase0()
-    {
-        List<Leaf> allLeafs = MapGenerator.allLeafs;
-        if (allLeafs.Count < 4)
-            return false;
-
-        spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
-
-        float diff = Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 2.0f);
-
-        int[] values = new int[] { 50, 100, -1 };
-        int trainingRadius = values[(int)diff];
-
-        List<Leaf> validTargets = new List<Leaf>();
-
-        if (trainingRadius > 0)
-        {
-            foreach (Leaf leaf in allLeafs)
-            {
-                if (leaf == spawnLake)
-                    continue;
-                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
-                if (dist <= trainingRadius && dist > 5f)
-                    validTargets.Add(leaf);
-            }
-        }
-        else
-        {
-            float minDistance = Mathf.Min(MapGenerator.mapWidth, MapGenerator.mapHeight) * 0.5f;
-            foreach (Leaf leaf in allLeafs)
-            {
-                if (leaf == spawnLake)
-                    continue;
-                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
-                if (dist >= minDistance)
-                    validTargets.Add(leaf);
-            }
-        }
-
-        if (validTargets.Count == 0)
-        {
-            do
-            {
-                targetLake = allLeafs[Random.Range(0, allLeafs.Count)];
-            } while (targetLake == spawnLake);
-        }
-        else
-        {
-            targetLake = validTargets[Random.Range(0, validTargets.Count)];
-        }
-
-        List<Leaf> availableLakes = new List<Leaf>();
-        foreach (var lake in allLeafs)
-        {
-            if (lake != spawnLake && lake != targetLake)
-                availableLakes.Add(lake);
-        }
-
-        int r = Random.Range(0, availableLakes.Count);
-        enemy1Lake = availableLakes[r];
-        availableLakes.RemoveAt(r);
-
-        enemy2Lake = availableLakes[Random.Range(0, availableLakes.Count)];
-        return true;
-    }
-
-    bool ChooseSpawnTargetLakes()
-    {
-        List<Leaf> allLeafs = MapGenerator.allLeafs;
-        if (allLeafs.Count < 4)
-            return false;
-
-        spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
-        Vector2 P = spawnLake.lakeCenter;
-
-        float maxDist = -1f;
-        Leaf furthest = null;
-
-        foreach (var leaf in allLeafs)
-        {
-            if (leaf == spawnLake)
-                continue;
-
-            float d = Vector2.Distance(P, leaf.lakeCenter);
-            if (d > maxDist)
-            {
-                maxDist = d;
-                furthest = leaf;
-            }
-        }
-
-        if (furthest == null)
-            return false;
-
-        targetLake = furthest;
-        Vector2 T = targetLake.lakeCenter;
-        float dPT = Vector2.Distance(P, T);
-
-        List<Leaf> enemyCandidates = new List<Leaf>();
-
-        foreach (var leaf in allLeafs)
-        {
-            if (leaf == spawnLake || leaf == targetLake)
-                continue;
-
-            Vector2 E = leaf.lakeCenter;
-
-            float dPE = Vector2.Distance(P, E);
-            float dET = Vector2.Distance(E, T);
-
-            float lateral = DistancePointToSegment(E, P, T);
-            if (lateral > dPT * 0.35f)
-                continue;
-
-            enemyCandidates.Add(leaf);
-        }
-
-        if (enemyCandidates.Count == 0)
-            return false;
-
-        enemy1Lake = enemyCandidates[Random.Range(0, enemyCandidates.Count)];
-        enemyCandidates.Remove(enemy1Lake);
-
-        enemy2Lake =
-            enemyCandidates.Count > 0
-                ? enemyCandidates[Random.Range(0, enemyCandidates.Count)]
-                : enemy1Lake;
-
-        return true;
-    }
-
-    float DistancePointToSegment(Vector2 p, Vector2 a, Vector2 b)
-    {
-        Vector2 ab = b - a;
-        float t = Vector2.Dot(p - a, ab) / ab.sqrMagnitude;
-        t = Mathf.Clamp01(t);
-        Vector2 proj = a + t * ab;
-        return Vector2.Distance(p, proj);
-    }
-
-    private bool CommitedSuicide(Transform shipTransform)
-    {
-        int mW = MapGenerator.mapWidth;
-        int mH = MapGenerator.mapHeight;
-
-        float xExt = 1.0f;
-        float yExt = 2.0f;
-
-        Vector2[] localPoints = new Vector2[]
-        {
-            new Vector2(0, yExt),
-            new Vector2(xExt, yExt),
-            new Vector2(-xExt, yExt),
-            new Vector2(xExt, -yExt),
-            new Vector2(-xExt, -yExt),
-            new Vector2(0, -yExt),
-        };
-
-        Vector2 shipPos = shipTransform.transform.localPosition;
-        Quaternion shipRot = shipTransform.transform.localRotation;
-
-        foreach (Vector2 p in localPoints)
-        {
-            Vector3 rotatedPoint = shipRot * p;
-            Vector2 worldPos = shipPos + (Vector2)rotatedPoint;
-
-            int x = Mathf.RoundToInt(worldPos.x);
-            int y = Mathf.RoundToInt(worldPos.y);
-
-            if (x <= 0 || x >= mW || y <= 0 || y >= mH)
-            {
-                return true;
-            }
-
-            if (MapGenerator.map[x, y] == TileType.Wall)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public int GetMaxStep()
-    {
-        return MaxStep;
+        currentPhase.InitPhase();
     }
 }
