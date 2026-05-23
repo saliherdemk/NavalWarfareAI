@@ -48,7 +48,7 @@ env_settings:
   env_path: Build/game.x86_64
   env_args: null
   base_port: 5005
-  num_envs: 4
+  num_envs: 2
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 6056
+          seed: 8981
           value: 0
       name: phase0
       completion_criteria: null
@@ -79,7 +79,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 6057
+          seed: 8982
           value: 0
       name: Close
       completion_criteria:
@@ -92,7 +92,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 6058
+          seed: 8983
           value: 1
       name: Medium
       completion_criteria:
@@ -105,7 +105,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 6059
+          seed: 8984
           value: 2
       name: Far
       completion_criteria: null
@@ -113,7 +113,7 @@ checkpoint_settings:
   run_id: phase0
   initialize_from: null
   load_model: false
-  resume: false
+  resume: true
   force: false
   train_model: false
   inference: false
