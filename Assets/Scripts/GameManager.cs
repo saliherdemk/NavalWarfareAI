@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     private void DeterminePhase()
     {
         float phaseParam = (int)
-            Academy.Instance.EnvironmentParameters.GetWithDefault("player_phase", 0.0f);
+            Academy.Instance.EnvironmentParameters.GetWithDefault("player_phase", 1.0f);
 
         switch ((int)phaseParam)
         {

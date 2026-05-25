@@ -4,12 +4,14 @@ public abstract class Phase : MonoBehaviour
 {
     public RoadGraphGenerator2D MapGenerator;
     public ShipController playerPrefab;
+    public ShipController enemyPrefab;
     public GameObject targetMarkerPrefab;
     public Transform mapEnvironment;
 
     protected GameObject targetMarkerInstance;
     protected Leaf spawnLake;
     public Leaf targetLake;
+    public Leaf enemyLake;
 
     protected int maxSteps = 5000;
 

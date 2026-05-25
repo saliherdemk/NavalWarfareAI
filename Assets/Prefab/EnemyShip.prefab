@@ -14,13 +14,12 @@ GameObject:
   - component: {fileID: 3558422647964703565}
   - component: {fileID: 5656702394028418616}
   - component: {fileID: -1695952100276913139}
-  - component: {fileID: -1401226848055160590}
-  - component: {fileID: 4796319932848490300}
-  - component: {fileID: 967951347228045238}
   - component: {fileID: 351306406652815276}
-  m_Layer: 7
-  m_Name: PlayerShip
-  m_TagString: PlayerShip
+  - component: {fileID: 2639020174656417764}
+  - component: {fileID: -3059150327373691010}
+  m_Layer: 6
+  m_Name: EnemyShip
+  m_TagString: EnemyShip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -88,7 +87,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0.9372188, b: 0, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.06575394, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -159,10 +158,10 @@ MonoBehaviour:
   Range: 50
   TargetMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 128
   FriendMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 64
 --- !u!114 &5656702394028418616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,7 +197,7 @@ MonoBehaviour:
   detectMask:
     serializedVersion: 2
     m_Bits: 256
---- !u!114 &-1401226848055160590
+--- !u!114 &351306406652815276
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -207,30 +206,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4491821316754141788}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 637d1bd6ddf4e145fbdc191ba7876386, type: 3}
+  m_Script: {fileID: 11500000, guid: 30094e6ee20b181b899844902c534157, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAgent
-  agentParameters:
-    maxStep: 0
-  hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
-  gm: {fileID: 0}
---- !u!114 &4796319932848490300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4491821316754141788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
-  DecisionPeriod: 5
-  DecisionStep: 0
-  TakeActionsBetweenDecisions: 1
---- !u!114 &967951347228045238
+  m_EditorClassIdentifier: Assembly-CSharp::ShipController
+  _radarDetector: {fileID: 0}
+  bulletPrefab: {fileID: 4838542427059691886, guid: 20bf11ce06f1513588caacdd8bbb1485, type: 3}
+--- !u!114 &2639020174656417764
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -250,18 +231,18 @@ MonoBehaviour:
       BranchSizes: 02000000
     VectorActionSize: 
     VectorActionDescriptions: []
-    VectorActionSpaceType: 1
+    VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: PlayerShip
+  m_BehaviorName: EnemyAgent
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_DeterministicInference: 0
   m_ObservableAttributeHandling: 0
---- !u!114 &351306406652815276
+--- !u!114 &-3059150327373691010
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -270,8 +251,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4491821316754141788}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30094e6ee20b181b899844902c534157, type: 3}
+  m_Script: {fileID: 11500000, guid: 508118fbd62d0ff4db8ff5bf5e5e4b8d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShipController
-  _radarDetector: {fileID: 0}
-  bulletPrefab: {fileID: 4838542427059691886, guid: 20bf11ce06f1513588caacdd8bbb1485, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAgent
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  gm: {fileID: 0}

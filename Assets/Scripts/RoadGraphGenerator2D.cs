@@ -37,13 +37,56 @@ public class RoadGraphGenerator2D : MonoBehaviour
 
     public void GenerateMap()
     {
-        ResetMap();
-        SplitMap();
-        AssignNeighbors();
-        CreateLakes();
-        CreateCanals();
-        InstantiateWalls();
+            int mapSize = 200;
+            mapWidth = mapSize;
+            mapHeight = mapSize;
+
+            ResetMap();
+            SplitMap();
+            AssignNeighbors();
+            CreateLakes();
+            CreateCanals();
+            InstantiateWalls();
     }
+
+
+    public (Leaf start, Leaf target, Leaf enemy) LoadMapFromCSV(TextAsset csvFile)
+{
+
+    ResetMap();
+
+    Leaf startLeaf = null;
+    Leaf targetLeaf = null;
+    Leaf enemyLeaf = null;
+
+    string[] rows = csvFile.text.Split('\n');
+
+    for (int row = 0; row < rows.Length; row++)
+    {
+        string trimmed = rows[row].Trim();
+        if (string.IsNullOrEmpty(trimmed)) continue;
+
+        string[] cols = trimmed.Split(',');
+        int y = mapHeight - 1 - row;
+
+        for (int x = 0; x < cols.Length; x++)
+        {
+            if (!int.TryParse(cols[x].Trim(), out int val)) continue;
+
+            map[x, y] = val == 1 ? TileType.Wall : TileType.Water;
+
+            switch (val)
+            {
+                case 2: startLeaf  = new Leaf { lakeCenter = new Vector2Int(x, y) }; break;
+                case 3: targetLeaf = new Leaf { lakeCenter = new Vector2Int(x, y) }; break;
+                case 4: enemyLeaf  = new Leaf { lakeCenter = new Vector2Int(x, y) }; break;
+            }
+        }
+    }
+
+    InstantiateWalls();
+    return (startLeaf, targetLeaf, enemyLeaf);
+}
 
     void ResetMap()
     {

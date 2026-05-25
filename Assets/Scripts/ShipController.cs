@@ -27,6 +27,7 @@ public class ShipController : MonoBehaviour
         _lastFireTime = -3f;
         transform.eulerAngles = Vector3.zero;
         transform.localPosition = new Vector3(spawnCoorinates.x, spawnCoorinates.y, 0f);
+        gameObject.SetActive(true);
     }
 
     void ProcessMovementInput(float targetThrottle, float targetRudder)
@@ -44,7 +45,7 @@ public class ShipController : MonoBehaviour
         GameObject bulletGO = Instantiate(bulletPrefab, parent);
         bulletGO.transform.localPosition = transform.localPosition + (Vector3)aimDir * 3f;
         Bullet bullet = bulletGO.AddComponent<Bullet>();
-        bullet.isPlayerBullet = true;
+        bullet.isPlayerBullet = gameObject.CompareTag("PlayerShip");
         bullet.Initialize(aimDir, mapGen);
 
         return true;

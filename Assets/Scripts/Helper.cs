@@ -41,6 +41,11 @@ public static class Helper
         return false;
     }
 
+    public static bool PlayerCollidedWithEnemy(Transform playerTransform, Transform enemyTransform)
+    {
+        return Vector2.Distance(playerTransform.localPosition, enemyTransform.localPosition) < 3f;
+    }
+
     public static bool PlayerReachedTarget(Transform shipTransform, Vector2 targetPosition)
     {
         return Vector2.Distance(shipTransform.localPosition, targetPosition) < 5.0f;

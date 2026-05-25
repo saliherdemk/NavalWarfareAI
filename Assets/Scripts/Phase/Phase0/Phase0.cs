@@ -89,6 +89,8 @@ public class Phase0 : Phase
         foreach (Bullet b in FindObjectsByType<Bullet>(FindObjectsSortMode.None))
             Destroy(b.gameObject);
 
+        RestartGame();
+
         playerAgent.EndEpisode();
     }
 
@@ -101,8 +103,7 @@ public class Phase0 : Phase
 
         spawnLake = allLeafs[Random.Range(0, allLeafs.Count)];
 
-        float diff = Academy.Instance.EnvironmentParameters
-            .GetWithDefault("difficulty", 2.0f);
+        float diff = Academy.Instance.EnvironmentParameters.GetWithDefault("difficulty", 2.0f);
 
         int[] values = new int[] { 50, 100, -1 };
         int trainingRadius = values[(int)diff];
@@ -116,10 +117,7 @@ public class Phase0 : Phase
                 if (leaf == spawnLake)
                     continue;
 
-                float dist = Vector2Int.Distance(
-                    spawnLake.lakeCenter,
-                    leaf.lakeCenter
-                );
+                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
 
                 if (dist <= trainingRadius && dist > 5f)
                     validTargets.Add(leaf);
@@ -127,18 +125,14 @@ public class Phase0 : Phase
         }
         else
         {
-            float minDistance =
-                Mathf.Min(MapGenerator.mapWidth, MapGenerator.mapHeight) * 0.5f;
+            float minDistance = Mathf.Min(MapGenerator.mapWidth, MapGenerator.mapHeight) * 0.5f;
 
             foreach (Leaf leaf in allLeafs)
             {
                 if (leaf == spawnLake)
                     continue;
 
-                float dist = Vector2Int.Distance(
-                    spawnLake.lakeCenter,
-                    leaf.lakeCenter
-                );
+                float dist = Vector2Int.Distance(spawnLake.lakeCenter, leaf.lakeCenter);
 
                 if (dist >= minDistance)
                     validTargets.Add(leaf);
@@ -150,14 +144,11 @@ public class Phase0 : Phase
             do
             {
                 targetLake = allLeafs[Random.Range(0, allLeafs.Count)];
-            }
-            while (targetLake == spawnLake);
+            } while (targetLake == spawnLake);
         }
         else
         {
-            targetLake = validTargets[
-                Random.Range(0, validTargets.Count)
-            ];
+            targetLake = validTargets[Random.Range(0, validTargets.Count)];
         }
 
         return true;

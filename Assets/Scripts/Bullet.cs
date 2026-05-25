@@ -18,9 +18,11 @@ public class Bullet : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (destroyed) return;
+        if (destroyed)
+            return;
         transform.localPosition += (Vector3)(direction * speed * Time.fixedDeltaTime);
         CheckWallCollision();
+        CheckShipCollision();
     }
 
     void CheckWallCollision()
@@ -43,26 +45,32 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void CheckShipCollision()
     {
-        if (destroyed) return;
-        if (collision.gameObject.CompareTag("PlayerShip"))
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 1f);
+        foreach (var hit in hits)
         {
-            destroyed = true;
-            PlayerAgent pa = collision.gameObject.GetComponent<PlayerAgent>();
-            if (pa != null)
-                pa.Kill();
-            Destroy(gameObject);
-            return;
+            if (destroyed)
+                return;
+
+            if (hit.gameObject.CompareTag("PlayerShip"))
+            {
+                destroyed = true;
+                PlayerAgent pa = hit.gameObject.GetComponent<PlayerAgent>();
+                if (pa != null)
+                    pa.Kill();
+                Destroy(gameObject);
+                return;
+            }
+            if (hit.gameObject.CompareTag("EnemyShip"))
+            {
+                destroyed = true;
+                EnemyAgent ea = hit.gameObject.GetComponent<EnemyAgent>();
+                if (ea != null)
+                    ea.Kill();
+                Destroy(gameObject);
+                return;
+            }
         }
-        if (collision.gameObject.CompareTag("EnemyShip"))
-        {
-            destroyed = true;
-            Destroy(collision.gameObject);
-            Destroy(gameObject);
-            return;
-        }
-        destroyed = true;
-        Destroy(gameObject);
     }
 }

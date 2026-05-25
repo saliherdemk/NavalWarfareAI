@@ -152,6 +152,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1694495701377839118}
+  - {fileID: 3140582245349419301}
   m_Father: {fileID: 1070541055171622500}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2427747266233933842
@@ -167,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   phase0: {fileID: 2353055626992934704}
-  phase1: {fileID: 0}
+  phase1: {fileID: 1811096499381500631}
 --- !u!1 &5410857140504376697
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,6 +215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Phase0
   MapGenerator: {fileID: 3412196229211383854}
   playerPrefab: {fileID: 351306406652815276, guid: aaf4fada3607c76db902dbcd9db3687a, type: 3}
+  enemyPrefab: {fileID: 351306406652815276, guid: 4bfa067f5bdce7c30b8002d3ccabcce0, type: 3}
   targetMarkerPrefab: {fileID: 7905118984000014077, guid: 2c3e17cd62a7ec807a55af2acbc18893, type: 3}
   mapEnvironment: {fileID: 6091563006160524768}
   player: {fileID: 0}
@@ -336,3 +338,58 @@ Transform:
   - {fileID: 4374013133580048700}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8578784263651786170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3140582245349419301}
+  - component: {fileID: 1811096499381500631}
+  m_Layer: 0
+  m_Name: Phase1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3140582245349419301
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8578784263651786170}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4529140458869830060}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1811096499381500631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8578784263651786170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bab60aa2b03368a29983cb5adac87af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Phase1
+  MapGenerator: {fileID: 3412196229211383854}
+  playerPrefab: {fileID: 351306406652815276, guid: aaf4fada3607c76db902dbcd9db3687a, type: 3}
+  enemyPrefab: {fileID: 351306406652815276, guid: 4bfa067f5bdce7c30b8002d3ccabcce0, type: 3}
+  targetMarkerPrefab: {fileID: 7905118984000014077, guid: 2c3e17cd62a7ec807a55af2acbc18893, type: 3}
+  mapEnvironment: {fileID: 6091563006160524768}
+  player: {fileID: 0}
+  enemy: {fileID: 0}
+  presetMaps:
+  - {fileID: 4900000, guid: 3ec1a813dcb478669bd79527b9ffbec2, type: 3}
+  - {fileID: 4900000, guid: 1e397ed43b0626113976b68a2a24f0bd, type: 3}
+  presetMapIndex: 0
