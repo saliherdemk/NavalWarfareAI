@@ -392,4 +392,7 @@ MonoBehaviour:
   presetMaps:
   - {fileID: 4900000, guid: 3ec1a813dcb478669bd79527b9ffbec2, type: 3}
   - {fileID: 4900000, guid: 1e397ed43b0626113976b68a2a24f0bd, type: 3}
+  - {fileID: 4900000, guid: 2d8b62bb79e3764d7aaf29c970a0cff8, type: 3}
+  - {fileID: 4900000, guid: 203d2910126ccece99c52a7e85ed1688, type: 3}
+  - {fileID: 4900000, guid: 5960cff15861ba59db6d81068775d06e, type: 3}
   presetMapIndex: 0
