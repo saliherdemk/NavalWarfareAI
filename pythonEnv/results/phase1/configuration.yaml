@@ -38,17 +38,17 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 100000000
+    max_steps: 101000000
     time_horizon: 1024
     summary_freq: 100000
     threaded: false
     self_play: null
     behavioral_cloning: null
 env_settings:
-  env_path: Build/game.x86_64
+  env_path: null
   env_args: null
   base_port: 5005
-  num_envs: 2
+  num_envs: 1
   num_areas: 1
   timeout_wait: 60
   seed: -1
@@ -59,10 +59,10 @@ engine_settings:
   width: 84
   height: 84
   quality_level: 5
-  time_scale: 40.0
+  time_scale: 1.0
   target_frame_rate: -1
   capture_frame_rate: 60
-  no_graphics: true
+  no_graphics: false
   no_graphics_monitor: false
 environment_parameters:
   player_phase:
@@ -70,7 +70,7 @@ environment_parameters:
     - value:
         sampler_type: constant
         sampler_parameters:
-          seed: 4199
+          seed: 6861
           value: 1
       name: phase1
       completion_criteria: null

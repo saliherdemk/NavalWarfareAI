@@ -18,6 +18,7 @@ public class PlayerAgent : Agent
 
     float _progressAccum;
     public bool IsDead { get; private set; }
+    private float[] _cachedSensors;
 
     public void Kill()
     {
@@ -54,7 +55,8 @@ public class PlayerAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        AddArray(sensor, _controller.GetSensors());
+        _cachedSensors = _controller.GetSensors();
+        AddArray(sensor, _cachedSensors);
         AddArray(sensor, GetRelativePositionData(gm.targetLake.lakeCenter));
     }
 
@@ -77,6 +79,7 @@ public class PlayerAgent : Agent
         }
 
         TargetProgressReward();
+        WallProximityPenalty();
 
         AddReward(-0.001f);
     }
@@ -85,16 +88,24 @@ public class PlayerAgent : Agent
     {
         float curr = Vector2.Distance(transform.localPosition, gm.targetLake.lakeCenter);
         float delta = _prevTargetDist - curr;
-
-        float r = delta * 0.01f;
-
-        if (_progressAccum + r > 0.5f)
-            r = Mathf.Max(0f, 0.5f - _progressAccum);
-
+        float r = delta * 0.005f;
+        if (_progressAccum + r > 0.3f)
+            r = Mathf.Max(0f, 0.3f - _progressAccum);
         _progressAccum += r;
         AddReward(r);
-
         _prevTargetDist = curr;
+    }
+
+    void WallProximityPenalty()
+    {
+        if (_cachedSensors == null)
+            return;
+        float minDist = float.MaxValue;
+        foreach (float s in _cachedSensors)
+            minDist = Mathf.Min(minDist, s);
+
+        if (minDist < 0.2f)
+            AddReward(-0.002f * (0.2f - minDist) / 0.2f);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
